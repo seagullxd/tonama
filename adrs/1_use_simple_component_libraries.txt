@@ -1,0 +1,24 @@
+4_use_some_component_libraries.txt
+
+Date created: 28/08/2025
+Decision outcome: Approved
+
+Document to investigate the value in introducing simple, pure HTML, CSS or JS libraries.
+
+What is the reason for the decision being raised?
+- To speed up development
+- Spend less time fidgeting with a component and more time pulling the MVP together
+
+What are some considerations?
+- Be strict on libraries you introduce
+- Requirements? 
+	1) component libraries that are built using just HTML, CSS and minimal JavaScript,
+	2) You can (almost) copy and paste into your own project without requiring more dependencies
+- Be mindful of introducing many different dependencies
+
+Possible component libraries?
+- Picocss (inline text, modal)
+- shoelace.style
+
+Resources?
+https://www.reddit.com/r/webdev/comments/1h3yoz3/html_css_component_library/
