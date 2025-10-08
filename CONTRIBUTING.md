@@ -24,4 +24,3 @@ Please be sure to offer:
 1. A detailed yet succinct description of the feature and why it's useful
 2. How you think the feature can be approached
 3. A unique proposal
-4. A clear and concise proposal

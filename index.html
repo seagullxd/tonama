@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta
+    	name="description"
+  		content="tonama is a surname (or family name) guessing game.">
+  	<meta property="og:image" content="" >
+		<meta
+  		property="og:description"
+  		content="tonama is a surname (or family name) guessing game.">
+		<meta property="og:title" content="tonama" >
+
+		<title>tonama</title>
+		<!-- 3x resolution iPhone: -->
+		<link
+  		rel="apple-touch-icon"
+  		sizes="180x180"
+  		href="/apple-touch-icon-180x180.png">
+
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+		<link rel="icon" href="favicon.ico" type="image/x-icon">
+		<link rel="stylesheet" href="/styles/main.css">
+		<script src="/scripts/main.js" defer></script>
+  </head>
+
+  <body>
+    <nav>
+      <ul>
+        <li>
+        	<h1><a href="#">tonama: Name guessing game</a></h1>
+        </li>
+      </ul>
+    </nav>
+
+    <main>
+    	<aside>
+
+      	<table>
+      		<tr>
+      			<td>elapsed time:</td> 
+      			<td>2m 1s</td>
+      		</tr>
+
+          <tr>
+          	<td>countries guessed:</td>
+          	<td>1</td>
+          </tr>    			
+      	</table>
+      </aside>
+    	<article>
+		  		<h2>
+		  			<a><time datetime="2025-10-04">Sat 4<sup>th</sup> Oct 2025</time></a>
+		  			<img src="globe.jpg" alt="streak">
+		  			<button type="button">More</button>
+		  			<select name="menu" id="menu">
+						  <option value="faq">FAQ</option>
+						  <option value="how">How to play</option>
+						  <option value="restart">Restart</option>
+						  <option value="levels">Levels</option>
+						</select>
+		  		</h2>
+    			
+		  </article>
+
+		  <article>
+		    <p>Guess the origin country of the surname below.</p>
+		    <h2>"Morgan"</h2>
+		    	<button type="button">Hint</button>
+		      <form>
+		        <input type="text" name="guess" placeholder="Enter a country" id="guess" required>
+		        <button type="submit">▶︎</button>
+		      </form>
+		    <p><samp>Hint activated!</samp></p>
+    	</article>
+
+    	<div>
+				<svg width="280" height="60">
+				    <rect x="5" y="5" width="270" height="50" stroke="#457b9d" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#457b9d" />
+				    <text x="30" y="35" fill="white">Finland</text>
+				    <text x="180" y="35" fill="white">500km</text>
+				</svg>
+				<svg width="280" height="60">
+				    <rect x="5" y="5" width="270" height="50" stroke="#ffb400" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#ffb400" />
+				    <text x="30" y="35" fill="white">Germany</text>
+				    <text x="180" y="35" fill="white">1000km</text>
+				</svg>
+				<svg width="280" height="60">
+				    <rect x="5" y="5" width="270" height="50" stroke="#457b9d" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#457b9d" />
+				    <text x="30" y="35" fill="white">France</text>
+				    <text x="180" y="35" fill="white">1100km</text>
+				</svg>				
+				<svg width="280" height="60">
+				    <rect x="5" y="5" width="270" height="50" stroke="#e76f51" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#e76f51" />
+				    <text x="30" y="35" fill="white">Spain</text>
+				    <text x="180" y="35" fill="white">1200km</text>
+				</svg>
+				<svg width="280" height="60">
+					  <style>
+					    /* Define the font family using web fonts */
+					    @font-face {
+					      font-family: "FiraSans";
+					      src:
+					        url("https://mdn.github.io/shared-assets/fonts/FiraSans-Italic.woff2")
+					          format("woff2"),
+					        url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap")
+					          format("woff2");
+					    }
+
+					    /* Style the text */
+					    text {
+					      /* Specify the system or custom font to use */
+					      font-family: "Noto Sans", sans-serif;
+					      font-weight: bold;
+					      /* Add other styling */
+					      font-size: 17px;
+					    }
+					  </style>
+				    <rect x="5" y="5" width="270" height="50" stroke="#d62828" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#d62828" />
+				    <text x="30" y="35" fill="white">England</text>
+				    <text x="180" y="35" fill="white">4000km</text>
+				</svg>
+    	</div>
+    </main>
+
+	  <footer>
+	  	<a href="https://www.example.com">about tonama</a>
+			<a href="https://www.example.com">contact tonama</a>
+	  </footer>
+  </body>
+</html>
