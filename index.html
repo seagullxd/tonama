@@ -24,7 +24,7 @@
 
 		<link rel="icon" href="favicon.ico" type="image/x-icon">
 		<link rel="stylesheet" href="/styles/main.css">
-		<script src="/scripts/main.js" defer></script>
+		<script src="scripts/main.js" defer ></script>
   </head>
 
   <body>
@@ -70,14 +70,14 @@
 		    <p>Guess the origin country of the surname below.</p>
 		    <h2>"Morgan"</h2>
 		    	<button type="button">Hint</button>
-		      <form>
-		        <input type="text" name="guess" placeholder="Enter a country" id="guess" required>
-		        <button type="submit">▶︎</button>
-		      </form>
+		    		<form>
+		        	<input type="text" id="name" name="country_name" placeholder="Enter a country" required>
+		        	<button type="submit" id="submit">▶︎</button>
+		        </form>
 		    <p><samp>Hint activated!</samp></p>
     	</article>
 
-    	<div>
+    	<div id="guesses">
 				<svg width="280" height="60">
 				    <rect x="5" y="5" width="270" height="50" stroke="#457b9d" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#457b9d" />
 				    <text x="30" y="35" fill="white">Finland</text>
