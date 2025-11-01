@@ -1,0 +1,9 @@
+body {
+	background-color: #264653;
+}
+
+div {
+  & .message {
+   	color: red; 	
+  }		
+}
