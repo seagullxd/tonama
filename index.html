@@ -23,8 +23,9 @@
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
 		<link rel="icon" href="favicon.ico" type="image/x-icon">
-		<link rel="stylesheet" href="/styles/main.css">
-		<script src="/scripts/main.js" defer></script>
+		<link rel="stylesheet" href="styles/main.css">
+		<script src="scripts/main.js" type="module" defer ></script>
+		<script src="scripts/player_cards.js" type="module" defer ></script>
   </head>
 
   <body>
@@ -69,36 +70,17 @@
 		  <article>
 		    <p>Guess the origin country of the surname below.</p>
 		    <h2>"Morgan"</h2>
-		    	<button type="button">Hint</button>
-		      <form>
-		        <input type="text" name="guess" placeholder="Enter a country" id="guess" required>
-		        <button type="submit">▶︎</button>
-		      </form>
-		    <p><samp>Hint activated!</samp></p>
+	    	<button type="button">Hint</button>
+    		<form>
+        	<input type="text" id="name" name="country_name" placeholder="Enter a country" required>
+        	<button type="submit" id="submit">▶︎</button>
+        </form>
+        <div id="tags">
+        </div>
     	</article>
 
-    	<div>
-				<svg width="280" height="60">
-				    <rect x="5" y="5" width="270" height="50" stroke="#457b9d" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#457b9d" />
-				    <text x="30" y="35" fill="white">Finland</text>
-				    <text x="180" y="35" fill="white">500km</text>
-				</svg>
-				<svg width="280" height="60">
-				    <rect x="5" y="5" width="270" height="50" stroke="#ffb400" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#ffb400" />
-				    <text x="30" y="35" fill="white">Germany</text>
-				    <text x="180" y="35" fill="white">1000km</text>
-				</svg>
-				<svg width="280" height="60">
-				    <rect x="5" y="5" width="270" height="50" stroke="#457b9d" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#457b9d" />
-				    <text x="30" y="35" fill="white">France</text>
-				    <text x="180" y="35" fill="white">1100km</text>
-				</svg>				
-				<svg width="280" height="60">
-				    <rect x="5" y="5" width="270" height="50" stroke="#e76f51" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#e76f51" />
-				    <text x="30" y="35" fill="white">Spain</text>
-				    <text x="180" y="35" fill="white">1200km</text>
-				</svg>
-				<svg width="280" height="60">
+    	<div id="guesses">
+				<svg width="1" height="1">
 					  <style>
 					    /* Define the font family using web fonts */
 					    @font-face {
@@ -119,9 +101,6 @@
 					      font-size: 17px;
 					    }
 					  </style>
-				    <rect x="5" y="5" width="270" height="50" stroke="#d62828" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#d62828" />
-				    <text x="30" y="35" fill="white">England</text>
-				    <text x="180" y="35" fill="white">4000km</text>
 				</svg>
     	</div>
     </main>

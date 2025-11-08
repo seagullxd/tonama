@@ -1,0 +1,14 @@
+body {
+	background-color: #003049;
+	color: #E7E7E7;
+}
+
+a {
+	color: #E7E7E7;
+}
+
+div {
+  & .message {
+   	color: red; 	
+  }		
+}
