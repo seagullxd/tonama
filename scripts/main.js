@@ -2,8 +2,8 @@ import { countryColours } from './colours.js';
 import PlayerCards from './player_cards.js';
 import { 
   toTitleCase, 
-  doesNotContainOnlyLettersSpaces, 
-  doesNotContainMisplacedCapital 
+  hasOnlyLetterAndSpaces, 
+  hasMisplacedCapital 
 } from './helper.js';
 import { 
   duplicateGuessErrorMessage, 
@@ -83,19 +83,15 @@ function addTempParagraph(message, messageType) {
   }
 }
 
-function isGuessTooLong(guess) {
+function hasAppropriateGuessLength(guess) {
+  const minGuessLength = 4 // based on the shortest country name 
   const maxGuessLength = 56 // based on the longest country name 
-  return guess.length > maxGuessLength  
+  return minGuessLength < guess.length < maxGuessLength  
 }
 
-function isGuessInvalid(guess) {
-  // todo: handle Uppercase letters that occur after the first letter e.g., eNglanD
-  console.log(isGuessTooLong(guess))
-  console.log(doesNotContainOnlyLettersSpaces(guess)) // good = 
-  console.log(!(guess in countryColours)) // true 
-  console.log(doesNotContainMisplacedCapital(guess)) // true 
-  return isGuessTooLong(guess) || doesNotContainOnlyLettersSpaces(guess) 
-    || !(toTitleCase(guess) in countryColours) || doesNotContainMisplacedCapital(guess)
+function isGuessValid(guess) {
+  return hasAppropriateGuessLength(guess) && hasOnlyLetterAndSpaces(guess) 
+    && toTitleCase(guess) in countryColours && !hasMisplacedCapital(guess)
 }
 
 function handleDialog() {
@@ -160,6 +156,10 @@ function handleDialogClose(closeBtns) {
 function main() {
   handleDialog()
 
+  //todo: add code to handle creation of level cards 
+  // todo2: modify getRect() method to accept width, heigh and colour as params
+  // todo3: do the same for other svg creation methods
+
   const formElem = document.querySelector("form");
   formElem.addEventListener("submit", (e) => {
     // on form submission, prevent default
@@ -168,7 +168,6 @@ function main() {
     // construct a FormData object, which fires the formdata event
     new FormData(formElem);
   });
-
 
   formElem.addEventListener("formdata", (e) => {
     console.log("formdata fired");
@@ -181,7 +180,7 @@ function main() {
     }
 
     const playerCards = new PlayerCards();
-    if (!isGuessInvalid(guess)) {
+    if (isGuessValid(guess)) {
       const titleCasedGuess = toTitleCase(guess);
       if (!playerCards.hasCard(titleCasedGuess)) {
         playerCards.addCard(titleCasedGuess, countryColours[titleCasedGuess])

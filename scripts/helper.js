@@ -6,9 +6,9 @@ export function toTitleCase(str) {
   );
 }
 
-export function doesNotContainOnlyLettersSpaces(str) {
+export function hasOnlyLetterAndSpaces(str) {
   const regex = /^[A-Za-z\s]+$/;
-  return !regex.test(str);
+  return regex.test(str);
 }
 
 // https://plainenglish.io/blog/javascript-check-if-string-contains-uppercase-letters-9a78b69739f6
@@ -16,13 +16,12 @@ export function containsUppercase(str) {
   return /[A-Z]/.test(str);
 }
 
-export function doesNotContainMisplacedCapital(str) {
+export function hasMisplacedCapital(str) {
   let words = str.split(' ');
-  let hasUppercase = false;
+  let hasMisplacedCapital = false;
   for (const word of words) {
     let charsToTest = word.slice(1);
-    hasUppercase = containsUppercase(charsToTest);
-    if (hasUppercase) break 
+    hasMisplacedCapital = containsUppercase(charsToTest);
+    if (hasMisplacedCapital) return true 
   }
-  return hasUppercase
 }
