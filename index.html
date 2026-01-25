@@ -54,15 +54,104 @@
       </aside>
     	<article>
 		  		<h2>
-		  			<a><time datetime="2025-10-04">Sat 4<sup>th</sup> Oct 2025</time></a>
-		  			<img src="globe.jpg" alt="streak">
-		  			<button type="button">More</button>
-		  			<select name="menu" id="menu">
-						  <option value="faq">FAQ</option>
-						  <option value="how">How to play</option>
-						  <option value="restart">Restart</option>
-						  <option value="levels">Levels</option>
-						</select>
+		  			<a><time datetime="2025-10-04">Sat 8<sup>th</sup> Nov 2025</time></a>
+		  			<img src="images/globe.svg" alt="streak">
+						<!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog#specifications -->
+						<button id="more-btn"><code>More</code></button>
+
+						<dialog id="moreDialog" closedby="any">
+
+						  <h2><code>More</code></h2>
+						  <p>
+						    Closable using the "Close" button, the Esc key, or by clicking outside the
+						    dialog. "Light dismiss" behavior.
+						  </p>
+							<div id="controls">
+								<button id="restart-btn"><code>Restart</code></button>
+								<button id="level-btn"><code>Levels</code></button>
+								<button id="how-to-play-btn"><code>How to Play</code></button>
+							  <button id="faq-btn"><code>FAQ</code></button>
+							  <button id="settings-btn"><code>Settings</code></button>
+							</div>
+							<button class="close">Close</button>
+						</dialog>
+
+						<dialog id="restartDialog" closedby="any">
+						  <h2><code>Restart</code></h2>
+						  <p>
+						    Are you sure you want to restart the level?
+						  </p>
+						  <button class="close">Close</button>
+						</dialog>
+
+						<dialog id="levelDialog" closedby="any">
+						  <h2><code>Levels</code></h2>
+						  <p>
+						    Closable using the "Close" button, the Esc key, or by clicking outside the
+						    dialog. "Light dismiss" behavior.
+						  </p>
+						  	<div id="levels-rounded-corners">
+						    	<div id="levels">
+										<svg width="1" height="1">
+											  <style>
+											    /* Define the font family using web fonts */
+											    @font-face {
+											      font-family: "FiraSans";
+											      src:
+											        url("https://mdn.github.io/shared-assets/fonts/FiraSans-Italic.woff2")
+											          format("woff2"),
+											        url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap")
+											          format("woff2");
+											    }
+
+											    /* Style the text */
+											    text {
+											      /* Specify the system or custom font to use */
+											      font-family: "Noto Sans", sans-serif;
+											      font-weight: bold;
+											      /* Add other styling */
+											      font-size: 17px;
+											    }
+											  </style>
+										</svg>
+										<svg width="300" height="60"><rect x="5" y="5" width="290" height="50" stroke="#00A878" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#00A878"></rect><text x="30" y="35" fill="white">14th Nov 25</text><text x="180" y="35" fill="white">easy</text></svg>
+										<svg width="300" height="60"><rect x="5" y="5" width="290" height="50" stroke="#00A878" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#00A878"></rect><text x="30" y="35" fill="white">21st Nov 25</text><text x="180" y="35" fill="white">easy</text></svg>
+										<svg width="300" height="60"><rect x="5" y="5" width="290" height="50" stroke="#00A6ED" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#00A6ED"></rect><text x="30" y="35" fill="white">28th Nov 25</text><text x="180" y="35" fill="white">intermediate</text></svg>
+										<svg width="300" height="60"><rect x="5" y="5" width="290" height="50" stroke="#FFB400" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#FFB400"></rect><text x="30" y="35" fill="white">5th Dec 25</text><text x="180" y="35" fill="white">hard</text></svg>
+										<svg width="300" height="60"><rect x="5" y="5" width="290" height="50" stroke="#00A6ED" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#00A6ED"></rect><text x="30" y="35" fill="white">12th Dec 25</text><text x="180" y="35" fill="white">intermediate</text></svg>
+										<svg width="300" height="60"><rect x="5" y="5" width="290" height="50" stroke="#00A6ED" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#00A6ED"></rect><text x="30" y="35" fill="white">19th Dec 25</text><text x="180" y="35" fill="white">intermediate</text></svg>
+						    	</div>
+						    </div>
+						  <button class="close">Close</button>
+						</dialog>
+
+						<dialog id="howToPlayDialog" closedby="any">
+						  <h2><code>How to Play</code></h2>
+						  <p>
+						    Closable using the "Close" button, the Esc key, or by clicking outside the
+						    dialog. "Light dismiss" behavior.
+						  </p>
+						  <button class="close">Close</button>
+						</dialog>
+
+						<dialog id="faqDialog" closedby="any">
+						  <h2><code>FAQ</code></h2>
+						  <p>
+						    Closable using the "Close" button, the Esc key, or by clicking outside the
+						    dialog. "Light dismiss" behavior.
+						  </p>
+						  <button class="close">Close</button>
+						</dialog>
+
+						<dialog id="settingsDialog" closedby="any">
+						  <h2><code>Settings</code></h2>
+						  <p>
+						    Closable using the "Close" button, the Esc key, or by clicking outside the
+						    dialog. "Light dismiss" behavior.
+						  </p>
+						  <button class="close">Close</button>
+						</dialog>
+
 		  		</h2>
     			
 		  </article>
@@ -70,7 +159,7 @@
 		  <article>
 		    <p>Guess the origin country of the surname below.</p>
 		    <h2>"Morgan"</h2>
-	    	<button type="button">Hint</button>
+	    	<img src="images/bulb2.svg" alt="streak">
     		<form>
         	<input type="text" id="name" name="country_name" placeholder="Enter a country" required>
         	<button type="submit" id="submit">▶︎</button>

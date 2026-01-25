@@ -1,6 +1,7 @@
 body {
 	background-color: #003049;
 	color: #E7E7E7;
+	font-family: sans-serif;
 }
 
 a {
@@ -11,4 +12,45 @@ div {
   & .message {
    	color: red; 	
   }		
+}
+
+dialog {
+  width: 420px;
+  border-radius: 16px;
+
+  border: 0.5rem solid #E7E7E7;
+}
+
+dialog h2 {
+  margin: 0;
+}
+
+dialog p {
+  line-height: 1.4;
+}
+
+#levelDialog {
+	overflow-y: hidden;
+}
+
+#levels-rounded-corners {
+  height:380px;
+  width:380px;
+  border-radius: 16px; 
+  padding: 6px;
+  background: #003049;
+}
+
+#levels {
+  height:380px;
+  width:380px;
+	background-color: #003049;
+	display: grid;
+  place-items: center;
+  max-height: 380px;
+  overflow: auto;
+}
+
+#levels svg {
+	padding: 4px 0px 4px 0px;
 }
