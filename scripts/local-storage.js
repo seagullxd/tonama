@@ -3,18 +3,22 @@ import { isEmpty } from "./util/object.js"
 
 export function saveLocalStorage(id, lastLevelOpen=undefined, levelTitle, additionalHintsUsed=0, guess) {
 	let storedLevels = JSON.parse(localStorage.getItem("levels"));
-	if (!storedLevels) {
-		storedLevels = [];
-		let storedLevel = makeLevel(levelTitle, additionalHintsUsed, guess);
-		storedLevels.push(storedLevel);
-	} else {
-		let storedLevel = storedLevels.find((l) => l.title == levelTitle);
-		if (!storedLevel) {
-			storedLevel = {};
-			storedLevel.hintsUsed += additionalHintsUsed;
-			storedLevel.guesses.push(guess);	
+	let storedLevel = undefined;
+	if (storedLevels) {
+		storedLevel = storedLevels.find((l) => l.title == levelTitle);
+		console.log(`storedLevel ${JSON.stringifystoredLevel}`)
+		if (storedLevel) {
+			storedLevel.guesses.push(guess);
+		} else {
+			storedLevel = makeLevel(levelTitle, additionalHintsUsed, guess);
+			storedLevels.push(storedLevel);
 		}
+	} else {
+		storedLevels = [];
+		storedLevel = makeLevel(levelTitle, additionalHintsUsed, guess);
+		storedLevels.push(storedLevel);
 	}
+	
 	localStorage.setItem("levels", JSON.stringify(storedLevels));
 	
 	let storedLastLevelOpen = localStorage.getItem("lastLevelOpen");
