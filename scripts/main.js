@@ -1,9 +1,10 @@
 import { countryColours } from "./models/colours.js";
-import { LevelStatus } from "./models/levels.js";
 import PlayerCards from "./player-cards.js";
 import {
   saveLocalStorage,
-  loadLocalStorage
+  loadLocalStorage,
+  getId,
+  generateDateId
 } from "./local-storage.js";
 import {
   toTitleCase,
@@ -99,12 +100,9 @@ function handleDialogClose(closeBtns) {
 }
 
 function main() {
-  handleDialogClose();
-  let userData = loadLocalStorage();
-
+  handleDialog();
   //TODO: add code to handle creation of level cards
   // todo3: do the same for other svg creation methods
-
   const formElem = document.querySelector("form");
   formElem.addEventListener("submit", (e) => {
     // on form submission, prevent default
@@ -114,42 +112,52 @@ function main() {
     new FormData(formElem);
   });
 
+  const currentLevelTitle = "26 Jan 25"; // TODO: implement level select
+  const currentLevelId = generateDateId(currentLevelTitle);
+  let userData = loadLocalStorage();
+
   formElem.addEventListener("formdata", (e) => {
     console.log("formdata fired");
 
     // Get the form data from the event object
     const data = e.formData;
-    let guess = "";
+    let guess = {
+      "country": undefined,
+      "distance": 500
+    };
     for (const value of data.values()) {
-      guess = value;
+      guess.country = value;
     }
 
-    const currentLevel = "12 Jan 2026";
     const playerCards = new PlayerCards();
-    if (isGuessValid(guess)) {
-      // if this level was previously in progress, then add to its guess data
-      let levelData = [];
-      if (userData) {
-        if ("levels" in userData) {
-          for (var level in userData.levels) {
-            if (level.name == currentLevel) {
-              levelData = level;
-              break;
-            }
+    if (isGuessValid(guess.country)) {
+      
+      // check if user exists
+      let id = localStorage.getItem("id");
+      if (id) {
+        // handle duplicate guess
+        let storedLevels = localStorage.getItem("levels");
+        if (storedLevels) {
+          const level = storedLevels.find((l) => l.id == currentLevelId);
+          if (level) {
+            const foundGuess = level.guesses.find((g) => g.country == guess.country);
+            // CHECKPOINT #3: Handle duplicate guess
+            addTempParagraph(`${guess.country} ${invalidCountryErrorMessage}`, invalidCountryTag);
           }
-          // handle if level does not exist
         }
       }
 
-      // make a new data instance and add to it
+      id = getId();   
+      saveLocalStorage(id, currentLevelTitle, currentLevelTitle, undefined, guess); 
 
-      // then proceed with saveLocalStorage()
-      saveLocalStorage("", "Tues 13 Jan 25", level); // checkpoint #1
+      // checkpoint #1 aus day jan 26
+      // IS IT AS A SINGLE OBJECT OR MULTIPLE DIFFERENT OBJECTS???
 
-      const titleCasedGuess = toTitleCase(guess);
+      // TODO: HANDLE DUPLICATE GUESSES
+      const titleCasedGuess = toTitleCase(guess.country);
       if (!playerCards.hasCard(titleCasedGuess)) {
         playerCards.addCard(titleCasedGuess, countryColours[titleCasedGuess]);
-        displayCard(titleCasedGuess, "500km", countryColours[titleCasedGuess]);
+        displayCard(titleCasedGuess, `${guess.distance}km`, countryColours[titleCasedGuess]);
       } else {
         addTempParagraph(
           `${titleCasedGuess} ${duplicateGuessErrorMessage}`,
@@ -158,7 +166,7 @@ function main() {
       }
     } else {
       addTempParagraph(
-        `${guess} ${invalidCountryErrorMessage}`,
+        `${guess.country} ${invalidCountryErrorMessage}`,
         invalidCountryTag,
       );
     }

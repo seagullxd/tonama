@@ -1,39 +1,85 @@
-import { uuidv4 } from "/scripts/util/guess.js";
+import { LevelStatus } from "./models/levels.js";
+import { isEmpty } from "./util/object.js"
 
-export function saveLocalStorage(userId, lastLevelOpen, level) {
-	let levels = [];
-	let oldLastLevelOpen = "";
-	if (userId) {
-		// check if user exists
-		localStorage.getItem("userId");
-		oldLastLevelOpen = localStorage.getItem("lastLevelOpen");
-		levels = JSON.parse(localStorage.getItem("levels"));
+export function saveLocalStorage(id, lastLevelOpen=undefined, levelTitle, additionalHintsUsed=0, guess) {
+	let storedLevels = JSON.parse(localStorage.getItem("levels"));
+	if (!storedLevels) {
+		storedLevels = [];
+		let storedLevel = makeLevel(levelTitle, additionalHintsUsed, guess);
+		storedLevels.push(storedLevel);
 	} else {
-		// make a new user
-		localStorage.setItem("userId", uuidv4());
+		let storedLevel = storedLevels.find((l) => l.title == levelTitle);
+		if (!storedLevel) {
+			storedLevel = {};
+			storedLevel.hintsUsed += additionalHintsUsed;
+			storedLevel.guesses.push(guess);	
+		}
 	}
-
-	if (oldLastLevelOpen != lastLevelOpen) {
+	localStorage.setItem("levels", JSON.stringify(storedLevels));
+	
+	let storedLastLevelOpen = localStorage.getItem("lastLevelOpen");
+	if (!storedLastLevelOpen) {
 		localStorage.setItem("lastLevelOpen", lastLevelOpen);
+	} else if (storedLastLevelOpen != lastLevelOpen) {
+		localStorage.setItem("lastLevelOpen", storedLastLevelOpen);
 	}
-
-	levels.push(level);
-	localStorage.setItem("levels", JSON.stringify(levels));
 }
 
-export function loadLocalStorage(userId) {
+function isUserExisting(id) {
+	const storedId = localStorage.getItem("id");
+	return id === storedId;
+}
+
+export function getId() {
+  let id = localStorage.getItem("id");
+  console.log(`id is ${id}`)
+  if (!id | !isUserExisting(id)) {
+    id = uuidv4();
+    localStorage.setItem("id", id);
+  }
+  return id;
+}
+
+function makeLevel(title, hintsUsed, guess) {
+	const guesses = [];
+	guesses.push(guess);
+	const level = {
+		"id": generateDateId(title),
+		"title": title,
+		"status": LevelStatus.inProgress,
+		"hintsUsed": hintsUsed,
+		"guesses": guesses
+	}
+	return level;
+}
+
+export function generateDateId(dateString) {
+	const date = new Date(dateString);
+	const dateId = [date.getDate(), date.getMonth(), date.getYear()];
+	return dateId.join("");
+}
+
+export function loadLocalStorage() {
 	let data = {};
-	let user = localStorage.getItem("userId");
-	if (user) {
-		// check if user exists
-		// fetch the remaining info
-		data.user = user;
+	let id = localStorage.getItem("id");
+	// check if user exists
+	if (id) {
+		data.id = id;
 		const lastLevelOpen = localStorage.getItem("lastLevelOpen");
-		const storedLevels = JSON.parse(localStorage.getItem("levels"));
 		data.lastLevelOpen = lastLevelOpen;
-		data.levels = storedLevels;
+		const levels = JSON.parse(localStorage.getItem("levels"));
+		data.levels = levels;
 	}
 	return data;
+}
+
+// Source - https://stackoverflow.com/a/2117523
+// Posted by broofa, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-01-13, License - CC BY-SA 4.0
+function uuidv4() {
+  return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+    (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+  );
 }
 
 function iterateStatus(status) {
@@ -49,30 +95,4 @@ function iterateStatus(status) {
 			break;
 	}
 	return status;
-}
-
-function addNewLevel(userData, newLevel) {
-	// handle if no user exists
-	const newLevelData = {};
-	newLevelData.name = newLevel;
-	newLevelData.status = "in-progress"; // TODO: make this LevelStatus.inProgress
-	newLevelData.guesses = [];
-
-	if ("levels" in userData) {
-		userData.levels.push(newLevelData);
-	} else {
-		throw new Error("No level data found!");
-	}
-}
-
-function addNewGuess(levelData, guess, distance) {
-	const newGuess = {
-		origin: guess,
-		distance: distance,
-	};
-	if ("guesses" in levelData) {
-		levelData.guesses.push(newGuess);
-	} else {
-		throw new Error("No guess data found!");
-	}
 }

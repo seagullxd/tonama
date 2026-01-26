@@ -1,5 +1,4 @@
-const LevelStatus = {
-  notStarted: 1,
-  inProgress: 2,
-  completed: 3,
+export const LevelStatus = {
+  inProgress: 1,
+  completed: 2,
 }
