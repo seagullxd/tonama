@@ -1,12 +1,13 @@
 import { LevelStatus } from "./models/levels.js";
-import { isEmpty } from "./util/object.js"
+import { isEmpty } from "./util/object.js";
+import { countryColours } from "./models/colours.js";
+import { displayCard } from "./svg.js";
 
-export function saveLocalStorage(id, lastLevelOpen=undefined, levelTitle, additionalHintsUsed=0, guess) {
+export function saveLocalStorage(id, levelTitle, guess, lastLevelOpen=undefined, additionalHintsUsed=0) {
 	let storedLevels = JSON.parse(localStorage.getItem("levels"));
-	let storedLevel = undefined;
+	let storedLevel;
 	if (storedLevels) {
 		storedLevel = storedLevels.find((l) => l.title == levelTitle);
-		console.log(`storedLevel ${JSON.stringifystoredLevel}`)
 		if (storedLevel) {
 			storedLevel.guesses.push(guess);
 		} else {
@@ -36,7 +37,6 @@ function isUserExisting(id) {
 
 export function getId() {
   let id = localStorage.getItem("id");
-  console.log(`id is ${id}`)
   if (!id | !isUserExisting(id)) {
     id = uuidv4();
     localStorage.setItem("id", id);
@@ -53,7 +53,7 @@ function makeLevel(title, hintsUsed, guess) {
 		"status": LevelStatus.inProgress,
 		"hintsUsed": hintsUsed,
 		"guesses": guesses
-	}
+	};
 	return level;
 }
 
@@ -63,19 +63,21 @@ export function generateDateId(dateString) {
 	return dateId.join("");
 }
 
-export function loadLocalStorage() {
-	let data = {};
-	let id = localStorage.getItem("id");
-	// check if user exists
-	if (id) {
-		data.id = id;
-		const lastLevelOpen = localStorage.getItem("lastLevelOpen");
-		data.lastLevelOpen = lastLevelOpen;
-		const levels = JSON.parse(localStorage.getItem("levels"));
-		data.levels = levels;
-	}
-	return data;
-}
+/**
+ * Display country cards for this level.
+ * @param {number} guess The level id to generate cards for.
+ * @return {undefined}
+ */
+export default void function loadLevelCards(levelId) {
+  let storedLevels = JSON.parse(localStorage.getItem("levels"));
+  if (storedLevels) {
+    const level = storedLevels.find((l) => l.id == levelId);
+	  level.guesses.forEach(guess => {
+	    const titleCasedGuess = guess.country;
+	    displayCard(titleCasedGuess, `${guess.distance}km`, countryColours[titleCasedGuess]);    
+	  });
+  }
+};
 
 // Source - https://stackoverflow.com/a/2117523
 // Posted by broofa, modified by community. See post 'Timeline' for change history

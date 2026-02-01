@@ -22,6 +22,30 @@ export function isGuessValid(guess) {
   );
 }
 
+/**
+ * Returns whether a valid guess has already been made.
+ *
+ * @param {object} guess The guess made.
+ * @param {number} currentLevelId Level identifier
+ * @return {boolean} only true if the guess already exists.
+ */
+export function isGuessADuplicate(guess, currentLevelId) {
+  let id = localStorage.getItem("id");
+  let foundDuplicateGuess = false;
+  if (id) {
+    // handle duplicate guess
+    let storedLevels = JSON.parse(localStorage.getItem("levels"));
+    console.log(`storedLevels is ${storedLevels}`);
+    if (storedLevels) {
+      const level = storedLevels.find((l) => l.id == currentLevelId);
+      if (level) {
+        foundDuplicateGuess = level.guesses.find((g) => g.country == toTitleCase(guess.country));
+      }
+    }
+  }
+  return foundDuplicateGuess;
+}
+
 function hasOnlyLetterAndSpaces(str) {
   const regex = /^[A-Za-z\s]+$/;
   return regex.test(str);

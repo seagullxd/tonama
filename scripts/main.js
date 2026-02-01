@@ -2,13 +2,14 @@ import { countryColours } from "./models/colours.js";
 import PlayerCards from "./player-cards.js";
 import {
   saveLocalStorage,
-  loadLocalStorage,
   getId,
-  generateDateId
+  generateDateId,
+  loadLevelCards
 } from "./local-storage.js";
 import {
   toTitleCase,
-  isGuessValid
+  isGuessValid,
+  isGuessADuplicate
 } from "./util/guess.js";
 import { displayCard } from "./svg.js";
 import {
@@ -80,19 +81,11 @@ function handleDialogClose(closeBtns) {
 
 function main() {
   handleDialog();
-  // check if playing a level 
-  let currentLevel = localStorage.getItem("lastLevelOpen"); // todo: revise this method
-  let currentLevelId = undefined;
+  let currentLevel = localStorage.getItem("lastLevelOpen");
+  let currentLevelId;
   if (currentLevel) {
     currentLevelId = generateDateId(currentLevel);
-    let storedLevels = JSON.parse(localStorage.getItem("levels"));
-    if (storedLevels) {
-      const level = storedLevels.find((l) => l.id == currentLevelId);
-      level.guesses.forEach(guess => {
-        const titleCasedGuess = guess.country;
-        displayCard(titleCasedGuess, `${guess.distance}km`, countryColours[titleCasedGuess]);    
-      })
-    }
+    loadLevelCards(currentLevelId);
   } else {
     currentLevel = "26 Jan 25"; // TODO: implement level select
     currentLevelId = generateDateId(currentLevel);
@@ -107,7 +100,6 @@ function main() {
     new FormData(formElem);
   });
 
-  let userData = loadLocalStorage();
   formElem.addEventListener("formdata", (e) => {
     console.log("formdata fired");
 
@@ -115,7 +107,7 @@ function main() {
     const data = e.formData;
     let guess = {
       "country": undefined,
-      "distance": 500
+      "distance": 500 // todo: remove hardcoding
     };
     for (const value of data.values()) {
       guess.country = value;
@@ -124,32 +116,14 @@ function main() {
     const playerCards = new PlayerCards();
     const titleCasedGuess = toTitleCase(guess.country);
     if (isGuessValid(guess.country)) {
-      
-      // check if user exists
-      let id = localStorage.getItem("id");
-      let foundDuplicateGuess = undefined;
-      if (id) {
-        // handle duplicate guess
-        let storedLevels = JSON.parse(localStorage.getItem("levels"));
-        console.log(`storedLevels is ${storedLevels}`)
-        if (storedLevels) {
-          const level = storedLevels.find((l) => l.id == currentLevelId);
-          if (level) {
-            foundDuplicateGuess = level.guesses.find((g) => g.country == toTitleCase(guess.country));
-          }
-        }
-      }
-
-      if (foundDuplicateGuess) {
+      if (isGuessADuplicate(guess, currentLevelId)) {
         displayErrorMessage(`${guess.country} ${duplicateGuessErrorMessage}`, duplicateGuessTag);
       } else {
-        saveLocalStorage(getId(), currentLevelTitle, currentLevelTitle, undefined, guess); 
+        saveLocalStorage(getId(), currentLevel, currentLevel, undefined, guess); 
         displayCard(titleCasedGuess, `${guess.distance}km`, countryColours[titleCasedGuess]);        
       }
     } else {
-      displayErrorMessage(
-        `${guess.country} ${invalidCountryErrorMessage}`,
-        invalidCountryTag,
+      displayErrorMessage(`${guess.country} ${invalidCountryErrorMessage}`, invalidCountryTag
       );
     }
   });
