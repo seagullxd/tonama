@@ -68,7 +68,7 @@ export function generateDateId(dateString) {
  * @param {number} guess The level id to generate cards for.
  * @return {undefined}
  */
-export default void function loadLevelCards(levelId) {
+export function loadLevelCards(levelId) {
   let storedLevels = JSON.parse(localStorage.getItem("levels"));
   if (storedLevels) {
     const level = storedLevels.find((l) => l.id == levelId);
@@ -77,7 +77,7 @@ export default void function loadLevelCards(levelId) {
 	    displayCard(titleCasedGuess, `${guess.distance}km`, countryColours[titleCasedGuess]);    
 	  });
   }
-};
+}
 
 // Source - https://stackoverflow.com/a/2117523
 // Posted by broofa, modified by community. See post 'Timeline' for change history
