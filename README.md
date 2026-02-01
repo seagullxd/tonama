@@ -20,6 +20,15 @@ Use [GitHub issues](https://github.com/seagullxd/tonama/issues) for bug reports 
 | Opera             | 106+     | Full support support                                |
 | Safari            | 17.2+   | Full support support                                |
 
+## Get started locally
+I use Sublime Text to run my server locally as the application is light. You may use Visual Studio Code.
+
+	Steps to run tonama locally
+	#1 Open Sublime Text
+	#2 Press Ctrl + Alt + P to open the command palette
+	#3 Search for "SublimeServer: Start Sublime Server"
+	#4 Open index.html in your editor
+	#5 Right click then select "View in Sublime Server'
 
 ## Contributing
 

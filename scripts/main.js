@@ -1,98 +1,24 @@
-import { countryColours } from './colours.js';
-import PlayerCards from './player_cards.js';
-import { 
-  toTitleCase, 
-  hasOnlyLetterAndSpaces, 
-  hasMisplacedCapital 
-} from './helper.js';
-import { 
-  duplicateGuessErrorMessage, 
-  invalidCountryErrorMessage, 
-  duplicateGuessTag, 
-  invalidCountryTag 
-} from './errors.js'
-
-// https://developer.mozilla.org/en-US/docs/Web/SVG/Guides/Scripting
-function getSvg() {
-  let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttributeNS(null, "width", "280");
-  svg.setAttributeNS(null, "height", "60");
-  return svg 
-}
-
-function getRect(colour) {
-  let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-  rect.setAttributeNS(null, "x", "5");
-  rect.setAttributeNS(null, "y", "5");
-  rect.setAttributeNS(null, "width", "270");
-  rect.setAttributeNS(null, "height", "50");
-  rect.setAttributeNS(null, "stroke", colour);
-  rect.setAttributeNS(null, "stroke-width", "5px");
-  rect.setAttributeNS(null, "rx", "10px");
-  rect.setAttributeNS(null, "ry", "10px");
-  rect.setAttributeNS(null, "stroke-linejoin", "round");
-  rect.setAttributeNS(null, "fill-opacity", "0.5");
-  rect.setAttributeNS(null, "fill", colour);
-  return rect 
-}
-
-function getText(x, text) {
-  const textNS = document.createElementNS("http://www.w3.org/2000/svg", "text");
-  textNS.setAttributeNS(null, "x", x);
-  textNS.setAttributeNS(null, "y", "35");
-  textNS.setAttributeNS(null, "fill", "white");
-  textNS.textContent = text;
-  return textNS
-}
-
-function displayCard(country, distance, colour) {
-  const textCoordinateX = "30"; 
-  const textCoordinateY = "180"; 
-  const guessesContainer = "guesses"
-
-  let svg = getSvg();
-  let node = document.getElementById(guessesContainer);
-  node.appendChild(svg)
-  let r = getRect(colour);
-  svg.appendChild(r);
-  let t1 = getText(textCoordinateX, country);
-  svg.appendChild(t1);
-  let t2 = getText(textCoordinateY, distance);
-  svg.appendChild(t2);
-}
-
-function addTempParagraph(message, messageType) {
-  let node = document.querySelector('#guessed-message')
-  if (!node) {
-    console.log(message);
-    const messageContainer = "tags"
-    node = document.getElementById(messageContainer);
-    const pElement = document.createElement("p")
-    pElement.setAttribute("class", "message")
-    pElement.setAttribute("id", messageType)
-
-    const sampElement = document.createElement("samp")
-    sampElement.textContent = message; 
-    node.appendChild(pElement);
-    pElement.appendChild(sampElement);
-
-    setTimeout(function() {
-      node.removeChild(pElement);
-      console.log("Message removed")
-    }, 5000);  
-  }
-}
-
-function hasAppropriateGuessLength(guess) {
-  const minGuessLength = 4 // based on the shortest country name 
-  const maxGuessLength = 56 // based on the longest country name 
-  return minGuessLength < guess.length < maxGuessLength  
-}
-
-function isGuessValid(guess) {
-  return hasAppropriateGuessLength(guess) && hasOnlyLetterAndSpaces(guess) 
-    && toTitleCase(guess) in countryColours && !hasMisplacedCapital(guess)
-}
+import { countryColours } from "./models/colours.js";
+import PlayerCards from "./player-cards.js";
+import {
+  saveLocalStorage,
+  getId,
+  generateDateId,
+  loadLevelCards
+} from "./local-storage.js";
+import {
+  toTitleCase,
+  isGuessValid,
+  isGuessADuplicate
+} from "./util/guess.js";
+import { displayCard } from "./svg.js";
+import {
+  duplicateGuessErrorMessage,
+  invalidCountryErrorMessage,
+  duplicateGuessTag,
+  invalidCountryTag,
+  displayErrorMessage
+} from "./errors.js";
 
 function handleDialog() {
   const moreBtn = document.getElementById("more-btn");
@@ -116,27 +42,27 @@ function handleDialog() {
   });
 
   restartBtn.addEventListener("click", () => {
-    handleDialogClose(closeBtns)
+    handleDialogClose(closeBtns);
     restartDialog.showModal();
   });
 
   levelBtn.addEventListener("click", () => {
-    handleDialogClose(closeBtns)
+    handleDialogClose(closeBtns);
     levelDialog.showModal();
   });
 
   howToPlayBtn.addEventListener("click", () => {
-    handleDialogClose(closeBtns)
+    handleDialogClose(closeBtns);
     howToPlayDialog.showModal();
   });
 
   faqBtn.addEventListener("click", () => {
-    handleDialogClose(closeBtns)
+    handleDialogClose(closeBtns);
     faqDialog.showModal();
   });
 
   settingsBtn.addEventListener("click", () => {
-    handleDialogClose(closeBtns)
+    handleDialogClose(closeBtns);
     settingsDialog.showModal();
   });
 
@@ -149,17 +75,22 @@ function handleDialog() {
 
 function handleDialogClose(closeBtns) {
   closeBtns.forEach((btn) => {
-      btn.parentElement.close();
+    btn.parentElement.close();
   });
 }
 
 function main() {
-  handleDialog()
-
-  //todo: add code to handle creation of level cards 
-  // todo2: modify getRect() method to accept width, heigh and colour as params
-  // todo3: do the same for other svg creation methods
-
+  handleDialog();
+  let currentLevel = localStorage.getItem("lastLevelOpen");
+  let currentLevelId;
+  if (currentLevel) {
+    currentLevelId = generateDateId(currentLevel);
+    loadLevelCards(currentLevelId);
+  } else {
+    currentLevel = "26 Jan 25"; // TODO: implement level select
+    currentLevelId = generateDateId(currentLevel);
+  }
+  
   const formElem = document.querySelector("form");
   formElem.addEventListener("submit", (e) => {
     // on form submission, prevent default
@@ -174,25 +105,28 @@ function main() {
 
     // Get the form data from the event object
     const data = e.formData;
-    let guess = ''
+    let guess = {
+      "country": undefined,
+      "distance": 500 // todo: remove hardcoding
+    };
     for (const value of data.values()) {
-      guess = value 
+      guess.country = value;
     }
 
     const playerCards = new PlayerCards();
-    if (isGuessValid(guess)) {
-      const titleCasedGuess = toTitleCase(guess);
-      if (!playerCards.hasCard(titleCasedGuess)) {
-        playerCards.addCard(titleCasedGuess, countryColours[titleCasedGuess])
-        displayCard(titleCasedGuess, "500km", countryColours[titleCasedGuess])
+    const titleCasedGuess = toTitleCase(guess.country);
+    if (isGuessValid(guess.country)) {
+      if (isGuessADuplicate(guess, currentLevelId)) {
+        displayErrorMessage(`${guess.country} ${duplicateGuessErrorMessage}`, duplicateGuessTag);
       } else {
-        addTempParagraph(`${titleCasedGuess} ${duplicateGuessErrorMessage}`, duplicateGuessTag)
-      }      
+        saveLocalStorage(getId(), currentLevel, currentLevel, undefined, guess); 
+        displayCard(titleCasedGuess, `${guess.distance}km`, countryColours[titleCasedGuess]);        
+      }
     } else {
-      addTempParagraph(`${guess} ${invalidCountryErrorMessage}`, invalidCountryTag)
+      displayErrorMessage(`${guess.country} ${invalidCountryErrorMessage}`, invalidCountryTag
+      );
     }
   });
 }
 
-main()
-
+main();
