@@ -1,23 +1,18 @@
-import { countryColours } from "./models/colours.js";
-import PlayerCards from "./player-cards.js";
+import { ENTITY_COLOURS } from "./models/entity-colours.js";
 import {
   saveLocalStorage,
   getId,
   generateDateId,
-  loadLevelCards
+  loadLevelCards,
 } from "./local-storage.js";
-import {
-  toTitleCase,
-  isGuessValid,
-  isGuessADuplicate
-} from "./util/guess.js";
+import { toTitleCase, isGuessValid, isGuessADuplicate } from "./util/guess.js";
 import { displayCard } from "./svg.js";
 import {
   duplicateGuessErrorMessage,
   invalidCountryErrorMessage,
   duplicateGuessTag,
   invalidCountryTag,
-  displayErrorMessage
+  displayErrorMessage,
 } from "./errors.js";
 
 function handleDialog() {
@@ -79,8 +74,21 @@ function handleDialogClose(closeBtns) {
   });
 }
 
+export async function fetchJsonFile(filename) {
+  const response = await fetch(filename);
+  if (!response.ok) {
+    const message = `An error has occured: ${response.status}`;
+    throw new Error(message);
+  }
+
+  const data = await response.json();
+  return data;
+}
+
 function main() {
   handleDialog();
+  const origin = "Wales";
+
   let currentLevel = localStorage.getItem("lastLevelOpen");
   let currentLevelId;
   if (currentLevel) {
@@ -90,7 +98,7 @@ function main() {
     currentLevel = "26 Jan 25"; // TODO: implement level select
     currentLevelId = generateDateId(currentLevel);
   }
-  
+
   const formElem = document.querySelector("form");
   formElem.addEventListener("submit", (e) => {
     // on form submission, prevent default
@@ -105,27 +113,40 @@ function main() {
 
     // Get the form data from the event object
     const data = e.formData;
+
     let guess = {
-      "country": undefined,
-      "distance": 500 // todo: remove hardcoding
+      country: undefined,
+      distance: undefined,
     };
     for (const value of data.values()) {
       guess.country = value;
     }
 
-    const playerCards = new PlayerCards();
-    const titleCasedGuess = toTitleCase(guess.country);
-    if (isGuessValid(guess.country)) {
-      if (isGuessADuplicate(guess, currentLevelId)) {
-        displayErrorMessage(`${guess.country} ${duplicateGuessErrorMessage}`, duplicateGuessTag);
+    fetchJsonFile("data/comprehensive_country_distances.json").then((data) => {
+      const titleCasedGuess = toTitleCase(guess.country);
+      if (!isGuessValid(guess.country, data.distances)) {
+        displayErrorMessage(
+          `${guess.country} ${invalidCountryErrorMessage}`,
+          invalidCountryTag,
+        );
       } else {
-        saveLocalStorage(getId(), currentLevel, currentLevel, undefined, guess); 
-        displayCard(titleCasedGuess, `${guess.distance}km`, countryColours[titleCasedGuess]);        
+        if (isGuessADuplicate(guess, currentLevelId)) {
+          displayErrorMessage(
+            `${guess.country} ${duplicateGuessErrorMessage}`,
+            duplicateGuessTag,
+          );
+        } else {
+          guess.distance = Math.round(data.distances[guess.country][origin]);
+          saveLocalStorage(getId(), currentLevel, guess, currentLevel, 0);
+          console.log(`displayCard ${titleCasedGuess} ${ENTITY_COLOURS[titleCasedGuess]}`);
+          displayCard(
+            titleCasedGuess,
+            `${guess.distance}km`,
+            ENTITY_COLOURS[titleCasedGuess],
+          );
+        }
       }
-    } else {
-      displayErrorMessage(`${guess.country} ${invalidCountryErrorMessage}`, invalidCountryTag
-      );
-    }
+    });
   });
 }
 
