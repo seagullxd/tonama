@@ -1,5 +1,3 @@
-import { countryColours } from "../models/colours.js";
-
 // https://stackoverflow.com/a/196991
 export function toTitleCase(str) {
   return str.replace(
@@ -10,14 +8,16 @@ export function toTitleCase(str) {
 function hasAppropriateGuessLength(guess) {
   const minGuessLength = 4; // based on the shortest country name
   const maxGuessLength = 56; // based on the longest country name
-  return minGuessLength < guess.length && guess.length < maxGuessLength;
+  return minGuessLength <= guess.length && guess.length < maxGuessLength;
 }
 
-export function isGuessValid(guess) {
+export function isGuessValid(guess, countryData) {
+  console.log(`${guess} in ${countryData}: ${toTitleCase(guess) in countryData}`);
+  console.log(`${hasAppropriateGuessLength(guess)} ${hasOnlyLetterAndSpaces(guess)} ${toTitleCase(guess) in countryData} ${!hasMisplacedCapital(guess)} `)
   return (
     hasAppropriateGuessLength(guess) &&
     hasOnlyLetterAndSpaces(guess) &&
-    toTitleCase(guess) in countryColours &&
+    toTitleCase(guess) in countryData &&
     !hasMisplacedCapital(guess)
   );
 }

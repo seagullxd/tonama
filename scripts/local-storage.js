@@ -1,6 +1,6 @@
 import { LevelStatus } from "./models/levels.js";
 import { isEmpty } from "./util/object.js";
-import { countryColours } from "./models/colours.js";
+import { ENTITY_COLOURS } from "./models/entity-colours.js";
 import { displayCard } from "./svg.js";
 
 export function saveLocalStorage(id, levelTitle, guess, lastLevelOpen=undefined, additionalHintsUsed=0) {
@@ -74,7 +74,7 @@ export function loadLevelCards(levelId) {
     const level = storedLevels.find((l) => l.id == levelId);
 	  level.guesses.forEach(guess => {
 	    const titleCasedGuess = guess.country;
-	    displayCard(titleCasedGuess, `${guess.distance}km`, countryColours[titleCasedGuess]);    
+	    displayCard(titleCasedGuess, `${guess.distance}km`, ENTITY_COLOURS[titleCasedGuess]);    
 	  });
   }
 }
