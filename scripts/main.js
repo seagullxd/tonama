@@ -1,4 +1,5 @@
-import { ENTITY_COLOURS } from "./models/entity-colours.js";
+import { COLOUR, ENTITY_COLOURS } from "./models/entity-colours.js";
+import { CONTAINER, COUNTRY_CARD, LEVEL_CARD } from "./constants.js";
 import {
   saveLocalStorage,
   getId,
@@ -85,7 +86,23 @@ export async function fetchJsonFile(filename) {
   return data;
 }
 
+function loadLevels() {
+  fetchJsonFile("data/levels.json").then((data) => {
+    for (const l of data.levels) {
+      displayCard(
+        l.level,
+        l.difficulty,
+        COLOUR.FRESH_SKY,
+        CONTAINER.LEVELS,
+        LEVEL_CARD.WIDTH,
+        LEVEL_CARD.HEIGHT,
+      );
+    }
+  });
+}
+
 function main() {
+  loadLevels();
   handleDialog();
   const origin = "Wales";
 
@@ -138,11 +155,13 @@ function main() {
         } else {
           guess.distance = Math.round(data.distances[guess.country][origin]);
           saveLocalStorage(getId(), currentLevel, guess, currentLevel, 0);
-          console.log(`displayCard ${titleCasedGuess} ${ENTITY_COLOURS[titleCasedGuess]}`);
           displayCard(
             titleCasedGuess,
             `${guess.distance}km`,
             ENTITY_COLOURS[titleCasedGuess],
+            CONTAINER.GUESSES,
+            COUNTRY_CARD.WIDTH,
+            COUNTRY_CARD.HEIGHT,
           );
         }
       }

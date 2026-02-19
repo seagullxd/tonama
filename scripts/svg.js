@@ -33,22 +33,24 @@ function getText(x, text) {
   return textNS;
 }
 
-export function displayCard(country, distance, colour) {
-  const countryCardWidth = 270;
-  const countryCardHeight = 50;
+export function displayCard(title, metadata, colour, container, width, height) {
+  if (!width && !height) {
+    return;
+  }
   const padding = 10;
-  let svg = getSvg(countryCardWidth + padding, countryCardHeight + padding);
-  const guessesContainer = "guesses";
-  let node = document.getElementById(guessesContainer);
-  node.appendChild(svg);
+  let svg = getSvg(width + padding, height + padding);
+  let node = document.getElementById(container);
+  if (node) {
+    node.appendChild(svg);
+  }
 
-  let r = getRect(colour, countryCardWidth, countryCardHeight);
+  let r = getRect(colour, width, height);
   svg.appendChild(r);
 
   const textCoordinateX = "30";
   const textCoordinateY = "180";
-  let t1 = getText(textCoordinateX, country);
+  let t1 = getText(textCoordinateX, title);
   svg.appendChild(t1);
-  let t2 = getText(textCoordinateY, distance);
+  let t2 = getText(textCoordinateY, metadata);
   svg.appendChild(t2);
 }
