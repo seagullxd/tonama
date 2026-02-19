@@ -9,26 +9,36 @@ Use [GitHub issues](https://github.com/seagullxd/tonama/issues) for bug reports 
 
 ## Usage
 
-
 ## Supported browsers
 
-| Name              | Version | Notes                                             |
-| ----------------- | ------- | ------------------------------------------------- |
-| Chromium / Chrome | 120+ | Full support (reasonable support for 112+)                                      |
-| Firefox           | 117+     | Full support (fastest local analysis since FF 79) |
-| Edge              | 120+     | Full support (reasonable support for 112+)         |
-| Opera             | 106+     | Full support support                                |
-| Safari            | 17.2+   | Full support support                                |
+| Name              | Version | Notes                                              |
+| ----------------- | ------- | ---------------------------------------------------|
+| Chromium / Chrome | 120+    | Full support (reasonable support for 112+)         |
+| Firefox           | 117+    | Full support (fastest local analysis since FF 79)  |
+| Edge              | 120+    | Full support (reasonable support for 112+)         |
+| Opera             | 106+    | Full support support                               |
+| Safari            | 17.2+   | Full support support                               |
+
+## Dependencies
+	$ npm install
+
+Install in Sublime Text Command Pallette:
+- HTML-CSS-JS Prettify
+- JavaScript Completions  
+- Prettier
+- JsHint
+
+Make sure the sublime settings for JsHint and Prettier reference the ./node_modules/.bin
 
 ## Get started locally
-I use Sublime Text to run my server locally as the application is light. You may use Visual Studio Code.
+I use Sublime Text to run my server locally as the application is light. You may use Visual Studio Code.  
 
-	Steps to run tonama locally
-	#1 Open Sublime Text
-	#2 Press Ctrl + Alt + P to open the command palette
-	#3 Search for "SublimeServer: Start Sublime Server"
-	#4 Open index.html in your editor
-	#5 Right click then select "View in Sublime Server'
+Steps to run tonama locally
+1. Open Sublime Text
+2. Press Ctrl + Alt + P to open the command palette
+3. Search for "SublimeServer: Start Sublime Server"
+4. Open index.html in your editor
+5. Right click then select "View in Sublime Server'
 
 ## Contributing
 
