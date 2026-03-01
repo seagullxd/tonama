@@ -1,13 +1,12 @@
 import { COLOUR, ENTITY_COLOURS } from "./models/entity-colours.js";
-import { CONTAINER, COUNTRY_CARD, LEVEL_CARD } from "./constants.js";
+import { CONTAINER, COUNTRY_CARD, LEVEL_CARD, LEVEL_CLASS } from "./constants.js";
 import {
   saveLocalStorage,
-  getId,
-  generateDateId,
-  loadLevelCards,
+  getUserId,
+  loadGuessCards,
 } from "./local-storage.js";
 import { toTitleCase, isGuessValid, isGuessADuplicate } from "./util/guess.js";
-import { displayCard } from "./svg.js";
+import { createCardElement } from "./svg.js";
 import {
   duplicateGuessErrorMessage,
   invalidCountryErrorMessage,
@@ -19,7 +18,7 @@ import {
 function handleDialog() {
   const moreBtn = document.getElementById("more-btn");
   const restartBtn = document.getElementById("restart-btn");
-  const levelBtn = document.getElementById("level-btn");
+  const levelsBtn = document.getElementById("levels-btn");
   const howToPlayBtn = document.getElementById("how-to-play-btn");
   const faqBtn = document.getElementById("faq-btn");
   const settingsBtn = document.getElementById("settings-btn");
@@ -42,7 +41,7 @@ function handleDialog() {
     restartDialog.showModal();
   });
 
-  levelBtn.addEventListener("click", () => {
+  levelsBtn.addEventListener("click", () => {
     handleDialogClose(closeBtns);
     levelDialog.showModal();
   });
@@ -86,35 +85,85 @@ export async function fetchJsonFile(filename) {
   return data;
 }
 
-function loadLevels() {
-  fetchJsonFile("data/levels.json").then((data) => {
-    for (const l of data.levels) {
-      displayCard(
-        l.level,
-        l.difficulty,
-        COLOUR.FRESH_SKY,
-        CONTAINER.LEVELS,
-        LEVEL_CARD.WIDTH,
-        LEVEL_CARD.HEIGHT,
-      );
-    }
-  });
+function loadLevelTitle(levelData) {
+  const familyName = document.getElementById('family-name');
+  familyName.innerHTML = `"${levelData.name}"`;
+
+  const levelTitle = levelData.level.split(" ");
+
+  // classify date into correct superscripts 
+  let superscript = 'th';
+  const date = levelTitle[0].slice(-1);
+  switch (date) {
+    case "1":
+      superscript = 'st';
+      break;
+    case "2":
+      superscript = 'nd';
+      break;
+    case "3":
+      superscript = 'rd';
+      break;
+  }
+  
+  const levelTitleTimeContent = `${levelTitle[0]}<sup>${superscript}</sup> ${levelTitle[1]} ${levelTitle[2]}`
+  const levelTitleTime = document.getElementById('level-title-time');
+  levelTitleTime.innerHTML = levelTitleTimeContent
+}
+
+function removeOnScreenGuessCards() {
+  document.querySelectorAll('.guess-card').forEach(e => e.remove());
+}
+
+export function loadLevelHandler(levelData) {
+  loadLevelTitle(levelData);
+  removeOnScreenGuessCards();
+  loadGuessCards(levelData.id);
+  localStorage.setItem("lastLevelIdOpen", levelData.id);
+
+  const closeBtns = document.querySelectorAll(".close");
+  handleDialogClose(closeBtns);
+}
+
+function loadLevelCards(allLevelsData) {
+  for (const l of allLevelsData) {
+    createCardElement(
+      l.level,
+      l.difficulty,
+      COLOUR.FRESH_SKY,
+      CONTAINER.LEVELS,
+      LEVEL_CARD.WIDTH,
+      LEVEL_CARD.HEIGHT,
+      true,
+      l
+    )
+  };
+}
+
+function loadCurrentLevel(allLevels) {
+  let currentLevel;
+  let currentLevelId = localStorage.getItem("lastLevelIdOpen");
+  if (currentLevelId) {
+    currentLevel = allLevels.find((level) => level.id == currentLevelId);
+    loadGuessCards(currentLevelId);
+  } else {
+    currentLevel = allLevels[allLevels.length - 1] // default is latest level
+  }
+  return currentLevel;
 }
 
 function main() {
-  loadLevels();
-  handleDialog();
-  const origin = "Wales";
+  let currentLevel;
+  let allLevelsData;
+  // initial level load in
+  fetchJsonFile("data/levels.json").then((rawLevelsData) => {
+    allLevelsData = rawLevelsData.levels;
+    loadLevelCards(allLevelsData);
+    currentLevel = loadCurrentLevel(allLevelsData);
+    loadLevelTitle(currentLevel);
+  });
 
-  let currentLevel = localStorage.getItem("lastLevelOpen");
-  let currentLevelId;
-  if (currentLevel) {
-    currentLevelId = generateDateId(currentLevel);
-    loadLevelCards(currentLevelId);
-  } else {
-    currentLevel = "26 Jan 25"; // TODO: implement level select
-    currentLevelId = generateDateId(currentLevel);
-  }
+  handleDialog();
 
   const formElem = document.querySelector("form");
   formElem.addEventListener("submit", (e) => {
@@ -126,40 +175,43 @@ function main() {
   });
 
   formElem.addEventListener("formdata", (e) => {
-    console.log("formdata fired");
-
-    // Get the form data from the event object
-    const data = e.formData;
-
     let guess = {
       country: undefined,
       distance: undefined,
     };
-    for (const value of data.values()) {
+    for (const value of e.formData.values()) {
       guess.country = value;
     }
 
     fetchJsonFile("data/comprehensive_country_distances.json").then((data) => {
-      const titleCasedGuess = toTitleCase(guess.country);
       if (!isGuessValid(guess.country, data.distances)) {
         displayErrorMessage(
           `${guess.country} ${invalidCountryErrorMessage}`,
           invalidCountryTag,
         );
       } else {
-        if (isGuessADuplicate(guess, currentLevelId)) {
+        // handle a user changing between levels
+        let currentLevelId = localStorage.getItem("lastLevelIdOpen");  
+        if (currentLevelId) {
+          if (currentLevelId != currentLevel.id) {
+            currentLevel = allLevelsData.find((level) => level.id == currentLevelId);
+          }
+        }
+        if (isGuessADuplicate(guess, currentLevel.id)) {
           displayErrorMessage(
             `${guess.country} ${duplicateGuessErrorMessage}`,
             duplicateGuessTag,
           );
         } else {
-          guess.distance = Math.round(data.distances[guess.country][origin]);
-          saveLocalStorage(getId(), currentLevel, guess, currentLevel, 0);
-          displayCard(
-            titleCasedGuess,
+          guess.country = toTitleCase(guess.country);
+          let distance = Math.round(data.distances[guess.country][currentLevel.origin])
+          guess.distance = guess.country == currentLevel.origin ? 0 : distance;
+          saveLocalStorage(getUserId(), currentLevel.id, currentLevel.level, guess, 0);
+          createCardElement(
+            guess.country,
             `${guess.distance}km`,
-            ENTITY_COLOURS[titleCasedGuess],
-            CONTAINER.GUESSES,
+            ENTITY_COLOURS[guess.country],
+            CONTAINER.GUESSED_CARDS,
             COUNTRY_CARD.WIDTH,
             COUNTRY_CARD.HEIGHT,
           );
