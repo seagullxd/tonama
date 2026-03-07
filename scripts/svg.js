@@ -1,14 +1,18 @@
-// Handle the creation of svgs for use in HTML
+/* Dynamically create svgs and elements for use in HTML */
+
+import { loadLevelHandler } from "./main.js";
+import { TEXT_COORDINATES, LEVEL_CLASS, CARD_PADDING } from "./constants.js";
 
 // https://developer.mozilla.org/en-US/docs/Web/SVG/Guides/Scripting
-function getSvg(width, height) {
+function createSvgElement(width, height, className) {
   let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttributeNS(null, "width", width);
   svg.setAttributeNS(null, "height", height);
+  svg.setAttributeNS(null, "class", className);
   return svg;
 }
 
-function getRect(colour, width, height) {
+function createRectElement(colour, width, height) {
   let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
   rect.setAttributeNS(null, "x", "5");
   rect.setAttributeNS(null, "y", "5");
@@ -24,7 +28,7 @@ function getRect(colour, width, height) {
   return rect;
 }
 
-function getText(x, text) {
+function createTextElement(x, text) {
   const textNS = document.createElementNS("http://www.w3.org/2000/svg", "text");
   textNS.setAttributeNS(null, "x", x);
   textNS.setAttributeNS(null, "y", "35");
@@ -33,22 +37,57 @@ function getText(x, text) {
   return textNS;
 }
 
-export function displayCard(country, distance, colour) {
-  const countryCardWidth = 270;
-  const countryCardHeight = 50;
-  const padding = 10;
-  let svg = getSvg(countryCardWidth + padding, countryCardHeight + padding);
-  const guessesContainer = "guesses";
-  let node = document.getElementById(guessesContainer);
-  node.appendChild(svg);
+function createButtonElement(type, id, className) {
+  const buttonNS = document.createElementNS(
+    "http://www.w3.org/1999/xhtml",
+    "button",
+  );
+  buttonNS.setAttributeNS(null, "type", type);
+  buttonNS.setAttributeNS(null, "id", id);
+  buttonNS.setAttributeNS(null, "class", className);
+  return buttonNS;
+}
 
-  let r = getRect(colour, countryCardWidth, countryCardHeight);
+function handleIncludeButton(svg, parentContainer, levelData) {
+  const { id, level, difficulty, name, origin } = levelData;
+  let button = createButtonElement("submit", `level-${levelData.id}`, LEVEL_CLASS);
+  button.addEventListener("click", () => {
+    loadLevelHandler(levelData);
+  });
+  button.appendChild(svg);
+  parentContainer.appendChild(button);
+}
+
+export function createCardElement(
+  title,
+  measure,
+  colour,
+  parentContainerHtmlId,
+  width,
+  height,
+  includeButton = false,
+  levelData = {}
+) {
+  
+  let parentContainer = document.getElementById(parentContainerHtmlId);
+  if ((!width && !height) || !parentContainer) {
+    return;
+  }
+
+
+  // tech debt: using includeButton to determine if card is for guess or level
+  let svg = createSvgElement(width + CARD_PADDING, height + CARD_PADDING, includeButton ? "level-card" : "guess-card");
+  if (includeButton) {
+    handleIncludeButton(svg, parentContainer, levelData);
+  } else {
+    parentContainer.appendChild(svg);
+  }
+  let r = createRectElement(colour, width, height);
   svg.appendChild(r);
-
-  const textCoordinateX = "30";
-  const textCoordinateY = "180";
-  let t1 = getText(textCoordinateX, country);
+  let t1 = createTextElement(TEXT_COORDINATES.X, title);
   svg.appendChild(t1);
-  let t2 = getText(textCoordinateY, distance);
+  let t2 = createTextElement(TEXT_COORDINATES.Y, measure);
   svg.appendChild(t2);
+
+  console.log('create card element successfully called!');
 }

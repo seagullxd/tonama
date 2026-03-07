@@ -54,3 +54,22 @@ dialog p {
 #levels svg {
 	padding: 4px 0px 4px 0px;
 }
+
+#levelDialog #levels-rounded-corners #levels {
+  button:hover svg rect {
+    stroke: #005786;
+    fill: #005786;  
+  }
+
+  button {
+    margin: 0;
+    background-color: #003049;
+    border: none;
+    color: white;
+    padding: 0px 0px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 300ms;
+  }
+}

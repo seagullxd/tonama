@@ -28,6 +28,7 @@
   </head>
 
   <body>
+  	<script>0</script>
     <nav>
       <ul>
         <li>
@@ -53,7 +54,7 @@
       </aside>
     	<article>
 		  		<h2>
-		  			<a><time datetime="2025-10-04">Sat 8<sup>th</sup> Nov 2025</time></a>
+		  			<a id="level-title"><time id="level-title-time"><sup id="level-title-time-sup"></sup></time></a>
 		  			<img src="images/globe.svg" alt="streak">
 						<!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog#specifications -->
 						<button id="more-btn"><code>More</code></button>
@@ -67,7 +68,7 @@
 						  </p>
 							<div id="controls">
 								<button id="restart-btn"><code>Restart</code></button>
-								<button id="level-btn"><code>Levels</code></button>
+								<button id="levels-btn"><code>Levels</code></button>
 								<button id="how-to-play-btn"><code>How to Play</code></button>
 							  <button id="faq-btn"><code>FAQ</code></button>
 							  <button id="settings-btn"><code>Settings</code></button>
@@ -113,12 +114,8 @@
 											    }
 											  </style>
 										</svg>
-										<svg width="300" height="60"><rect x="5" y="5" width="290" height="50" stroke="#00A878" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#00A878"></rect><text x="30" y="35" fill="white">14th Nov 25</text><text x="180" y="35" fill="white">easy</text></svg>
-										<svg width="300" height="60"><rect x="5" y="5" width="290" height="50" stroke="#00A878" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#00A878"></rect><text x="30" y="35" fill="white">21st Nov 25</text><text x="180" y="35" fill="white">easy</text></svg>
-										<svg width="300" height="60"><rect x="5" y="5" width="290" height="50" stroke="#00A6ED" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#00A6ED"></rect><text x="30" y="35" fill="white">28th Nov 25</text><text x="180" y="35" fill="white">intermediate</text></svg>
-										<svg width="300" height="60"><rect x="5" y="5" width="290" height="50" stroke="#FFB400" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#FFB400"></rect><text x="30" y="35" fill="white">5th Dec 25</text><text x="180" y="35" fill="white">hard</text></svg>
-										<svg width="300" height="60"><rect x="5" y="5" width="290" height="50" stroke="#00A6ED" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#00A6ED"></rect><text x="30" y="35" fill="white">12th Dec 25</text><text x="180" y="35" fill="white">intermediate</text></svg>
-										<svg width="300" height="60"><rect x="5" y="5" width="290" height="50" stroke="#00A6ED" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#00A6ED"></rect><text x="30" y="35" fill="white">19th Dec 25</text><text x="180" y="35" fill="white">intermediate</text></svg>
+										<button type="submit" class="level"><svg width="300" height="60"><rect x="5" y="5" width="290" height="50" stroke="#00A6ED" stroke-width="5px" rx="10px" ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#00A6ED"></rect><text x="30" y="35" fill="white">28th Nov 25</text><text x="180" y="35" fill="white">intermediate</text></svg>
+										</button>
 						    	</div>
 						    </div>
 						  <button class="close">Close</button>
@@ -127,8 +124,7 @@
 						<dialog id="howToPlayDialog" closedby="any">
 						  <h2><code>How to Play</code></h2>
 						  <p>
-						    Closable using the "Close" button, the Esc key, or by clicking outside the
-						    dialog. "Light dismiss" behavior.
+						  	The distance between two countries is based on bilateral distances between the biggest cities of those two countries
 						  </p>
 						  <button class="close">Close</button>
 						</dialog>
@@ -157,17 +153,17 @@
 
 		  <article>
 		    <p>Guess the origin country of the surname below.</p>
-		    <h2>"Morgan"</h2>
+		    <h2 id="family-name">"Morgan"</h2>
 	    	<img src="images/bulb2.svg" alt="streak">
     		<form>
-        	<input type="text" id="name" name="country_name" placeholder="Enter a country" required>
+        	<input type="text" id="guess" name="country_name" placeholder="Enter a country" required>
         	<button type="submit" id="submit">▶︎</button>
         </form>
         <div id="tags">
         </div>
     	</article>
 
-    	<div id="guesses">
+    	<div id="guessed-cards-container">
 				<svg width="1" height="1">
 					  <style>
 					    /* Define the font family using web fonts */
