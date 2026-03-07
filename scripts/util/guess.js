@@ -30,14 +30,14 @@ export function isGuessValid(guess, countryData) {
  * @return {boolean} only true if the guess already exists.
  */
 export function isGuessADuplicate(guess, currentLevelId) {
-  let id = localStorage.getItem("id");
+  let id = localStorage.getItem("userId");
   let foundDuplicateGuess = false;
   if (id) {
     // handle duplicate guess
     let storedLevels = JSON.parse(localStorage.getItem("levels"));
-    console.log(`storedLevels is ${storedLevels}`);
     if (storedLevels) {
       const level = storedLevels.find((l) => l.id == currentLevelId);
+      console.log(`isGuessADuplicate ${level} ${currentLevelId}`);
       if (level) {
         foundDuplicateGuess = level.guesses.find((g) => g.country == toTitleCase(guess.country));
       }
