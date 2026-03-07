@@ -12,28 +12,29 @@ export function saveLocalStorage(
 	additionalHintsUsed = 0,
 ) {
 	let storedLevels = JSON.parse(localStorage.getItem("levels"));
-	let storedLevel;
+	let locallyStoredLevelTarget;
 	if (storedLevels) {
-		storedLevel = storedLevels.find((l) => l.id == levelId);
-		if (storedLevel) {
-			storedLevel.guesses.push(guess);
+		locallyStoredLevelTarget = storedLevels.find((l) => l.id == levelId);
+		if (locallyStoredLevelTarget) {
+			// todo: perform insertion sort
+			locallyStoredLevelTarget.guesses.push(guess);
 		} else {
-			storedLevel = makeLevel(levelId, levelTitle, additionalHintsUsed, guess);
-			storedLevels.push(storedLevel);
+			locallyStoredLevelTarget = makeLevel(levelId, levelTitle, additionalHintsUsed, guess);
+			storedLevels.push(locallyStoredLevelTarget);
 		}
 	} else {
 		storedLevels = [];
-		storedLevel = makeLevel(levelId, levelTitle, additionalHintsUsed, guess);
-		storedLevels.push(storedLevel);
+		locallyStoredLevelTarget = makeLevel(levelId, levelTitle, additionalHintsUsed, guess);
+		storedLevels.push(locallyStoredLevelTarget);
 	}
 
 	localStorage.setItem("levels", JSON.stringify(storedLevels));
 
-	let storedLastLevelIdOpen = localStorage.getItem("lastLevelIdOpen");
-	if (!storedLastLevelIdOpen) {
-		localStorage.setItem("lastLevelIdOpen", levelId);
-	} else if (storedLastLevelIdOpen != levelId) {
-		localStorage.setItem("lastLevelIdOpen", storedLastLevelIdOpen);
+	let lastLevelIdOpened = localStorage.getItem("lastLevelIdOpened");
+	if (!lastLevelIdOpened) {
+		localStorage.setItem("lastLevelIdOpened", levelId);
+	} else if (lastLevelIdOpened != levelId) {
+		localStorage.setItem("lastLevelIdOpened", lastLevelIdOpened);
 	}
 }
 
