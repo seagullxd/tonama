@@ -1,10 +1,14 @@
 // Sizes
 export const COUNTRY_CARD = {
+  PARENT: "guessed-cards-container",
+  ID: "guess-card",
 	WIDTH: 290,
 	HEIGHT: 50
 }
 
 export const LEVEL_CARD = {
+  PARENT: "levels-cards-container",
+  ID: "level-card",
 	WIDTH: 290,
 	HEIGHT: 50
 }
@@ -43,10 +47,5 @@ export const DIALOG_CONFIG = {
     dialog: "settings-dialog"
   }
 };
-
-export const CONTAINER = {
-	GUESSED_CARDS: "guessed-cards-container",
-	LEVELS: "levels"
-}
 
 export const LEVEL_CLASS = "level";
