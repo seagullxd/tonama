@@ -5,3 +5,19 @@
 export function isEmpty(obj) {
     return Object.keys(obj).length === 0;
 }
+
+// Source - https://stackoverflow.com/a/21822316
+// Posted by Web_Designer, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-03-08, License - CC BY-SA 3.0
+
+export function sortedIndex(array, value) {
+    let low = 0
+    let high = array.length;
+
+    while (low < high) {
+        let mid = (low + high) >>> 1;
+        if (array[mid].distance < value) low = mid + 1;
+        else high = mid;
+    }
+    return low;
+}
