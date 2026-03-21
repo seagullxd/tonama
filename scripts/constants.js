@@ -1,24 +1,51 @@
-const CONTAINER = {
-	GUESSED_CARDS: "guessed-cards-container",
-	LEVELS: "levels"
-}
-
- const COUNTRY_CARD = {
+// Sizes
+export const COUNTRY_CARD = {
+  PARENT: "guessed-cards-container",
+  ID: "guess-card",
 	WIDTH: 290,
 	HEIGHT: 50
 }
 
-const LEVEL_CARD = {
+export const LEVEL_CARD = {
+  PARENT: "levels-cards-container",
+  ID: "level-card",
 	WIDTH: 290,
 	HEIGHT: 50
 }
 
-const TEXT_COORDINATES = {
+export const TEXT_COORDINATES = {
 	X: 30,
 	Y: 180
 }
 
-const LEVEL_CLASS = "level";
-const CARD_PADDING = 10;
+export const CARD_PADDING = 10;
 
-export { CONTAINER, COUNTRY_CARD, LEVEL_CARD, TEXT_COORDINATES, LEVEL_CLASS, CARD_PADDING };
+// HTML Elements 
+export const DIALOG_CONFIG = {
+  MORE: {
+    button: "more-btn",
+    dialog: "more-dialog"
+  },
+  RESTART: {
+    button: "restart-btn",
+    dialog: "restart-dialog"
+  },
+  LEVELS: {
+    button: "levels-btn",
+    dialog: "levels-dialog"
+  },
+  HOW_TO_PLAY: {
+    button: "how-to-play-btn",
+    dialog: "how-to-play-dialog"
+  },
+  FAQ: {
+    button: "faq-btn",
+    dialog: "faq-dialog"
+  },
+  SETTINGS: {
+    button: "settings-btn",
+    dialog: "settings-dialog"
+  }
+};
+
+export const LEVEL_CLASS = "level";

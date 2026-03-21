@@ -40,6 +40,21 @@ Steps to run tonama locally
 4. Open index.html in your editor
 5. Right click then select "View in Sublime Server'
 
+#### Setup build system
+1. Go to Tools > Build System > New Build System...
+2. Start with the below code block - add to it as you like
+3. Save the build system
+4. Set it as the preset build system in Tools > Build System 
+
+```
+tonama.sublime-build
+// activates on save
+{   
+  "cmd": ["/path/to/jshint", "$file"],   
+  "selector": "*.js"   
+}
+```
+
 ## Contributing
 
 Pull requests are welcome. You should check whether or not another developer is already working on an open issue.  

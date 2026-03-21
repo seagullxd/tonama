@@ -41,21 +41,19 @@ dialog p {
   background: #003049;
 }
 
-#levels {
+#levels-cards-container {
   height:380px;
   width:380px;
-	background-color: #003049;
-	display: grid;
+  background-color: #003049;
+  display: grid;
   place-items: center;
   max-height: 380px;
   overflow: auto;
-}
 
-#levels svg {
-	padding: 4px 0px 4px 0px;
-}
+  svg {
+   padding: 4px 0px 4px 0px;
+  }
 
-#levelDialog #levels-rounded-corners #levels {
   button:hover svg rect {
     stroke: #005786;
     fill: #005786;  
@@ -73,3 +71,5 @@ dialog p {
     transition: 300ms;
   }
 }
+
+

@@ -1,39 +1,60 @@
 import { LevelStatus } from "./models/levels.js";
-import { isEmpty } from "./util/object.js";
+import { isEmpty, sortedIndex } from "./util/object.js";
 import { ENTITY_COLOURS } from "./models/entity-colours.js";
 import { createCardElement } from "./svg.js";
-import { CONTAINER, COUNTRY_CARD, LEVEL_CARD } from "./constants.js";
+import { COUNTRY_CARD, LEVEL_CARD } from "./constants.js";
 
 export function saveLocalStorage(
-	userId,
-	levelId,
-	levelTitle,
+	levelIdToSave,
+	levelTitleToSave,
 	guess,
-	additionalHintsUsed = 0,
+	additionalHintsUsed = 0
+	// userId removed: was unused. Re-add if needed later.
 ) {
-	let storedLevels = JSON.parse(localStorage.getItem("levels"));
-	let storedLevel;
-	if (storedLevels) {
-		storedLevel = storedLevels.find((l) => l.id == levelId);
-		if (storedLevel) {
-			storedLevel.guesses.push(guess);
-		} else {
-			storedLevel = makeLevel(levelId, levelTitle, additionalHintsUsed, guess);
-			storedLevels.push(storedLevel);
-		}
-	} else {
-		storedLevels = [];
-		storedLevel = makeLevel(levelId, levelTitle, additionalHintsUsed, guess);
-		storedLevels.push(storedLevel);
+	// Validate required inputs
+	if (!levelIdToSave || guess === undefined) {
+		console.warn("saveLocalStorage: missing required parameters", { levelIdToSave, guess });
+		return;
 	}
 
-	localStorage.setItem("levels", JSON.stringify(storedLevels));
+	// Safely load existing levels
+	let levels = [];
+	try {
+		const stored = localStorage.getItem("levels");
+		if (stored) {
+			levels = JSON.parse(stored);
+			if (!Array.isArray(levels)) levels = [];
+		}
+	} catch (e) {
+		console.error("Failed to load levels from localStorage", e);
+	}
 
-	let storedLastLevelIdOpen = localStorage.getItem("lastLevelIdOpen");
-	if (!storedLastLevelIdOpen) {
-		localStorage.setItem("lastLevelIdOpen", levelId);
-	} else if (storedLastLevelIdOpen != levelId) {
-		localStorage.setItem("lastLevelIdOpen", storedLastLevelIdOpen);
+	// Find or create the level entry
+	let level = levels.find((l) => l.id === levelIdToSave);
+
+	if (level) {
+		const index = sortedIndex(level.guesses, guess.distance);
+		level.guesses.splice(index, 0, guess);
+	} else {
+		level = makeLevel(levelIdToSave, levelTitleToSave, additionalHintsUsed, guess);
+		levels.push(level);
+	}
+
+	// Persist levels back to storage
+	try {
+		localStorage.setItem("levels", JSON.stringify(levels));
+	} catch (e) {
+		console.error("Failed to save levels to localStorage", e);
+	}
+
+	// Update lastLevelIdOpened (only if changed)
+	try {
+		const currentLast = localStorage.getItem("lastLevelIdOpened");
+		if (currentLast !== levelIdToSave) {
+			localStorage.setItem("lastLevelIdOpened", levelIdToSave);
+		}
+	} catch (e) {
+		console.warn("Could not update lastLevelIdOpened", e);
 	}
 }
 
@@ -54,14 +75,14 @@ export function getUserId() {
 function makeLevel(levelId, level, hintsUsed, guess) {
 	const guesses = [];
 	guesses.push(guess);
-	const newLevelObj = {
+	const newLevel = {
 		id: levelId,
 		title: level,
 		status: LevelStatus.inProgress,
 		hintsUsed: hintsUsed,
 		guesses: guesses,
 	};
-	return newLevelObj;
+	return newLevel;
 }
 
 /**
@@ -75,14 +96,11 @@ export function loadGuessCards(levelId) {
 		const level = storedLevels.find((l) => l.id == levelId);
 		if (level) {
 			level.guesses.forEach((guess) => {
-				createCardElement(
-					guess.country,
-					`${guess.distance}km`,
-					ENTITY_COLOURS[guess.country],
-					CONTAINER.GUESSED_CARDS,
-					LEVEL_CARD.WIDTH,
-					LEVEL_CARD.HEIGHT,
-				);
+				createCardElement({
+					...guess,
+					...COUNTRY_CARD,
+					colour: ENTITY_COLOURS[guess.country],
+				});
 			});
 		}
 	}
@@ -93,10 +111,7 @@ export function loadGuessCards(levelId) {
 // Retrieved 2026-01-13, License - CC BY-SA 4.0
 function uuidv4() {
 	return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c) =>
-		(
-			+c ^
-			(crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))
-		).toString(16),
+		(+c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))).toString(16)
 	);
 }
 
