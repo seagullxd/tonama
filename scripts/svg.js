@@ -1,6 +1,4 @@
 /* Dynamically create svgs and elements for use in HTML */
-
-import { handleDialogClose } from "./main.js";
 import {
   TEXT_COORDINATES,
   LEVEL_CLASS,
@@ -8,7 +6,7 @@ import {
   COUNTRY_CARD,
   LEVEL_CARD,
 } from "./constants.js";
-import { loadGuessCards } from "./local-storage.js";
+import { loadGuessCards, loadLevel } from "./local-storage.js";
 
 // https://developer.mozilla.org/en-US/docs/Web/SVG/Guides/Scripting
 function createSvgElement(width, height, className) {
@@ -52,51 +50,11 @@ function createButtonElement(type, id, className) {
   return buttonNS;
 }
 
-export function loadLevelTitleElement(levelData) {
-  const familyName = document.getElementById("family-name");
-  familyName.innerHTML = `"${levelData.name}"`;
-
-  const levelTitle = levelData.level.split(" ");
-
-  // classify date into correct superscripts
-  let superscript = "th";
-  const date = levelTitle[0].slice(-1);
-  switch (date) {
-    case "1":
-      superscript = "st";
-      break;
-    case "2":
-      superscript = "nd";
-      break;
-    case "3":
-      superscript = "rd";
-      break;
-  }
-
-  const levelTitleTimeContent = `${levelTitle[0]}<sup>${superscript}</sup> ${levelTitle[1]} ${levelTitle[2]}`;
-  const levelTitleTime = document.getElementById("level-title-time");
-  levelTitleTime.innerHTML = levelTitleTimeContent;
-}
-
-function removeOnScreenGuessCards() {
-  document.querySelectorAll(".guess-card").forEach((e) => e.remove());
-}
-
-function loadLevelHandler(levelData) {
-  loadLevelTitleElement(levelData);
-  removeOnScreenGuessCards();
-  loadGuessCards(levelData.id);
-  localStorage.setItem("lastLevelIdOpened", levelData.id);
-
-  const closeBtns = document.querySelectorAll(".close");
-  handleDialogClose(closeBtns);
-}
-
 function handleIncludeButton(svg, parentContainer, levelData) {
   const { id, level, difficulty, name, origin } = levelData;
   let button = createButtonElement("submit", `level-${levelData.id}`, LEVEL_CLASS);
   button.addEventListener("click", () => {
-    loadLevelHandler(levelData);
+    loadLevel(levelData);
   });
   button.appendChild(svg);
   parentContainer.appendChild(button);
