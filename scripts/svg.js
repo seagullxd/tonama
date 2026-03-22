@@ -69,9 +69,8 @@ function categoriseCard(CARD) {
       measure = `${CARD.distance}km`;
       break;
     case LEVEL_CARD.PARENT:
-      title = CARD.level;
+      title = CARD.title;
       measure = CARD.difficulty;
-      console.log(`title measure ${title, measure}`);
       break;
   }
   return { title, measure };
@@ -92,12 +91,10 @@ export function createCardElement(
     levelData ? LEVEL_CARD.ID : COUNTRY_CARD.ID
   );
 
-  levelData
-    ? handleIncludeButton(svg, parentContainer, levelData)
-    : parentContainer.appendChild(svg);
+  if (levelData) handleIncludeButton(svg, parentContainer, levelData);
+  else parentContainer.appendChild(svg);
 
   const { title, measure } = categoriseCard(CARD);
-  console.log(`title: ${title} measure: ${measure}`);
   let r = createRectElement(CARD.colour, CARD.WIDTH, CARD.HEIGHT);
   svg.appendChild(r);
   let t1 = createTextElement(TEXT_COORDINATES.X, title);

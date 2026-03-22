@@ -20,27 +20,22 @@ export function loadLevelStorage(levelIdToSave) {
   return levels;
 }
 
-export function saveLocalStorage(
-	levelIdToSave,
-	levelTitleToSave,
-	guess,
-	additionalHintsUsed = 0
-	// userId removed: was unused. Re-add if needed later.
-) {
+export function saveLocalStorage(currentLevel, guess) {
 	// Validate required inputs
-	if (!levelIdToSave || guess === undefined) {
-		console.warn("saveLocalStorage: missing required parameters", { levelIdToSave, guess });
+	if (!currentLevel.id || guess === undefined) {
+		console.warn("saveLocalStorage: missing required parameters", currentLevel.id, guess);
 		return;
 	}
 
-	let levels  = loadLevelStorage(levelIdToSave);
-	let level = levels.find((l) => l.id === levelIdToSave);
+	let levels  = loadLevelStorage(currentLevel.id);
+	let level = levels.find((l) => l.id === currentLevel.id);
 
 	if (level) {
 		const index = sortedIndex(level.guesses, guess.distance);
 		level.guesses.splice(index, 0, guess);
+		level.status = currentLevel.status;
 	} else {
-		level = makeLevel(levelIdToSave, levelTitleToSave, additionalHintsUsed, guess);
+		level = makeLevel(currentLevel, guess);
 		levels.push(level);
 	}
 
@@ -48,8 +43,8 @@ export function saveLocalStorage(
 	try {
 		localStorage.setItem("levels", JSON.stringify(levels));
 		const currentLast = localStorage.getItem("lastLevelIdOpened");
-		if (currentLast !== levelIdToSave) {
-			localStorage.setItem("lastLevelIdOpened", levelIdToSave);
+		if (currentLast !== currentLevel.id) {
+			localStorage.setItem("lastLevelIdOpened", currentLevel.id);
 		}
 	} catch (e) {
 		console.warn("Failed to save level data", e);
@@ -78,14 +73,18 @@ export function loadCurrentLevelProperties(
   } else {
     newLevelToSet = allLevelsData[allLevelsData.length - 1]; // default is latest level
   }
+  setCurrentLevel(currentLevel, newLevelToSet);
+  return currentLevel;
+}
 
+function setCurrentLevel(currentLevel, newLevelToSet) {
   currentLevel.id = newLevelToSet.id;
-  currentLevel.level = newLevelToSet.level;
+  currentLevel.title = newLevelToSet.title;
   currentLevel.difficulty = newLevelToSet.difficulty;
   currentLevel.name = newLevelToSet.name;
   currentLevel.origin = newLevelToSet.origin;
-
-  return currentLevel;
+  currentLevel.status = LevelStatus.notStarted;
+  currentLevel.hintsUsed = 0;
 }
 
 function isUserExisting(id) {
@@ -102,14 +101,14 @@ export function getUserId() {
 	return id;
 }
 
-function makeLevel(levelId, level, hintsUsed, guess) {
+function makeLevel(currentLevel, guess) {
 	const guesses = [];
 	guesses.push(guess);
 	const newLevel = {
-		id: levelId,
-		title: level,
-		status: LevelStatus.inProgress,
-		hintsUsed: hintsUsed,
+		id: currentLevel.id,
+		title: currentLevel.title,
+		status: currentLevel.status,
+		hintsUsed: currentLevel.hintsUsed,
 		guesses: guesses,
 	};
 	return newLevel;
@@ -140,7 +139,7 @@ export function loadLevelTitleElement(levelData) {
   const familyName = document.getElementById("family-name");
   familyName.innerHTML = `"${levelData.name}"`;
 
-  const levelTitle = levelData.level.split(" ");
+  const levelTitle = levelData.title.split(" ");
 
   // classify date into correct superscripts
   let superscript = "th";

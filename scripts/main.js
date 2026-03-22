@@ -1,8 +1,19 @@
+import { LevelStatus } from "./models/levels.js";
 import { COLOUR, ENTITY_COLOURS } from "./models/entity-colours.js";
 import { COUNTRY_CARD, LEVEL_CARD, LEVEL_CLASS, DIALOG_CONFIG } from "./constants.js";
-import { saveLocalStorage, getUserId, loadGuessCards } from "./local-storage.js";
 import { toTitleCase, isGuessValid, isGuessADuplicate } from "./util/guess.js";
-import { createCardElement, loadLevelTitleElement } from "./svg.js";
+import { createCardElement } from "./svg.js";
+import { handleDialogEvent } from "./menu.js";
+import { isLevelInProgress } from "./util/object.js";
+import {
+  saveLocalStorage,
+  getUserId,
+  loadGuessCards,
+  loadLevelTitleElement,
+  loadCurrentLevelProperties,
+  loadLevelStorage,
+  removeOnScreenGuessCards
+} from "./local-storage.js";
 import {
   duplicateGuessErrorMessage,
   invalidCountryErrorMessage,
@@ -10,30 +21,6 @@ import {
   invalidCountryTag,
   displayErrorMessage,
 } from "./errors.js";
-
-function handleDialogEvent() {
-  const closeBtns = document.querySelectorAll(".close");
-  Object.entries(DIALOG_CONFIG).forEach(([key, { button, dialog }]) => {
-    const buttonElement = document.getElementById(button);
-    const dialogElement = document.getElementById(dialog);
-    buttonElement.addEventListener("click", () => {
-      handleDialogClose(closeBtns);
-      dialogElement.showModal();
-    });
-  });
-
-  closeBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      btn.parentElement.close();
-    });
-  });
-}
-
-export function handleDialogClose(closeBtns) {
-  closeBtns.forEach((btn) => {
-    btn.parentElement.close();
-  });
-}
 
 export async function fetchJsonFile(filename) {
   const response = await fetch(filename);
@@ -46,50 +33,49 @@ export async function fetchJsonFile(filename) {
   return data;
 }
 
-function loadLevelCards(allLevelsData) {
-  for (const l of allLevelsData) {
-    createCardElement(
-      {
-        level: l.level,
-        difficulty: l.difficulty,
-        ...LEVEL_CARD,
-        colour: COLOUR.FRESH_SKY,
-      },
-      l
-    );
-  }
+function validateGuess(guess, allLevelsData, currentLevel) {
+  fetchJsonFile("data/comprehensive_country_distances.json").then((data) => {
+    if (!isGuessValid(guess.country, data.distances)) {
+      displayErrorMessage(
+        `${guess.country} ${invalidCountryErrorMessage}`,
+        invalidCountryTag
+      );
+    } else {
+      loadCurrentLevelProperties(allLevelsData, currentLevel);
+      if (isGuessADuplicate(guess, currentLevel.id)) {
+        displayErrorMessage(
+          `${guess.country} ${duplicateGuessErrorMessage}`,
+          duplicateGuessTag
+        );
+      } else {
+        guess.country = toTitleCase(guess.country);
+        if (guess.country == currentLevel.origin) {
+          guess.distance = 0;
+          currentLevel.status = LevelStatus.completed;
+        } else {
+          guess.distance = Math.round(data.distances[guess.country][currentLevel.origin]);
+          currentLevel.status = LevelStatus.inProgress;
+        }
+        saveLocalStorage(currentLevel, guess);
+        insertSortInProgressLevelGuessCard(currentLevel.id);
+        if (guess.country == currentLevel.origin) endLevel(currentLevel.id);
+      }
+    }
+  });
 }
 
-/**
- * Load the last level opened by using local storage.
- * @param {object} allLevelsData all levels
- * @param {object} currentLevel level to be replaced
- * @param {boolean} triggerLoadInGuessCards false by default
- * @return {object} the last level to be modified in local storage
- */
-function loadLastLevelOpened(
-  allLevelsData,
-  currentLevel,
-  triggerLoadInGuessCards = false
-) {
-  let lastLevelIdOpened = localStorage.getItem("lastLevelIdOpened");
-  let newLevelToSet;
-  if (lastLevelIdOpened) {
-    newLevelToSet = allLevelsData.find((level) => level.id == lastLevelIdOpened);
-    if (triggerLoadInGuessCards) {
-      loadGuessCards(lastLevelIdOpened);
-    }
-  } else {
-    newLevelToSet = allLevelsData[allLevelsData.length - 1]; // default is latest level
+function endLevel(levelId) {
+  // set level state to completed
+
+  // display endLevel dialog 
+  // prevent any further guessings by removing formInput
+}
+
+function insertSortInProgressLevelGuessCard(currentLevelId) {
+  if (isLevelInProgress(currentLevelId)) {
+    removeOnScreenGuessCards();
+    loadGuessCards(currentLevelId);
   }
-
-  currentLevel.id = newLevelToSet.id;
-  currentLevel.level = newLevelToSet.level;
-  currentLevel.difficulty = newLevelToSet.difficulty;
-  currentLevel.name = newLevelToSet.name;
-  currentLevel.origin = newLevelToSet.origin;
-
-  return currentLevel;
 }
 
 function handleFormSubmitEvent(formElem) {
@@ -112,33 +98,23 @@ function handleFormDataEvent(formElem, allLevelsData, currentLevel) {
       guess.country = value;
     }
 
-    fetchJsonFile("data/comprehensive_country_distances.json").then((data) => {
-      if (!isGuessValid(guess.country, data.distances)) {
-        displayErrorMessage(
-          `${guess.country} ${invalidCountryErrorMessage}`,
-          invalidCountryTag
-        );
-      } else {
-        loadLastLevelOpened(allLevelsData, currentLevel);
-        if (isGuessADuplicate(guess, currentLevel.id)) {
-          displayErrorMessage(
-            `${guess.country} ${duplicateGuessErrorMessage}`,
-            duplicateGuessTag
-          );
-        } else {
-          guess.country = toTitleCase(guess.country);
-          let distance = Math.round(data.distances[guess.country][currentLevel.origin]);
-          guess.distance = guess.country == currentLevel.origin ? 0 : distance;
-          saveLocalStorage(currentLevel.id, currentLevel.level, guess, 0);
-          createCardElement({
-            ...guess,
-            ...COUNTRY_CARD,
-            colour: ENTITY_COLOURS[guess.country],
-          });
-        }
-      }
-    });
+    validateGuess(guess, allLevelsData, currentLevel);
   });
+}
+
+function loadLevelCards(allLevelsData) {
+  // todo: compare with user data to see if level.status is not started, in-progress or completed
+  for (const l of allLevelsData) {
+    createCardElement(
+      {
+        title: l.title,
+        difficulty: l.difficulty,
+        ...LEVEL_CARD,
+        colour: COLOUR.FRESH_SKY,
+      },
+      l
+    );
+  }
 }
 
 function main() {
@@ -147,7 +123,7 @@ function main() {
   fetchJsonFile("data/levels.json").then((rawLevelsData) => {
     const allLevelsData = rawLevelsData.levels;
     loadLevelCards(allLevelsData);
-    loadLastLevelOpened(allLevelsData, currentLevel, true);
+    loadCurrentLevelProperties(allLevelsData, currentLevel, true);
     handleFormDataEvent(formElem, allLevelsData, currentLevel);
     loadLevelTitleElement(currentLevel);
   });
