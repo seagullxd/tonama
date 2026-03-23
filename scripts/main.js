@@ -1,9 +1,9 @@
 import { LevelStatus } from "./models/levels.js";
 import { COLOUR, ENTITY_COLOURS } from "./models/entity-colours.js";
-import { COUNTRY_CARD, LEVEL_CARD, LEVEL_CLASS, DIALOG_CONFIG } from "./constants.js";
+import { COUNTRY_CARD, LEVEL_CARD, LEVEL_CLASS, DIALOG_CONFIG, END_LEVEL } from "./constants.js";
 import { toTitleCase, isGuessValid, isGuessADuplicate } from "./util/guess.js";
 import { createCardElement } from "./svg.js";
-import { handleDialogEvent } from "./menu.js";
+import { handleDialogEvent, handleEndLevelEvent } from "./menu.js";
 import { isLevelInProgress } from "./util/object.js";
 import {
   saveLocalStorage,
@@ -58,17 +58,25 @@ function validateGuess(guess, allLevelsData, currentLevel) {
         }
         saveLocalStorage(currentLevel, guess);
         insertSortInProgressLevelGuessCard(currentLevel.id);
-        if (guess.country == currentLevel.origin) endLevel(currentLevel.id);
+        if (guess.country == currentLevel.origin) endLevel();
       }
     }
   });
 }
 
-function endLevel(levelId) {
-  // set level state to completed
+function endLevel(allLevelsData) {
+  // prevent any further guessings by removing formInput box
+  console.log('end level f()');
+  const endLevelDialogElement = document.getElementById(END_LEVEL.DIALOG);
+  const endLevelEvent = new CustomEvent(END_LEVEL.EVENT, { "detail": "End level event message" });
+  endLevelDialogElement.dispatchEvent(endLevelEvent);
 
-  // display endLevel dialog 
-  // prevent any further guessings by removing formInput
+  // reload levels after level state set to completed
+    // a custom event should be triggered to prompt a reload of the level cards
+    // what does this new level state mean? level can't be edited, when you return to it you're automatically in review state, you may exit this review state with an exit button
+  // removeOnScreenGuessCards();
+  // loadLevelCards(allLevelsData);
+
 }
 
 function insertSortInProgressLevelGuessCard(currentLevelId) {
@@ -104,6 +112,7 @@ function handleFormDataEvent(formElem, allLevelsData, currentLevel) {
 
 function loadLevelCards(allLevelsData) {
   // todo: compare with user data to see if level.status is not started, in-progress or completed
+  // idea sort localStorage levels in order, then compare each one in this for loop
   for (const l of allLevelsData) {
     createCardElement(
       {
@@ -119,6 +128,7 @@ function loadLevelCards(allLevelsData) {
 
 function main() {
   let currentLevel = {};
+  handleEndLevelEvent();
   // initial level load in
   fetchJsonFile("data/levels.json").then((rawLevelsData) => {
     const allLevelsData = rawLevelsData.levels;

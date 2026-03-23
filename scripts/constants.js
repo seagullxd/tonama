@@ -48,4 +48,15 @@ export const DIALOG_CONFIG = {
   }
 };
 
+export const END_LEVEL = {
+  DIALOG: "end-level-dialog",
+  EVENT: "end-level-event",
+  BUTTON: {
+    review: "end-level-review-btn",
+    next: "end-level-next-btn",
+    select: "end-level-select-btn" 
+  }
+
+}
+
 export const LEVEL_CLASS = "level";
