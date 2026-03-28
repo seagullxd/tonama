@@ -1,16 +1,20 @@
+import { COLOUR } from "./models/entity-colours.js";
+
 // Sizes
 export const COUNTRY_CARD = {
   PARENT: "guessed-cards-container",
   ID: "guess-card",
 	WIDTH: 290,
-	HEIGHT: 50
+	HEIGHT: 50,
+  COLOUR: COLOUR.FRESH_SKY,
 }
 
 export const LEVEL_CARD = {
   PARENT: "levels-cards-container",
   ID: "level-card",
 	WIDTH: 290,
-	HEIGHT: 50
+	HEIGHT: 50,
+  COLOUR: COLOUR.FRESH_SKY,
 }
 
 export const TEXT_COORDINATES = {
@@ -56,7 +60,17 @@ export const END_LEVEL = {
     next: "end-level-next-btn",
     select: "end-level-select-btn" 
   }
+}
 
+export const ERROR_MESSAGES = {
+  DUPLICATE: {
+    message: "has already been guessed.",
+    id: "guessed-message"
+  },
+  INVALID: {
+    message: "is not a valid country.",
+    id: "invalid-message"
+  }
 }
 
 export const LEVEL_CLASS = "level";
