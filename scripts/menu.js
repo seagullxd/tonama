@@ -4,7 +4,7 @@ import {
   loadCurrentLevelProperties,
   setLevel
 } from "./local-storage.js";
-import { displayErrorMessage } from "errors.js";
+import { displayErrorMessage } from "./errors.js";
 
 export function handleDialogEvent() {
   const closeBtns = document.querySelectorAll(".close");
@@ -42,17 +42,17 @@ export function handleEndLevelEvent(allLevelsData, currentLevel, newLevel) {
     // do something
   });
 
-  nextButton.addEventListener("click", () => {
-    console.log('trigger next level button');
-    if (!newLevel) {
-      // decide what to do when user reaches last lvl 
-      // option1: congratulations msg 
-      // option2: remove nextLevel button
-    }
-    setLevel(currentLevel, newLevel); // next level becomes the current level
-    loadCurrentLevelProperties(allLevelsData, currentLevel, true);
-    loadLevelTitleElement(currentLevel);
-  });
+  if (!newLevel) {
+    nextButton.remove();
+    
+  } else {
+    nextButton.addEventListener("click", () => {
+      console.log('trigger next level button');
+      setLevel(currentLevel, newLevel); // next level becomes the current level
+      loadCurrentLevelProperties(allLevelsData, currentLevel, true);
+      loadLevelTitleElement(currentLevel);
+    })    
+  }
 
   const selectButtonDialog = document.getElementById(
     DIALOG_CONFIG.LEVELS.dialog

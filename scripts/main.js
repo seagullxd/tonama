@@ -11,7 +11,7 @@ import {
   LEVEL_CLASS,
   DIALOG_CONFIG,
   END_LEVEL,
-  ERROR_MESSAGES,
+  GUESSED_ERROR_MESSAGES,
 } from "./constants.js";
 import {
   saveLocalStorage,
@@ -40,15 +40,15 @@ function validateGuess(guess, allLevelsData, currentLevel) {
   fetchJsonFile("data/comprehensive_country_distances.json").then((data) => {
     if (!isGuessValid(guess.country, data.distances)) {
       displayErrorMessage(
-        `${guess.country} ${ERROR_MESSAGES.INVALID.message}`,
-        ERROR_MESSAGES.INVALID.id
+        GUESSED_ERROR_MESSAGES.INVALID.id,
+        `${guess.country} ${GUESSED_ERROR_MESSAGES.INVALID.message}`
       );
     } else {
       loadCurrentLevelProperties(allLevelsData, currentLevel);
       if (isGuessADuplicate(guess, currentLevel.id)) {
         displayErrorMessage(
-          `${guess.country} ${ERROR_MESSAGES.DUPLICATE.message}`,
-          ERROR_MESSAGES.DUPLICATE.message
+          GUESSED_ERROR_MESSAGES.DUPLICATE.message,
+          `${guess.country} ${GUESSED_ERROR_MESSAGES.DUPLICATE.message}`
         );
       } else {
         guess.country = toTitleCase(guess.country);

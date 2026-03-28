@@ -62,15 +62,21 @@ export const END_LEVEL = {
   }
 }
 
-export const ERROR_MESSAGES = {
+export const GUESSED_ERROR_MESSAGES = {
+  CONTAINER: "guessed-message-container",
   DUPLICATE: {
     message: "has already been guessed.",
-    id: "guessed-message"
+    id: "guessed-message-duplicate"
   },
   INVALID: {
     message: "is not a valid country.",
-    id: "invalid-message"
+    id: "guessed-message-invalid"
   }
+}
+
+export const COMPLETION_MESSAGE = {
+  CONTAINER: "",
+  MESSAGE: ""
 }
 
 export const LEVEL_CLASS = "level";
