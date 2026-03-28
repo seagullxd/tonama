@@ -1,4 +1,6 @@
 /* Dynamically create svgs and elements for use in HTML */
+import { loadLevel } from "./local-storage.js";
+import { isEmpty } from "./util/object.js";
 import {
   TEXT_COORDINATES,
   LEVEL_CLASS,
@@ -6,7 +8,6 @@ import {
   COUNTRY_CARD,
   LEVEL_CARD,
 } from "./constants.js";
-import { loadGuessCards, loadLevel } from "./local-storage.js";
 
 // https://developer.mozilla.org/en-US/docs/Web/SVG/Guides/Scripting
 function createSvgElement(width, height, className) {
@@ -17,7 +18,7 @@ function createSvgElement(width, height, className) {
   return svg;
 }
 
-function createRectElement(colour, width, height) {
+function createRectElement(width, height, colour) {
   let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
   rect.setAttributeNS(null, "x", "5");
   rect.setAttributeNS(null, "y", "5");
@@ -60,45 +61,33 @@ function handleIncludeButton(svg, parentContainer, levelData) {
   parentContainer.appendChild(button);
 }
 
-function categoriseCard(CARD) {
-  let title;
-  let measure;
-  switch (CARD.PARENT) {
-    case COUNTRY_CARD.PARENT:
-      title = CARD.country;
-      measure = `${CARD.distance}km`;
-      break;
-    case LEVEL_CARD.PARENT:
-      title = CARD.title;
-      measure = CARD.difficulty;
-      break;
-  }
-  return { title, measure };
-}
-
-export function createCardElement(
-  CARD,
-  levelData = undefined
-) {
-  let parentContainer = document.getElementById(CARD.PARENT);
-  if ((!CARD.WIDTH && !CARD.HEIGHT) || !parentContainer) {
+/**
+ * Creates a card element
+ * @param {object} contents A card's contents
+ * @param {object} attributes A card's HTML attributes
+ * @param {object} level A level's attributes
+ * @return {undefined}
+ */
+export function createCardElement(attributes, contents, level = undefined) {
+  console.log(attributes);
+  let parentContainer = document.getElementById(attributes.PARENT);
+  if (isEmpty(attributes) || isEmpty(contents)) {
     return;
   }
 
   let svg = createSvgElement(
-    CARD.WIDTH + CARD_PADDING,
-    CARD.HEIGHT + CARD_PADDING,
-    levelData ? LEVEL_CARD.ID : COUNTRY_CARD.ID
+    attributes.WIDTH + CARD_PADDING,
+    attributes.HEIGHT + CARD_PADDING,
+    level ? LEVEL_CARD.ID : COUNTRY_CARD.ID
   );
 
-  if (levelData) handleIncludeButton(svg, parentContainer, levelData);
+  if (level) handleIncludeButton(svg, parentContainer, level);
   else parentContainer.appendChild(svg);
 
-  const { title, measure } = categoriseCard(CARD);
-  let r = createRectElement(CARD.colour, CARD.WIDTH, CARD.HEIGHT);
+  let r = createRectElement(attributes.WIDTH, attributes.HEIGHT, attributes.COLOUR);
   svg.appendChild(r);
-  let t1 = createTextElement(TEXT_COORDINATES.X, title);
+  let t1 = createTextElement(TEXT_COORDINATES.X, contents.title);
   svg.appendChild(t1);
-  let t2 = createTextElement(TEXT_COORDINATES.Y, measure);
+  let t2 = createTextElement(TEXT_COORDINATES.Y, contents.measure);
   svg.appendChild(t2);
 }

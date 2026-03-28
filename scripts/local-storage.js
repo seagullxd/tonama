@@ -64,27 +64,42 @@ export function loadCurrentLevelProperties(
   triggerLoadInGuessCards = false
 ) {
   let lastLevelIdOpened = localStorage.getItem("lastLevelIdOpened");
-  let newLevelToSet;
+  let newLevel;
   if (lastLevelIdOpened) {
-    newLevelToSet = allLevelsData.find((level) => level.id == lastLevelIdOpened);
+    newLevel = allLevelsData.find((level) => level.id == lastLevelIdOpened);
     if (triggerLoadInGuessCards) {
-      loadGuessCards(lastLevelIdOpened);
+      loadGuessedCards(lastLevelIdOpened);
     }
   } else {
-    newLevelToSet = allLevelsData[allLevelsData.length - 1]; // default is latest level
+    newLevel = allLevelsData[allLevelsData.length - 1]; // default is latest level
   }
-  setCurrentLevel(currentLevel, newLevelToSet);
+  setLevel(currentLevel, newLevel);
+  setLocalStorageLevelProperties(currentLevel);
   return currentLevel;
 }
 
-function setCurrentLevel(currentLevel, newLevelToSet) {
-  currentLevel.id = newLevelToSet.id;
-  currentLevel.title = newLevelToSet.title;
-  currentLevel.difficulty = newLevelToSet.difficulty;
-  currentLevel.name = newLevelToSet.name;
-  currentLevel.origin = newLevelToSet.origin;
+/** 
+ * Set level properties for a level. See data/levels.json for an example object.
+ * @param currentLevel The level to be set 
+ * @param newLevel The new level to set for currentLevel
+ * @returns {undefined}
+ */
+export function setLevel(currentLevel, newLevel) {
+  currentLevel.id = newLevel.id;
+  currentLevel.title = newLevel.title;
+  currentLevel.difficulty = newLevel.difficulty;
+  currentLevel.name = newLevel.name;
+  currentLevel.origin = newLevel.origin;
+}
+
+function setLocalStorageLevelProperties(currentLevel) {
   currentLevel.status = LevelStatus.notStarted;
   currentLevel.hintsUsed = 0;
+}
+
+export function removeLocalStorageLevelProperties(currentLevel) {
+  delete currentLevel.status;
+  delete currentLevel.hintsUsed;
 }
 
 function isUserExisting(id) {
@@ -119,17 +134,15 @@ function makeLevel(currentLevel, guess) {
  * @param {number} the level id to generate guessed cards for.
  * @return {undefined}
  */
-export function loadGuessCards(levelId) {
+export function loadGuessedCards(levelId) {
 	let storedLevels = JSON.parse(localStorage.getItem("levels"));
 	if (storedLevels) {
 		const level = storedLevels.find((l) => l.id == levelId);
 		if (level) {
 			level.guesses.forEach((guess) => {
-				createCardElement({
-					...guess,
-					...COUNTRY_CARD,
-					colour: ENTITY_COLOURS[guess.country],
-				});
+				const card = { title: guess.country, measure: `${guess.distance}km` };
+				COUNTRY_CARD.COLOUR = ENTITY_COLOURS[guess.country];
+				createCardElement(COUNTRY_CARD, card);
 			});
 		}
 	}
@@ -168,7 +181,7 @@ export function removeOnScreenGuessCards() {
 export function loadLevel(levelData) {
   loadLevelTitleElement(levelData);
   removeOnScreenGuessCards();
-  loadGuessCards(levelData.id);
+  loadGuessedCards(levelData.id);
   localStorage.setItem("lastLevelIdOpened", levelData.id);
 
   const closeBtns = document.querySelectorAll(".close");

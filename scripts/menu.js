@@ -1,4 +1,10 @@
 import { DIALOG_CONFIG, END_LEVEL } from "./constants.js";
+import {
+  loadLevelTitleElement,
+  loadCurrentLevelProperties,
+  setLevel
+} from "./local-storage.js";
+import { displayErrorMessage } from "errors.js";
 
 export function handleDialogEvent() {
   const closeBtns = document.querySelectorAll(".close");
@@ -18,30 +24,42 @@ export function handleDialogEvent() {
   });
 }
 
-export function handleEndLevelEvent() {
+export function handleEndLevelEvent(allLevelsData, currentLevel, newLevel) {
   console.log('handleEndLevelEvent');
-  const endLevelDialogElement = document.getElementById(END_LEVEL.DIALOG);
-  const reviewButtonElement = document.getElementById(END_LEVEL.BUTTON.review);
-  const nextButtonElement = document.getElementById(END_LEVEL.BUTTON.next);
-  const selectButtonElement = document.getElementById(END_LEVEL.BUTTON.select);
+  const endLevelDialog = document.getElementById(END_LEVEL.DIALOG);
+  const reviewButton = document.getElementById(END_LEVEL.BUTTON.review);
+  const nextButton = document.getElementById(END_LEVEL.BUTTON.next);
+  const selectButton = document.getElementById(END_LEVEL.BUTTON.select);
 
-  endLevelDialogElement.addEventListener(END_LEVEL.EVENT, () => {
+  endLevelDialog.addEventListener(END_LEVEL.EVENT, () => {
     console.log('end-level event triggered!');
-    endLevelDialogElement.showModal();
+    endLevelDialog.showModal();
   });
 
 
   // todo
-  reviewButtonElement.addEventListener("click", () => {
+  reviewButton.addEventListener("click", () => {
     // do something
   });
 
-  nextButtonElement.addEventListener("click", () => {
-    // do something
+  nextButton.addEventListener("click", () => {
+    console.log('trigger next level button');
+    if (!newLevel) {
+      // decide what to do when user reaches last lvl 
+      // option1: congratulations msg 
+      // option2: remove nextLevel button
+    }
+    setLevel(currentLevel, newLevel); // next level becomes the current level
+    loadCurrentLevelProperties(allLevelsData, currentLevel, true);
+    loadLevelTitleElement(currentLevel);
   });
 
-  selectButtonElement.addEventListener("click", () => {
-    // do something
+  const selectButtonDialog = document.getElementById(
+    DIALOG_CONFIG.LEVELS.dialog
+  );
+  selectButton.addEventListener("click", () => {
+    console.log('trigger select level button');
+    selectButtonDialog.showModal();
   });
 }
 
