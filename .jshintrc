@@ -3,5 +3,6 @@
 // Retrieved 2026-01-25, License - CC BY-SA 3.0
 
 {
-  "esversion": 9
+  "unused": true,
+  "esversion": 11
 }
