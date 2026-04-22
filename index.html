@@ -54,7 +54,7 @@
       </aside>
     	<article>
 		  		<h2>
-		  			<a id="level-title"><time id="level-title-time"><sup id="level-title-time-sup"></sup></time></a>
+		  			<a id="level-title-date"><time id="level-title-date-time"><sup id="level-title-date-time-sup"></sup></time></a>
 		  			<img src="images/globe.svg" alt="streak">
 						<!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog#specifications -->
 						<button id="more-btn"><code>More</code></button>
@@ -149,7 +149,7 @@
 						  <p>
 						    You guessed correct!
 						  </p>
-						  <div id="tags"></div>
+						  <div id="game-completion-message-container"></div>
 						  <button id="end-level-review-btn">Review level</button>
 						  <button id="end-level-next-btn">Next level</button>
 						  <button id="end-level-select-btn">Select next level</button>
@@ -160,10 +160,10 @@
 
 		  <article>
 		    <p>Guess the origin country of the surname below.</p>
-		    <h2 id="family-name">"Morgan"</h2>
+		    <h2 id="level-title-family-name">"Morgan"</h2>
 	    	<img src="images/bulb2.svg" alt="streak">
     		<form>
-        	<input type="text" id="guess" name="country_name" placeholder="Enter a country" required>
+        	<input type="text" id="guess-input" name="country_name" placeholder="Enter a country" required>
         	<button type="submit" id="submit">▶︎</button>
         </form>
         <div id="guessed-message-container">
