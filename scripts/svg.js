@@ -1,6 +1,8 @@
 /* Dynamically create svgs and elements for use in HTML */
 import { unloadLevel, loadLevelAttributes } from "./util/utilLevels.js";
 import { isEmpty } from "./util/object.js";
+import { COLOUR } from "./models/entity-colours.js";
+import { LevelStatusToColour } from "./models/levels.js";
 import {
   TEXT_COORDINATES,
   LEVEL_CLASS,
@@ -65,14 +67,14 @@ function handleIncludeButton(svg, parentContainer, levelData) {
 
 /**
  * Creates a card element
- * @param {object} contents A card's contents
  * @param {object} attributes A card's HTML attributes
+ * @param {object} contents A card's content
  * @param {object} level A level's attributes
  * @return {undefined}
  */
-export function createCardElement(attributes, contents, level = undefined) {
+export function createCardElement(attributes, content, level = undefined) {
   let parentContainer = document.getElementById(attributes.PARENT);
-  if (isEmpty(attributes) || isEmpty(contents)) {
+  if (isEmpty(attributes) || isEmpty(content)) {
     return;
   }
 
@@ -82,14 +84,18 @@ export function createCardElement(attributes, contents, level = undefined) {
     level ? LEVEL_CARD.ID : COUNTRY_CARD.ID
   );
 
-  if (level) handleIncludeButton(svg, parentContainer, level);
+  if (level) {
+    handleIncludeButton(svg, parentContainer, level);
+    attributes.COLOUR = LevelStatusToColour[level.status];
+    console.log(level);
+  }
   else parentContainer.appendChild(svg);
 
   let r = createRectElement(attributes.WIDTH, attributes.HEIGHT, attributes.COLOUR);
   svg.appendChild(r);
-  let t1 = createTextElement(TEXT_COORDINATES.X, contents.title);
+  let t1 = createTextElement(TEXT_COORDINATES.X, content.title);
   svg.appendChild(t1);
-  let t2 = createTextElement(TEXT_COORDINATES.Y, contents.measure);
+  let t2 = createTextElement(TEXT_COORDINATES.Y, content.grade);
   svg.appendChild(t2);
 }
 
@@ -104,11 +110,11 @@ export function removeElementTextValue(id) {
   element.value = "";
 }
 
-export function createLevelCardElements(levels) {
-  // todo: compare with user data to see if level.status is not started, in-progress or completed
-  // idea sort localStorage levels in order, then compare each one in this for loop
-  for (const level of levels) {
-    const contents = { title: level.title, measure: level.difficulty };
-    createCardElement(LEVEL_CARD, contents, level);
+export function createCardElements(attributes, contents) {
+  // todo: use this function to replace loadGuessedCards(...) in utilLevels.js
+  const isLevelCard = attributes.ID == LEVEL_CARD.ID;
+  for (const origContent of contents) {
+    const content = { title: origContent.title, grade: origContent.difficulty };
+    createCardElement(LEVEL_CARD, content, isLevelCard ? origContent : undefined);
   }
 }
