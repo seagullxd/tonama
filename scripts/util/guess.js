@@ -34,12 +34,11 @@ export function isGuessADuplicate(guess, currentLevelId) {
   let foundDuplicateGuess = false;
   if (id) {
     // handle duplicate guess
-    let storedLevels = JSON.parse(localStorage.getItem("levels"));
-    if (storedLevels) {
-      const level = storedLevels.find((l) => l.id == currentLevelId);
-      console.log(`isGuessADuplicate ${level} ${currentLevelId}`);
-      if (level) {
-        foundDuplicateGuess = level.guesses.find((g) => g.country == toTitleCase(guess.country));
+    let localStorageLevels = JSON.parse(localStorage.getItem("levels"));
+    if (localStorageLevels) {
+      const localStorageLevel = localStorageLevels.find((l) => l.id == currentLevelId);
+      if (localStorageLevel) {
+        foundDuplicateGuess = localStorageLevel.guesses.find((g) => g.country == toTitleCase(guess.country));
       }
     }
   }

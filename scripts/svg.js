@@ -1,5 +1,5 @@
 /* Dynamically create svgs and elements for use in HTML */
-import { loadLevel } from "./local-storage.js";
+import { unloadLevel, loadLevelAttributes } from "./util/utilLevels.js";
 import { isEmpty } from "./util/object.js";
 import {
   TEXT_COORDINATES,
@@ -7,6 +7,7 @@ import {
   CARD_PADDING,
   COUNTRY_CARD,
   LEVEL_CARD,
+  GUESS_INPUT
 } from "./constants.js";
 
 // https://developer.mozilla.org/en-US/docs/Web/SVG/Guides/Scripting
@@ -55,7 +56,8 @@ function handleIncludeButton(svg, parentContainer, levelData) {
   const { id, level, difficulty, name, origin } = levelData;
   let button = createButtonElement("submit", `level-${levelData.id}`, LEVEL_CLASS);
   button.addEventListener("click", () => {
-    loadLevel(levelData);
+    unloadLevel();
+    loadLevelAttributes(levelData);
   });
   button.appendChild(svg);
   parentContainer.appendChild(button);
@@ -69,7 +71,6 @@ function handleIncludeButton(svg, parentContainer, levelData) {
  * @return {undefined}
  */
 export function createCardElement(attributes, contents, level = undefined) {
-  console.log(attributes);
   let parentContainer = document.getElementById(attributes.PARENT);
   if (isEmpty(attributes) || isEmpty(contents)) {
     return;
@@ -90,4 +91,24 @@ export function createCardElement(attributes, contents, level = undefined) {
   svg.appendChild(t1);
   let t2 = createTextElement(TEXT_COORDINATES.Y, contents.measure);
   svg.appendChild(t2);
+}
+
+export function removeGuessTextInput() {
+  const textInput = document.getElementById(GUESS_INPUT);
+  textInput.value = "";
+}
+
+export function removeElementTextValue(id) {
+  const element = document.getElementById(id);
+  console.log(element);
+  element.value = "";
+}
+
+export function createLevelCardElements(levels) {
+  // todo: compare with user data to see if level.status is not started, in-progress or completed
+  // idea sort localStorage levels in order, then compare each one in this for loop
+  for (const level of levels) {
+    const contents = { title: level.title, measure: level.difficulty };
+    createCardElement(LEVEL_CARD, contents, level);
+  }
 }

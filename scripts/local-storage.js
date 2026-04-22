@@ -1,213 +1,57 @@
-import { LevelStatus } from "./models/levels.js";
-import { isEmpty, sortedIndex } from "./util/object.js";
-import { ENTITY_COLOURS } from "./models/entity-colours.js";
-import { createCardElement } from "./svg.js";
-import { COUNTRY_CARD, LEVEL_CARD } from "./constants.js";
-import { handleDialogClose } from "./menu.js";
+import { sortedIndex } from "./util/object.js";
 
-export function loadLevelStorage(levelIdToSave) {
-  let levels = [];
-  try {
-    const stored = localStorage.getItem("levels");
-    if (stored) {
-      levels = JSON.parse(stored);
-      if (!Array.isArray(levels)) levels = [];
+export function getLocalStorageLevels() {
+  let localStorageLevels = [];
+  const stored = localStorage.getItem("levels");
+  if (stored) {
+    localStorageLevels = JSON.parse(stored);
+    if (!Array.isArray(localStorageLevels)) {
+    	localStorageLevels = [];
     }
-  } catch (e) {
-    console.error("Failed to load levels from localStorage", e);
-  }
-
-  return levels;
+   }
+  return localStorageLevels;
 }
 
-export function saveLocalStorage(currentLevel, guess) {
+export function setLocalStorageLevels(level, guess) {
 	// Validate required inputs
-	if (!currentLevel.id || guess === undefined) {
-		console.warn("saveLocalStorage: missing required parameters", currentLevel.id, guess);
+	if (!level.id || guess === undefined) {
+		console.warn("saveLocalStorage: missing required parameters", level.id, guess);
 		return;
 	}
 
-	let levels  = loadLevelStorage(currentLevel.id);
-	let level = levels.find((l) => l.id === currentLevel.id);
+	let localStorageLevels  = getLocalStorageLevels();
+	let localStorageLevel = localStorageLevels.find((l) => l.id === level.id);
 
-	if (level) {
-		const index = sortedIndex(level.guesses, guess.distance);
-		level.guesses.splice(index, 0, guess);
-		level.status = currentLevel.status;
+	if (localStorageLevel) {
+		const index = sortedIndex(localStorageLevel.guesses, guess.distance);
+		localStorageLevel.guesses.splice(index, 0, guess);
+		localStorageLevel.status = level.status;
 	} else {
-		level = makeLevel(currentLevel, guess);
-		levels.push(level);
+		localStorageLevel = makeLevel(level, guess);
+		localStorageLevels.push(localStorageLevel);
 	}
 
 	// Update lastLevelIdOpened (only if changed)
 	try {
-		localStorage.setItem("levels", JSON.stringify(levels));
+		localStorage.setItem("levels", JSON.stringify(localStorageLevels));
 		const currentLast = localStorage.getItem("lastLevelIdOpened");
-		if (currentLast !== currentLevel.id) {
-			localStorage.setItem("lastLevelIdOpened", currentLevel.id);
+		if (currentLast !== level.id) {
+			localStorage.setItem("lastLevelIdOpened", level.id);
 		}
 	} catch (e) {
 		console.warn("Failed to save level data", e);
 	}
 }
 
-/**
- * Load the last level opened by using local storage.
- * @param {object} allLevelsData all levels
- * @param {object} currentLevel level to be replaced
- * @param {boolean} triggerLoadInGuessCards false by default
- * @return {object} the last level to be modified in local storage
- */
-export function loadCurrentLevelProperties(
-  allLevelsData,
-  currentLevel,
-  triggerLoadInGuessCards = false
-) {
-  let lastLevelIdOpened = localStorage.getItem("lastLevelIdOpened");
-  let newLevel;
-  if (lastLevelIdOpened) {
-    newLevel = allLevelsData.find((level) => level.id == lastLevelIdOpened);
-    if (triggerLoadInGuessCards) {
-      loadGuessedCards(lastLevelIdOpened);
-    }
-  } else {
-    newLevel = allLevelsData[allLevelsData.length - 1]; // default is latest level
-  }
-  setLevel(currentLevel, newLevel);
-  setLocalStorageLevelProperties(currentLevel);
-  return currentLevel;
-}
-
-/** 
- * Set level properties for a level. See data/levels.json for an example object.
- * @param currentLevel The level to be set 
- * @param newLevel The new level to set for currentLevel
- * @returns {undefined}
- */
-export function setLevel(currentLevel, newLevel) {
-  currentLevel.id = newLevel.id;
-  currentLevel.title = newLevel.title;
-  currentLevel.difficulty = newLevel.difficulty;
-  currentLevel.name = newLevel.name;
-  currentLevel.origin = newLevel.origin;
-}
-
-function setLocalStorageLevelProperties(currentLevel) {
-  currentLevel.status = LevelStatus.notStarted;
-  currentLevel.hintsUsed = 0;
-}
-
-export function removeLocalStorageLevelProperties(currentLevel) {
-  delete currentLevel.status;
-  delete currentLevel.hintsUsed;
-}
-
-function isUserExisting(id) {
-	const storedId = localStorage.getItem("userId");
-	return id === storedId;
-}
-
-export function getUserId() {
-	let id = localStorage.getItem("userId");
-	if (!id | !isUserExisting(id)) {
-		id = uuidv4();
-		localStorage.setItem("userId", id);
-	}
-	return id;
-}
-
-function makeLevel(currentLevel, guess) {
+function makeLevel(level, guess) {
 	const guesses = [];
 	guesses.push(guess);
 	const newLevel = {
-		id: currentLevel.id,
-		title: currentLevel.title,
-		status: currentLevel.status,
-		hintsUsed: currentLevel.hintsUsed,
+		id: level.id,
+		title: level.title,
+		status: level.status,
+		hintsUsed: level.hintsUsed,
 		guesses: guesses,
 	};
 	return newLevel;
-}
-
-/**
- * Display country cards for this level.
- * @param {number} the level id to generate guessed cards for.
- * @return {undefined}
- */
-export function loadGuessedCards(levelId) {
-	let storedLevels = JSON.parse(localStorage.getItem("levels"));
-	if (storedLevels) {
-		const level = storedLevels.find((l) => l.id == levelId);
-		if (level) {
-			level.guesses.forEach((guess) => {
-				const card = { title: guess.country, measure: `${guess.distance}km` };
-				COUNTRY_CARD.COLOUR = ENTITY_COLOURS[guess.country];
-				createCardElement(COUNTRY_CARD, card);
-			});
-		}
-	}
-}
-
-export function loadLevelTitleElement(levelData) {
-  const familyName = document.getElementById("family-name");
-  familyName.innerHTML = `"${levelData.name}"`;
-
-  const levelTitle = levelData.title.split(" ");
-
-  // classify date into correct superscripts
-  let superscript = "th";
-  const date = levelTitle[0].slice(-1);
-  switch (date) {
-    case "1":
-      superscript = "st";
-      break;
-    case "2":
-      superscript = "nd";
-      break;
-    case "3":
-      superscript = "rd";
-      break;
-  }
-
-  const levelTitleTimeContent = `${levelTitle[0]}<sup>${superscript}</sup> ${levelTitle[1]} ${levelTitle[2]}`;
-  const levelTitleTime = document.getElementById("level-title-time");
-  levelTitleTime.innerHTML = levelTitleTimeContent;
-}
-
-export function removeOnScreenGuessCards() {
-  document.querySelectorAll(".guess-card").forEach((e) => e.remove());
-}
-
-export function loadLevel(levelData) {
-  loadLevelTitleElement(levelData);
-  removeOnScreenGuessCards();
-  loadGuessedCards(levelData.id);
-  localStorage.setItem("lastLevelIdOpened", levelData.id);
-
-  const closeBtns = document.querySelectorAll(".close");
-  handleDialogClose(closeBtns);
-}
-
-// Source - https://stackoverflow.com/a/2117523
-// Posted by broofa, modified by community. See post 'Timeline' for change history
-// Retrieved 2026-01-13, License - CC BY-SA 4.0
-function uuidv4() {
-	return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c) =>
-		(+c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))).toString(16)
-	);
-}
-
-function iterateStatus(status) {
-	switch (status) {
-		case LevelStatus.notStarted:
-			status = LevelStatus.inProgress;
-			break;
-		case LevelStatus.inProgress:
-			status = LevelStatus.completed;
-			break;
-		default:
-			// do nothing to status if completed
-			break;
-	}
-	return status;
 }
