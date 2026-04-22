@@ -1,4 +1,4 @@
-import { GUESSED_ERROR_MESSAGES, COMPLETION_MESSAGE } from "./constants.js";
+import { GUESSED_ERROR_MESSAGES } from "./constants.js";
 
 /**
  * @param {string} message An error message to display
@@ -8,7 +8,7 @@ import { GUESSED_ERROR_MESSAGES, COMPLETION_MESSAGE } from "./constants.js";
 export function displayErrorMessage(id, message) {
   let guessedMessageTag = document.querySelector(GUESSED_ERROR_MESSAGES.DUPLICATE.id);
   let invalidMessageTag = document.querySelector(GUESSED_ERROR_MESSAGES.INVALID.id);
-  if (guessedMessageTag || guessedMessageTag) {
+  if (guessedMessageTag || invalidMessageTag) {
     return;
   }
 
@@ -37,9 +37,16 @@ export function displayErrorMessage(id, message) {
  * @param {string} message A completion message to display 
  * @returns {undefined}
  */
-export function displayCompletionMessage(id, message) {
+export function displayCompletionMessage(parent, id, message) {
+  let guessedMessageTag = document.querySelector(GUESSED_ERROR_MESSAGES.DUPLICATE.id);
+  let invalidMessageTag = document.querySelector(GUESSED_ERROR_MESSAGES.INVALID.id);
+  if (guessedMessageTag || invalidMessageTag) {
+    return;
+  }
+
   console.log(message);
-  const node = document.getElementById(COMPLETION_MESSAGE.CONTAINER);
+  const node = document.getElementById(parent);
+  console.log(`node is: ${node}`);
   const paragraphElement = document.createElement("p");
   paragraphElement.setAttribute("class", "message");
   paragraphElement.setAttribute("id", id);

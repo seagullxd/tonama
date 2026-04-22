@@ -3,11 +3,11 @@ import { COLOUR } from "./models/entity-colours.js";
 // Sizes
 export const COUNTRY_CARD = {
   PARENT: "guessed-cards-container",
-  ID: "guess-card",
+  ID: "guessed-card",
 	WIDTH: 290,
 	HEIGHT: 50,
   COLOUR: COLOUR.FRESH_SKY,
-}
+};
 
 export const LEVEL_CARD = {
   PARENT: "levels-cards-container",
@@ -15,12 +15,12 @@ export const LEVEL_CARD = {
 	WIDTH: 290,
 	HEIGHT: 50,
   COLOUR: COLOUR.FRESH_SKY,
-}
+};
 
 export const TEXT_COORDINATES = {
 	X: 30,
 	Y: 180
-}
+};
 
 export const CARD_PADDING = 10;
 
@@ -60,7 +60,7 @@ export const END_LEVEL = {
     next: "end-level-next-btn",
     select: "end-level-select-btn" 
   }
-}
+};
 
 export const GUESSED_ERROR_MESSAGES = {
   CONTAINER: "guessed-message-container",
@@ -72,11 +72,29 @@ export const GUESSED_ERROR_MESSAGES = {
     message: "is not a valid country.",
     id: "guessed-message-invalid"
   }
-}
+};
 
-export const COMPLETION_MESSAGE = {
-  CONTAINER: "",
-  MESSAGE: ""
-}
+export const GAME_COMPLETION_MESSAGE = {
+  CONTAINER: "game-completion-message-container",
+  ID: "game-completion-message",
+  MESSAGE: "You have guessed correctly, for the last time..."
+};
 
+export const GAME_COMPLETION_MESSAGE_CONTINUED = {
+  CONTAINER: "game-completion-message-container",
+  ID: "game-completion-message-continued",
+  MESSAGE: "Congratulations on finishing the game!"
+};
+
+export const LEVEL_TITLE = {
+  DATE: {
+    parent: "level-title-date",
+    time: "level-title-date-time",
+    // sup: "level-title-date-time-sup"
+
+  },
+  FAMILY_NAME: "level-title-family-name",
+};
+
+export const GUESS_INPUT = "guess-input";
 export const LEVEL_CLASS = "level";
