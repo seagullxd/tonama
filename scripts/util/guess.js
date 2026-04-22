@@ -26,17 +26,17 @@ export function isGuessValid(guess, countryData) {
  * Returns whether a valid guess has already been made.
  *
  * @param {object} guess The guess made.
- * @param {number} currentLevelId Level identifier
+ * @param {number} levelId Level identifier
  * @return {boolean} only true if the guess already exists.
  */
-export function isGuessADuplicate(guess, currentLevelId) {
+export function isGuessADuplicate(guess, levelId) {
   let id = localStorage.getItem("userId");
   let foundDuplicateGuess = false;
   if (id) {
     // handle duplicate guess
     let localStorageLevels = JSON.parse(localStorage.getItem("levels"));
     if (localStorageLevels) {
-      const localStorageLevel = localStorageLevels.find((l) => l.id == currentLevelId);
+      const localStorageLevel = localStorageLevels.find((l) => l.id == levelId);
       if (localStorageLevel) {
         foundDuplicateGuess = localStorageLevel.guesses.find((g) => g.country == toTitleCase(guess.country));
       }

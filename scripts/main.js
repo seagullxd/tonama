@@ -1,11 +1,12 @@
 import { LevelStatus } from "./models/levels.js";
 import { toTitleCase, isGuessValid, isGuessADuplicate } from "./util/guess.js";
-import { createCardElement, createLevelCardElements } from "./svg.js";
+import { createCardElement, createCardElements } from "./svg.js";
 import { handleDialogEvent, handleEndLevelEvent, setupCustomEndLevelEvent } from "./menu.js";
 import { isLevelInProgress } from "./util/object.js";
 import { displayErrorMessage } from "./errors.js";
 import {
   GUESSED_ERROR_MESSAGES,
+  LEVEL_CARD
 } from "./constants.js";
 import {
   setLocalStorageLevels,
@@ -15,7 +16,7 @@ import {
   loadLevelAttributes,
   setLatestLevel,
   loadGuessedCards,
-  filterCompletedLevels,
+  filterInCompleteLevels,
   removeOnScreenGuessCards
 } from "./util/utilLevels.js";
 
@@ -62,10 +63,10 @@ function validateGuess(guess, levels, level) {
   });
 }
 
-function insertSortInProgressLevelGuessCard(currentLevelId) {
-  if (isLevelInProgress(currentLevelId)) {
+function insertSortInProgressLevelGuessCard(levelId) {
+  if (isLevelInProgress(levelId)) {
     removeOnScreenGuessCards();
-    loadGuessedCards(currentLevelId);
+    loadGuessedCards(levelId);
   }
 }
 
@@ -92,20 +93,25 @@ function handleFormSubmitEvent(formElem) {
   });
 }
 
+function tagLevelsStatus(levels, localStorageLevels) {
+  return levels.map(l => {
+    return {...l, status: localStorageLevels.find(cl => cl.id == l.id)?.status ?? l.status}
+  })
+}
+
 function main() {
   let level = {};
-
-  // trigger end level only when all levels are complete
   const localStorageLevels = getLocalStorageLevels();
-
   fetchJsonFile("data/levels.json").then((data) => {
-    const levels = data.levels;
-    let notCompletedLevels = filterCompletedLevels(localStorageLevels);
+    let levels = data.levels;
+    levels = tagLevelsStatus(levels, localStorageLevels);
     setLatestLevel(levels, level, true);
-    createLevelCardElements(levels);
+    createCardElements(LEVEL_CARD, levels);
     loadLevelAttributes(level);
     handleFormDataEvent(formElem, levels, level);
-    handleEndLevelEvent(level, notCompletedLevels[0]);
+
+    let completedLevels = filterInCompleteLevels(localStorageLevels);
+    handleEndLevelEvent(level, completedLevels[0]);
   });
 
   handleDialogEvent();

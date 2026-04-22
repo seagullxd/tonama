@@ -132,7 +132,7 @@ export function loadGuessedCards(levelId) {
 		const targetLevel = localStorageLevels.find((l) => l.id == levelId);
 		if (targetLevel) {
 			targetLevel.guesses.forEach((guess) => {
-				const card = { title: guess.country, measure: `${guess.distance}km` };
+				const card = { title: guess.country, grade: `${guess.distance}km` };
 				COUNTRY_CARD.COLOUR = ENTITY_COLOURS[guess.country];
 				createCardElement(COUNTRY_CARD, card);
 			});
@@ -140,9 +140,9 @@ export function loadGuessedCards(levelId) {
 	}
 }
 
-export function filterCompletedLevels(localStorageLevels) {
-	let notCompletedLevels = localStorageLevels.filter(function(e) { 
-		return !e.guesses.find(g => g.distance === 0)
+export function filterInCompleteLevels(localStorageLevels) {
+	let completedLevels = localStorageLevels.filter(function(e) { 
+		return e.guesses.find(g => g.distance === 0)
 	});
-	return notCompletedLevels;
+	return completedLevels;
 }

@@ -30,9 +30,9 @@ export function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function isLevelInProgress(currentLevelId) {
+export function isLevelInProgress(levelId) {
   const levels = getLocalStorageLevels();
-  const level = levels.find((l) => l.id === currentLevelId);
+  const level = levels.find((l) => l.id === levelId);
   return level;
 }
 
