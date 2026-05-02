@@ -25,7 +25,9 @@
   },
   "homepage": "https://github.com/seagullxd/tonama#readme",
   "devDependencies": {
+    "http-server": "^14.1.1",
     "jshint": "^2.13.6",
+    "live-server": "^1.2.2",
     "prettier": "^3.8.1"
   }
 }
