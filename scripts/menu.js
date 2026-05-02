@@ -1,11 +1,6 @@
 import { displayCompletionMessage } from "./errors.js";
 import { loadLevelAttributes, unloadLevel } from "./util/utilLevels.js";
 import { 
-  createButtonElement, 
-  createDialogElement, 
-  createSimpleElement 
-} from "./svg.js";
-import { 
   DIALOG_CONFIG, 
   END_LEVEL, 
   GAME_COMPLETION_MESSAGE, 
@@ -35,9 +30,7 @@ export function handleDialogEvent() {
 }
 
 export function createEndLevelDialog(levelId) {
-  // const endLevelDialogElement = createEndLevelDialogElement(levelId);
   const endLevelDialogElement = document.getElementById(END_LEVEL.DIALOG);
-
   const endLevelEvent = new CustomEvent(END_LEVEL.EVENT, {
     detail: "End level event message",
   });
@@ -48,15 +41,15 @@ export function dispatchEndLevelEvent(endLevelDialog) {
   endLevelDialog.element.dispatchEvent(endLevelDialog.event);
 }
 
-export function attachEndLevelEvent(level, newLevel) {
+export function attachEndLevelEvent() {
   const endLevelDialog = document.getElementById(END_LEVEL.DIALOG);
-
   endLevelDialog.addEventListener(END_LEVEL.EVENT, () => {
     endLevelDialog.showModal();
   });
 
   attachEndLevelEventReview();
   attachEndLevelEventReviewExit();
+  attachEndLevelEventSelect();
 }
 
 function attachEndLevelEventReview() {
@@ -80,6 +73,14 @@ export function attachEndLevelEventReviewExit() {
 
     const reviewLevelContainer = document.getElementById(REVIEW_LEVEL_CONTAINER);
     reviewLevelContainer.setAttribute(STYLE_ATTRIBUTES.PARENT, "border-style: none");
+  });
+}
+
+function attachEndLevelEventSelect() {
+  const buttonElement = document.getElementById(END_LEVEL.BUTTON.select);
+  const dialogElement = document.getElementById(DIALOG_CONFIG.LEVELS.dialog);
+  buttonElement.addEventListener("click", () => {
+    dialogElement.showModal();
   });
 }
 
@@ -123,15 +124,6 @@ function handleEndLevelEventNext(newLevel) {
       loadLevelAttributes(newLevel);
     });
   }
-}
-
-function handleEndLevelEventSelect() {
-  const selectButton = document.getElementById(END_LEVEL.BUTTON.select);
-  const selectButtonDialog = document.getElementById(DIALOG_CONFIG.LEVELS.dialog);
-  selectButton.addEventListener("click", () => {
-    console.log('trigger select level button');
-    selectButtonDialog.showModal();
-  });
 }
 
 export function closeDialogs(closeBtns) {

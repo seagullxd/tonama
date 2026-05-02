@@ -112,7 +112,6 @@ function main() {
   const localStorageLevels = getLocalStorageLevels();
 
   attachEndLevelEvent();
-  
   fetchJsonFile("data/levels.json").then((data) => {
     let levels = data.levels;
     levels = tagLevelsStatus(levels, localStorageLevels);

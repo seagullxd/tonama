@@ -52,12 +52,6 @@ function createTextElement(x, text) {
   return textNS;
 }
 
-export function createSimpleElement(tag, content) {
-  const element = document.createElement(tag);
-  element.innerText = content;
-  return element
-}
-
 export function createButtonElement(id, className, type) {
   const buttonNS = document.createElementNS("http://www.w3.org/2000/xhtml", "button");
   buttonNS.setAttributeNS(null, "id", id);
@@ -135,11 +129,4 @@ export function removeElementTextValue(id) {
   const element = document.getElementById(id);
 
   element.value = "";
-}
-
-export function createDialogElement(id, closedByType) {
-  const dialogNS = document.createElementNS("http://www.w3.org/1999/xhtml", "dialog");
-  dialogNS.setAttributeNS(null, "id", id);
-  dialogNS.setAttributeNS(null, "closedby", closedByType);
-  return dialogNS;
 }
