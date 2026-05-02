@@ -17,6 +17,8 @@ export const LEVEL_CARD = {
   COLOUR: COLOUR.FRESH_SKY,
 };
 
+export const REVIEW_LEVEL_CONTAINER = "review-level-container";
+
 export const TEXT_COORDINATES = {
 	X: 30,
 	Y: 180
@@ -57,6 +59,7 @@ export const END_LEVEL = {
   EVENT: "end-level-event",
   BUTTON: {
     review: "end-level-review-btn",
+    reviewExit: "end-level-review-exit-btn",
     next: "end-level-next-btn",
     select: "end-level-select-btn" 
   }
@@ -91,10 +94,23 @@ export const LEVEL_TITLE = {
     parent: "level-title-date",
     time: "level-title-date-time",
     // sup: "level-title-date-time-sup"
-
   },
   FAMILY_NAME: "level-title-family-name",
 };
 
-export const GUESS_INPUT = "guess-input";
+//CSS_DISPLAY_VALUES
+export const STYLE_ATTRIBUTES = {
+  PARENT: "style",
+  DISPLAY: {
+    flex: "flex",
+    none: "none"    
+  }
+}
+
+export const FORM_GUESS = {
+  PARENT: "form-guess",
+  INPUT: "form-guess-input",
+  SUBMIT: "form-guess-submit"
+}
+
 export const LEVEL_CLASS = "level";

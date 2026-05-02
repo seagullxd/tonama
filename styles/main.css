@@ -72,4 +72,9 @@ dialog p {
   }
 }
 
-
+#review-level-container {
+  height:680px;
+  width:580px;
+/*  border-style: solid;*/
+  border-radius: 16px;
+}

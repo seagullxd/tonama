@@ -5,7 +5,7 @@ import { LevelStatus } from "../models/levels.js";
 import { ENTITY_COLOURS } from "../models/entity-colours.js";
 import { createCardElement } from "../svg.js";
 import {  
-	GUESS_INPUT,
+	FORM_GUESS,
 	LEVEL_TITLE,
 	COUNTRY_CARD,
 } from "../constants.js";
@@ -20,7 +20,7 @@ export function unloadLevel() {
 		removeElementTextValue(child);
 	}
 	removeElementTextValue(LEVEL_TITLE.FAMILY_NAME);
-	removeElementTextValue(GUESS_INPUT);
+	removeElementTextValue(FORM_GUESS.INPUT);
 	removeOnScreenGuessCards();
 	const closeBtns = document.querySelectorAll(".close");
   closeDialogs(closeBtns);
@@ -52,23 +52,16 @@ export function loadLevelAttributes(level) {
  * @param {boolean} triggerLoadInGuessCards false by default.
  * @return {object} level The level now set.
  */
-export function setLatestLevel(
-  levels,
-  level,
-  enableGuessCardLoading = false,
-) {
+export function setLatestLevel(levels, level) {
   let lastLevelIdOpened = localStorage.getItem("lastLevelIdOpened");
   let newLevel;
   if (lastLevelIdOpened) {
     newLevel = levels.find((l) => l.id == lastLevelIdOpened);
-    if (enableGuessCardLoading) {
-      loadGuessedCards(lastLevelIdOpened);
-    }
   } else {
     newLevel = levels[levels.length - 1]; // default is latest level
   }
   setLevelProperties(level, newLevel);
-  setPropertiesForLocalStorage(level);
+  setLocalStorageLevelProperties(level, newLevel);
   return level;
 }
 
@@ -115,8 +108,8 @@ function setLevelProperties(level, newLevel) {
   level.origin = newLevel.origin;
 }
 
-function setPropertiesForLocalStorage(level) {
-  level.status = LevelStatus.notStarted;
+function setLocalStorageLevelProperties(level, newLevel) {
+  level.status = newLevel.status;
   level.hintsUsed = 0;
 }
 
@@ -140,7 +133,7 @@ export function loadGuessedCards(levelId) {
 	}
 }
 
-export function filterInCompleteLevels(localStorageLevels) {
+export function filterIncompleteLevels(localStorageLevels) {
 	let completedLevels = localStorageLevels.filter(function(e) { 
 		return e.guesses.find(g => g.distance === 0)
 	});

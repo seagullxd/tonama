@@ -3,13 +3,19 @@ import { unloadLevel, loadLevelAttributes } from "./util/utilLevels.js";
 import { isEmpty } from "./util/object.js";
 import { COLOUR } from "./models/entity-colours.js";
 import { LevelStatusToColour } from "./models/levels.js";
+import { LevelStatus } from "./models/levels.js";
+import { 
+  createEndLevelDialog, 
+  dispatchEndLevelEvent 
+} from "./menu.js";
 import {
   TEXT_COORDINATES,
   LEVEL_CLASS,
   CARD_PADDING,
   COUNTRY_CARD,
   LEVEL_CARD,
-  GUESS_INPUT
+  FORM_GUESS,
+  END_LEVEL
 } from "./constants.js";
 
 // https://developer.mozilla.org/en-US/docs/Web/SVG/Guides/Scripting
@@ -46,23 +52,45 @@ function createTextElement(x, text) {
   return textNS;
 }
 
-function createButtonElement(type, id, className) {
-  const buttonNS = document.createElementNS("http://www.w3.org/1999/xhtml", "button");
-  buttonNS.setAttributeNS(null, "type", type);
+export function createSimpleElement(tag, content) {
+  const element = document.createElement(tag);
+  element.innerText = content;
+  return element
+}
+
+export function createButtonElement(id, className, type) {
+  const buttonNS = document.createElementNS("http://www.w3.org/2000/xhtml", "button");
   buttonNS.setAttributeNS(null, "id", id);
   buttonNS.setAttributeNS(null, "class", className);
+  buttonNS.setAttributeNS(null, "type", type);
   return buttonNS;
 }
 
-function handleIncludeButton(svg, parentContainer, levelData) {
+function attachNewLevelSelectEvent(svg, parentContainer, levelData) {
   const { id, level, difficulty, name, origin } = levelData;
-  let button = createButtonElement("submit", `level-${levelData.id}`, LEVEL_CLASS);
+  let button = createButtonElement(`level-${levelData.id}`, LEVEL_CLASS, "submit");
+  const endLevelDialog = document.getElementById(END_LEVEL.DIALOG);
   button.addEventListener("click", () => {
     unloadLevel();
     loadLevelAttributes(levelData);
+   
+    endLevelDialog.close();
+    if (levelData.status == LevelStatus.completed) {
+      let endLevelDialog = createEndLevelDialog(levelData.id);
+      dispatchEndLevelEvent(endLevelDialog);
+    }
   });
   button.appendChild(svg);
   parentContainer.appendChild(button);
+}
+
+export function createCardElements(attributes, contents) {
+  // todo: use this function to replace loadGuessedCards(...) in utilLevels.js
+  const isLevelCard = attributes.ID == LEVEL_CARD.ID;
+  for (const origContent of contents) {
+    const content = { title: origContent.title, grade: origContent.difficulty };
+    createCardElement(LEVEL_CARD, content, isLevelCard ? origContent : undefined);
+  }
 }
 
 /**
@@ -85,9 +113,8 @@ export function createCardElement(attributes, content, level = undefined) {
   );
 
   if (level) {
-    handleIncludeButton(svg, parentContainer, level);
+    attachNewLevelSelectEvent(svg, parentContainer, level);
     attributes.COLOUR = LevelStatusToColour[level.status];
-    console.log(level);
   }
   else parentContainer.appendChild(svg);
 
@@ -100,21 +127,19 @@ export function createCardElement(attributes, content, level = undefined) {
 }
 
 export function removeGuessTextInput() {
-  const textInput = document.getElementById(GUESS_INPUT);
+  const textInput = document.getElementById(FORM_GUESS.INPUT);
   textInput.value = "";
 }
 
 export function removeElementTextValue(id) {
   const element = document.getElementById(id);
-  console.log(element);
+
   element.value = "";
 }
 
-export function createCardElements(attributes, contents) {
-  // todo: use this function to replace loadGuessedCards(...) in utilLevels.js
-  const isLevelCard = attributes.ID == LEVEL_CARD.ID;
-  for (const origContent of contents) {
-    const content = { title: origContent.title, grade: origContent.difficulty };
-    createCardElement(LEVEL_CARD, content, isLevelCard ? origContent : undefined);
-  }
+export function createDialogElement(id, closedByType) {
+  const dialogNS = document.createElementNS("http://www.w3.org/1999/xhtml", "dialog");
+  dialogNS.setAttributeNS(null, "id", id);
+  dialogNS.setAttributeNS(null, "closedby", closedByType);
+  return dialogNS;
 }
