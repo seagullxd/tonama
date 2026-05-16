@@ -10,8 +10,10 @@ export const COUNTRY_CARD = {
 };
 
 export const LEVEL_CARD = {
+  GRANDPARENT: "levels-rounded-corners",
   PARENT: "levels-cards-container",
   ID: "level-card",
+  BUTTON: "level",
 	WIDTH: 290,
 	HEIGHT: 50,
   COLOUR: COLOUR.FRESH_SKY,

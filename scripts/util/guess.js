@@ -12,8 +12,6 @@ function hasAppropriateGuessLength(guess) {
 }
 
 export function isGuessValid(guess, countryData) {
-  console.log(`${guess} in ${countryData}: ${toTitleCase(guess) in countryData}`);
-  console.log(`${hasAppropriateGuessLength(guess)} ${hasOnlyLetterAndSpaces(guess)} ${toTitleCase(guess) in countryData} ${!hasMisplacedCapital(guess)} `)
   return (
     hasAppropriateGuessLength(guess) &&
     hasOnlyLetterAndSpaces(guess) &&

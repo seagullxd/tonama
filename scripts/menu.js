@@ -10,22 +10,26 @@ import {
   STYLE_ATTRIBUTES
 } from "./constants.js";
 
-export function handleDialogEvent() {
+export function handleDialogOpenEvent() {
   const closeBtns = document.querySelectorAll(".close");
   Object.entries(DIALOG_CONFIG).forEach(([key, { button, dialog }]) => {
     const buttonElement = document.getElementById(button);
-    console.log(buttonElement);
     const dialogElement = document.getElementById(dialog);
-    buttonElement.addEventListener("click", () => {
-      closeDialogs(closeBtns);
-      dialogElement.showModal();
-    });
+    attachDialogOpenEvent(buttonElement, dialogElement);
   });
 
   closeBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       btn.parentElement.close();
     });
+  });
+}
+
+function attachDialogOpenEvent(buttonElement, dialogElement) {
+  const closeBtns = document.querySelectorAll(".close");
+  buttonElement.addEventListener("click", () => {
+    closeDialogs(closeBtns);
+    dialogElement.showModal();
   });
 }
 
@@ -41,7 +45,7 @@ export function dispatchEndLevelEvent(endLevelDialog) {
   endLevelDialog.element.dispatchEvent(endLevelDialog.event);
 }
 
-export function attachEndLevelEvent() {
+export function attachEndLevelEvents() {
   const endLevelDialog = document.getElementById(END_LEVEL.DIALOG);
   endLevelDialog.addEventListener(END_LEVEL.EVENT, () => {
     endLevelDialog.showModal();
@@ -53,6 +57,7 @@ export function attachEndLevelEvent() {
 }
 
 function attachEndLevelEventReview() {
+  // TODO: Remove 'MORE' button in this state
   const reviewButton = document.getElementById(END_LEVEL.BUTTON.review);
   reviewButton.addEventListener("click", () => {
     setSVGHTMLElementDisplay(FORM_GUESS.PARENT, false, STYLE_ATTRIBUTES.DISPLAY.none)
@@ -64,7 +69,7 @@ function attachEndLevelEventReview() {
   });
 }
 
-export function attachEndLevelEventReviewExit() {
+function attachEndLevelEventReviewExit() {
   const reviewExitButton = document.getElementById(END_LEVEL.BUTTON.reviewExit);
   reviewExitButton.addEventListener("click", () => {
     setSVGHTMLElementDisplay(FORM_GUESS.PARENT, false, STYLE_ATTRIBUTES.DISPLAY.flex)
@@ -83,6 +88,33 @@ function attachEndLevelEventSelect() {
     dialogElement.showModal();
   });
 }
+
+/**
+ * Attach an event for the next level button.
+ * @param {object} nextLevel the next level to load in.
+ */
+export function attachEndLevelEventNext(nextLevel) {
+  const nextButton = document.getElementById(END_LEVEL.BUTTON.next);
+  if (!nextLevel) {
+    nextButton.remove();
+    displayCompletionMessage(
+      GAME_COMPLETION_MESSAGE.CONTAINER, 
+      GAME_COMPLETION_MESSAGE.ID, 
+      GAME_COMPLETION_MESSAGE.MESSAGE);
+    displayCompletionMessage(
+      GAME_COMPLETION_MESSAGE_CONTINUED.CONTAINER, 
+      GAME_COMPLETION_MESSAGE_CONTINUED.ID, 
+      GAME_COMPLETION_MESSAGE_CONTINUED.MESSAGE);
+  } else {
+    const endLevelDialog = document.getElementById(END_LEVEL.DIALOG);
+    nextButton.addEventListener("click", () => {
+      unloadLevel();
+      loadLevelAttributes(nextLevel);
+      endLevelDialog.close();
+    });
+  }
+}
+
 
 /**
  * Sets the display value for a HTML or SVG element.
@@ -104,26 +136,6 @@ function setSVGHTMLElementDisplay(id, isSVG, newDisplayValue) {
 function showDialogModal(id, isShow) {
   const modal = document.getElementById(id); 
   isShow ? modal.showModal() : modal.close();
-}
-
-function handleEndLevelEventNext(newLevel) {
-  const nextButton = document.getElementById(END_LEVEL.BUTTON.next);
-  if (!newLevel) {
-    nextButton.remove();
-    displayCompletionMessage(
-      GAME_COMPLETION_MESSAGE.CONTAINER, 
-      GAME_COMPLETION_MESSAGE.ID, 
-      GAME_COMPLETION_MESSAGE.MESSAGE);
-    displayCompletionMessage(
-      GAME_COMPLETION_MESSAGE_CONTINUED.CONTAINER, 
-      GAME_COMPLETION_MESSAGE_CONTINUED.ID, 
-      GAME_COMPLETION_MESSAGE_CONTINUED.MESSAGE);
-  } else {
-    nextButton.addEventListener("click", () => {
-      unloadLevel();
-      loadLevelAttributes(newLevel);
-    });
-  }
 }
 
 export function closeDialogs(closeBtns) {

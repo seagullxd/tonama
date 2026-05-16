@@ -3,11 +3,16 @@ import { closeDialogs } from "../menu.js";
 import { classifyDate } from "./utilDate.js";
 import { LevelStatus } from "../models/levels.js";
 import { ENTITY_COLOURS } from "../models/entity-colours.js";
-import { createCardElement } from "../svg.js";
+import { 
+	createCardElement, 
+	createCardElements, 
+	createDivElement
+} from "../svg.js";
 import {  
 	FORM_GUESS,
 	LEVEL_TITLE,
 	COUNTRY_CARD,
+	LEVEL_CARD
 } from "../constants.js";
 
 /**
@@ -21,9 +26,25 @@ export function unloadLevel() {
 	}
 	removeElementTextValue(LEVEL_TITLE.FAMILY_NAME);
 	removeElementTextValue(FORM_GUESS.INPUT);
-	removeOnScreenGuessCards();
+	removeAllCards(`.${COUNTRY_CARD.ID}`);
 	const closeBtns = document.querySelectorAll(".close");
   closeDialogs(closeBtns);
+}
+
+/**
+ * Reload the level cards container. May be useful to re-tag cards.
+ * @param {object} levels All of the levels data
+ * @return {undefined}
+ */
+export function reloadLevelCards(levels) {
+  const node = document.getElementById(LEVEL_CARD.GRANDPARENT);
+  const levelCardsContainer = document.getElementById(LEVEL_CARD.PARENT);
+  const newLevelCardsContainer = createDivElement(LEVEL_CARD.PARENT);
+
+  levelCardsContainer.remove();
+  node.appendChild(newLevelCardsContainer);
+
+  createCardElements(LEVEL_CARD, levels); 
 }
 
 /**
@@ -62,12 +83,10 @@ export function setLatestLevel(levels, level) {
   }
   setLevelProperties(level, newLevel);
   setLocalStorageLevelProperties(level, newLevel);
-  return level;
 }
 
-
-export function removeOnScreenGuessCards() {
-  document.querySelectorAll(".guessed-card").forEach((e) => e.remove());
+export function removeAllCards(selector) {
+  document.querySelectorAll(selector).forEach((e) => e.remove());
 }
 
 /**
@@ -133,9 +152,14 @@ export function loadGuessedCards(levelId) {
 	}
 }
 
-export function filterIncompleteLevels(localStorageLevels) {
-	let completedLevels = localStorageLevels.filter(function(e) { 
-		return e.guesses.find(g => g.distance === 0)
-	});
+export function filterByIncompleteLevels(localStorageLevels) {
+	let completedLevels = localStorageLevels.filter(l => l.status === LevelStatus.completed);
 	return completedLevels;
+}
+
+export function sliceLevelsWithoutCurrentLevel(incompleteLevels, incompleteLevelIndex) {
+  const levelsAfterCurrentLevel = incompleteLevels.slice(incompleteLevelIndex + 1, incompleteLevels.length);
+  const levelsBeforeCurrentLevel = incompleteLevels.slice(0, incompleteLevelIndex);
+  const levelsWithoutCurrentLevel = levelsAfterCurrentLevel.concat(levelsBeforeCurrentLevel);
+  return levelsWithoutCurrentLevel;
 }

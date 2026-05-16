@@ -19,7 +19,7 @@ import {
 } from "./constants.js";
 
 // https://developer.mozilla.org/en-US/docs/Web/SVG/Guides/Scripting
-function createSvgElement(width, height, className) {
+export function createSvgElement(width, height, className) {
   let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttributeNS(null, "width", width);
   svg.setAttributeNS(null, "height", height);
@@ -58,6 +58,13 @@ export function createButtonElement(id, className, type) {
   buttonNS.setAttributeNS(null, "class", className);
   buttonNS.setAttributeNS(null, "type", type);
   return buttonNS;
+}
+
+export function createDivElement(id, className) {
+  const container = document.createElement('div');
+  container.setAttribute("id", id);
+  container.setAttribute("class", className);
+  return container;
 }
 
 function attachNewLevelSelectEvent(svg, parentContainer, levelData) {
