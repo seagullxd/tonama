@@ -78,3 +78,24 @@ dialog p {
 /*  border-style: solid;*/
   border-radius: 16px;
 }
+
+.guessed-card, .level-card {
+  /* Define the font family using web fonts */
+  @font-face {
+    font-family: "FiraSans";
+    src:
+      url("https://mdn.github.io/shared-assets/fonts/FiraSans-Italic.woff2")
+        format("woff2"),
+      url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap")
+        format("woff2");
+  }
+
+  /* Style the text */
+  text {
+    /* Specify the system or custom font to use */
+    font-family: "Noto Sans", sans-serif;
+    font-weight: bold;
+    /* Add other styling */
+    font-size: 17px;
+  } 
+}
