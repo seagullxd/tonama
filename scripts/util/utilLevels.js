@@ -69,22 +69,19 @@ export function loadLevelAttributes(level) {
 
 /**
  * Set a level with static level data using a target level id. 
- * Sets a default level if target doesn't exist.
+ * Set a default level if target doesn't exist.
  * 
  * @param {object} level The level to be set.
- * @param {number} targetLevelId The target level id to search for in static data.
  * @param {array} levels The static data to search through.
+ * @param {number} targetLevelId The target level id to search for in static data.
  * @return {object} level The level now set.
  */
 export function setStaticLevel(level, levels, targetLevelId,) {
   let newLevel;
-  if (targetLevelId) {
-    newLevel = levels.find((l) => l.id == targetLevelId);
-  } else {
-    newLevel = levels[levels.length - 1]; // default is latest level
-  }
+  newLevel = targetLevelId ? levels.find((l) => l.id == targetLevelId) 
+  : levels[levels.length - 1];
   setLevelProperties(level, newLevel);
-  setLocalStorageLevelProperties(level, newLevel);
+  setLevelPropertiesForStorage(level, newLevel);
 }
 
 /**
@@ -125,7 +122,7 @@ function setLevelProperties(level, newLevel) {
   level.origin = newLevel.origin;
 }
 
-function setLocalStorageLevelProperties(level, newLevel) {
+function setLevelPropertiesForStorage(level, newLevel) {
   level.status = newLevel.status;
   level.hintsUsed = 0;
 }

@@ -14,7 +14,7 @@ import {
 } from "./svg.js";
 import { 
   toTitleCase, 
-  isGuessAcceptable,
+  isGuessValid,
   insertSortGuessedCards
 } from "./util/guess.js";
 import { 
@@ -88,9 +88,10 @@ function attachFormDataEvent(formElem, levels, level) {
     guess.country = toTitleCase(guess.country);
     let lastLevelIdOpened = getLastLevelIdOpened();
     fetchJsonFile(`${PATH.PARENT}/${PATH.COUNTRIES_FILE}`).then((countryData) => {
-      isGuessAcceptable(guess, countryData, level.id);
-      setStaticLevel(level, levels, lastLevelIdOpened,); // todo: why is this set again?
-      applyGuess(guess, levels, level, countryData);
+      if (isGuessValid(guess, countryData, level.id)) {
+        setStaticLevel(level, levels, lastLevelIdOpened,); // todo: why is this set again?
+        applyGuess(guess, levels, level, countryData);  
+      }
     });
   });
 }

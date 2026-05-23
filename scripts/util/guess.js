@@ -21,7 +21,7 @@ function hasAppropriateGuessLength(guess) {
   return minGuessLength <= guess.length && guess.length < maxGuessLength;
 }
 
-function isGuessValid(guess) {
+function isGuessSpellingValid(guess) {
   return (
     hasAppropriateGuessLength(guess) &&
     hasOnlyLetterAndSpaces(guess) &&
@@ -38,9 +38,9 @@ function isGuessValid(guess) {
  * @param {number} levelId Level identifier
  * @return {boolean} only true if the guess already exists.
  */
-export function isGuessAcceptable(guess, countryData, levelId) {
+export function isGuessValid(guess, countryData, levelId) {
   let error = {};
-  if (!isGuessValid(guess.country)) {
+  if (!isGuessSpellingValid(guess.country)) {
     error.type = GUESSED_ERROR_MESSAGES.INVALID.id;
     error.message = `${guess.country} ${GUESSED_ERROR_MESSAGES.INVALID.message}`;
   }
@@ -49,13 +49,14 @@ export function isGuessAcceptable(guess, countryData, levelId) {
     error.message = `${guess.country} ${GUESSED_ERROR_MESSAGES.INVALID.message}`;
   }
   if (isGuessADuplicate(guess, levelId)) {
-    error.type = GUESSED_ERROR_MESSAGES.DUPLICATE.message;
+    error.type = GUESSED_ERROR_MESSAGES.DUPLICATE.id;
     error.message = `${guess.country} ${GUESSED_ERROR_MESSAGES.DUPLICATE.message}`;
   }
   if ('type' in error) {
     displayErrorMessage(error.type, error.message);
+    return false;
   }
-  return !('type' in error);
+  return true;
 }
 
 // remove me - just to remember it's here
@@ -71,19 +72,9 @@ export function isGuessInCountryData(guess, countryData) {
  * @return {boolean} only true if the guess already exists.
  */
 function isGuessADuplicate(guess, levelId) {
-  let id = localStorage.getItem("userId");
   let foundDuplicateGuess = false;
-  if (id) {
-    // handle duplicate guess
-    let localStorageLevels = getLevels();
-    if (localStorageLevels) {
-      const localStorageLevel = localStorageLevels.find((l) => l.id == levelId);
-      if (localStorageLevel) {
-        foundDuplicateGuess = localStorageLevel.guesses.find((g) => g.country == toTitleCase(guess.country));
-      }
-    }
-  }
-  return foundDuplicateGuess;
+  const level = getLevels().find((l) => l.id == levelId);
+  return level.guesses.find((g) => g.country == guess.country) ? true : false;
 }
 
 function hasOnlyLetterAndSpaces(str) {
