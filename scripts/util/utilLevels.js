@@ -2,11 +2,13 @@ import { removeElementTextValue } from "../svg.js";
 import { closeDialogs } from "../menu.js";
 import { classifyDate } from "./utilDate.js";
 import { LevelStatus } from "../models/levels.js";
-import { ENTITY_COLOURS } from "../models/entity-colours.js";
+import { getLevels } from "../local-storage.js";
+import { createGuessedCardElements } from "./guess.js";
 import { 
 	createCardElement, 
 	createCardElements, 
-	createDivElement
+	createDivElement,
+	removeAllCards
 } from "../svg.js";
 import {  
 	FORM_GUESS,
@@ -58,35 +60,31 @@ export function loadLevelAttributes(level) {
 	setElementTitle(dateString, superscript);
 	setElementName(level.name);
 
-  loadGuessedCards(level.id);
-  localStorage.setItem("lastLevelIdOpened", level.id);
+	let dynamicLevels = getLevels();
+  createGuessedCardElements(level.id, dynamicLevels);
 
   const closeBtns = document.querySelectorAll(".close");
   closeDialogs(closeBtns);
 }
 
 /**
- * Set a target level's properties
+ * Set a level with static level data using a target level id. 
+ * Sets a default level if target doesn't exist.
  * 
- * @param {object} levels The levels.
  * @param {object} level The level to be set.
- * @param {boolean} triggerLoadInGuessCards false by default.
+ * @param {number} targetLevelId The target level id to search for in static data.
+ * @param {array} levels The static data to search through.
  * @return {object} level The level now set.
  */
-export function setLatestLevel(levels, level) {
-  let lastLevelIdOpened = localStorage.getItem("lastLevelIdOpened");
+export function setStaticLevel(level, levels, targetLevelId,) {
   let newLevel;
-  if (lastLevelIdOpened) {
-    newLevel = levels.find((l) => l.id == lastLevelIdOpened);
+  if (targetLevelId) {
+    newLevel = levels.find((l) => l.id == targetLevelId);
   } else {
     newLevel = levels[levels.length - 1]; // default is latest level
   }
   setLevelProperties(level, newLevel);
   setLocalStorageLevelProperties(level, newLevel);
-}
-
-export function removeAllCards(selector) {
-  document.querySelectorAll(selector).forEach((e) => e.remove());
 }
 
 /**
@@ -132,34 +130,21 @@ function setLocalStorageLevelProperties(level, newLevel) {
   level.hintsUsed = 0;
 }
 
-/**
- * Display country cards for a target level.
- * 
- * @param {number} levelId The level identifier to generate guessed cards for.
- * @return {undefined} 
- */
-export function loadGuessedCards(levelId) {
-	let localStorageLevels = JSON.parse(localStorage.getItem("levels"));
-	if (localStorageLevels) {
-		const targetLevel = localStorageLevels.find((l) => l.id == levelId);
-		if (targetLevel) {
-			targetLevel.guesses.forEach((guess) => {
-				const card = { title: guess.country, grade: `${guess.distance}km` };
-				COUNTRY_CARD.COLOUR = ENTITY_COLOURS[guess.country];
-				createCardElement(COUNTRY_CARD, card);
-			});
-		}
-	}
-}
-
 export function filterByIncompleteLevels(localStorageLevels) {
 	let completedLevels = localStorageLevels.filter(l => l.status === LevelStatus.completed);
 	return completedLevels;
 }
 
-export function sliceLevelsWithoutCurrentLevel(incompleteLevels, incompleteLevelIndex) {
+function sliceLevelsWithoutCurrentLevel(incompleteLevels, incompleteLevelIndex) {
   const levelsAfterCurrentLevel = incompleteLevels.slice(incompleteLevelIndex + 1, incompleteLevels.length);
   const levelsBeforeCurrentLevel = incompleteLevels.slice(0, incompleteLevelIndex);
   const levelsWithoutCurrentLevel = levelsAfterCurrentLevel.concat(levelsBeforeCurrentLevel);
   return levelsWithoutCurrentLevel;
+}
+
+export function findNextLevelsToComplete(levels, level) {
+  const incompleteLevels = levels.filter(l => l.status != LevelStatus.completed);
+  const indexOfCurrentLevelInIncompleteLevels = incompleteLevels.findIndex(l => l.id == level.id);
+  const nextLevelsToComplete = sliceLevelsWithoutCurrentLevel(incompleteLevels, indexOfCurrentLevelInIncompleteLevels);
+  return nextLevelsToComplete;
 }

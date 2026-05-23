@@ -116,3 +116,9 @@ export const FORM_GUESS = {
 }
 
 export const LEVEL_CLASS = "level";
+
+export const PATH = {
+  PARENT: "data",
+  LEVELS_FILE: "levels.json",
+  COUNTRIES_FILE: "comprehensive_country_distances.json"
+}

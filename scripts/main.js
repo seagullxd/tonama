@@ -1,11 +1,10 @@
 import { LevelStatus } from "./models/levels.js";
-import { toTitleCase, isGuessValid, isGuessADuplicate } from "./util/guess.js";
-import { isLevelInProgress } from "./util/object.js";
 import { displayErrorMessage } from "./errors.js";
 import {
   GUESSED_ERROR_MESSAGES,
   LEVEL_CARD,
-  COUNTRY_CARD
+  COUNTRY_CARD,
+  PATH
 } from "./constants.js";
 import { 
   createCardElement, 
@@ -14,6 +13,11 @@ import {
   createDivElement
 } from "./svg.js";
 import { 
+  toTitleCase, 
+  isGuessAcceptable,
+  insertSortGuessedCards
+} from "./util/guess.js";
+import { 
   handleDialogOpenEvent,
   attachEndLevelEvents,
   attachEndLevelEventNext,
@@ -21,18 +25,22 @@ import {
   dispatchEndLevelEvent
 } from "./menu.js";
 import {
-  setLocalStorageLevels,
-  getLocalStorageLevels
+  getLevels,
+  setLevelGuess,
+  getLastLevelIdOpened,
+  setLastLevelOpened
 } from "./local-storage.js";
 import { 
   loadLevelAttributes,
-  setLatestLevel,
-  loadGuessedCards,
-  sliceLevelsWithoutCurrentLevel,
+  setStaticLevel,
   reloadLevelCards,
-  removeAllCards
+  findNextLevelsToComplete
 } from "./util/utilLevels.js";
 
+// todo: refactor so that js files contain functions that make sense
+// want to eliminate menu.js and just group into business logic 
+// e.g., attachFormDataEvent should be in guess.js, applyGuess should be in guess.js
+// meanwhile, you should rename utilLevels.js to just levels because its role is beyond just helper functions now
 
 export async function fetchJsonFile(filename) {
   const response = await fetch(filename);
@@ -40,63 +48,32 @@ export async function fetchJsonFile(filename) {
     const message = `An error has occured: ${response.status}`;
     throw new Error(message);
   }
-
   const data = await response.json();
   return data;
 }
 
-function validateGuess(guess, levels, level) {
-  fetchJsonFile("data/comprehensive_country_distances.json").then((data) => {
-    if (!isGuessValid(guess.country, data.distances)) {
-      displayErrorMessage(
-        GUESSED_ERROR_MESSAGES.INVALID.id,
-        `${guess.country} ${GUESSED_ERROR_MESSAGES.INVALID.message}`
-      );
-    } else {
-      setLatestLevel(levels, level);
-      if (isGuessADuplicate(guess, level.id)) {
-        displayErrorMessage(
-          GUESSED_ERROR_MESSAGES.DUPLICATE.message,
-          `${guess.country} ${GUESSED_ERROR_MESSAGES.DUPLICATE.message}`
-        );
-      } else {
-        guess.country = toTitleCase(guess.country);
-        if (guess.country == level.origin) {
-          guess.distance = 0;
-          level.status = LevelStatus.completed;
+function applyGuess(guess, levels, level, countryData) {
+  if (guess.country === level.origin) {
+    guess.distance = 0;
+    // todo: should var naming distinguish between local storage and static?
+    level.status = LevelStatus.completed; 
+    const levelIndex = levels.findIndex(l => l.id == level.id);
+    levels[levelIndex].status = LevelStatus.completed;
+    reloadLevelCards(levels); // to re-tag levels
 
-          const levelIndex = levels.findIndex(l => l.id == level.id);
-          levels[levelIndex].status = LevelStatus.completed;
-        } else {
-          guess.distance = Math.round(data.distances[guess.country][level.origin]);
-          level.status = LevelStatus.inProgress;
-        }
-        setLocalStorageLevels(level, guess);
-        insertSortInProgressLevelGuessCard(level.id);
-        
-        // TODO: Fix this repetitive if stmt, could be done above instead?
-        if (guess.country === level.origin) {
-          reloadLevelCards(levels); // to re-tag levels
-          const incompleteLevels = levels.filter(l => l.status != 2);
-          const incompleteLevelIndex = incompleteLevels.findIndex(l => l.id == level.id);
-          const incompleteLevelsWithoutCurrentLevel = sliceLevelsWithoutCurrentLevel(incompleteLevels, incompleteLevelIndex);
-          attachEndLevelEventNext(incompleteLevelsWithoutCurrentLevel?.[0]);
-
-          let endLevelDialog = createEndLevelDialog(level.id);
-          dispatchEndLevelEvent(endLevelDialog);
-        }
-      }
-    }
-  });
-}
-
-
-
-function insertSortInProgressLevelGuessCard(levelId) {
-  if (isLevelInProgress(levelId)) {
-    removeAllCards(`.${COUNTRY_CARD.ID}`);
-    loadGuessedCards(levelId);
+    const nextLevelToComplete = findNextLevelsToComplete(levels, level)?.[0];
+    attachEndLevelEventNext(nextLevelToComplete);
+    const endLevelDialog = createEndLevelDialog(level.id);
+    dispatchEndLevelEvent(endLevelDialog);
+  } else {
+    guess.distance = Math.round(countryData.distances[guess.country][level.origin]);
+    level.status = LevelStatus.inProgress;
   }
+  setLevelGuess(level, guess);
+  if (getLastLevelIdOpened() != level.id) {
+    setLastLevelOpened(level.id);
+  }
+  insertSortGuessedCards(level.id);
 }
 
 function attachFormDataEvent(formElem, levels, level) {
@@ -108,7 +85,13 @@ function attachFormDataEvent(formElem, levels, level) {
     for (const value of e.formData.values()) {
       guess.country = value;
     }
-    validateGuess(guess, levels, level);
+    guess.country = toTitleCase(guess.country);
+    let lastLevelIdOpened = getLastLevelIdOpened();
+    fetchJsonFile(`${PATH.PARENT}/${PATH.COUNTRIES_FILE}`).then((countryData) => {
+      isGuessAcceptable(guess, countryData, level.id);
+      setStaticLevel(level, levels, lastLevelIdOpened,); // todo: why is this set again?
+      applyGuess(guess, levels, level, countryData);
+    });
   });
 }
 
@@ -120,38 +103,30 @@ function attachFormSubmitEvent(formElem) {
   });
 }
 
-function tagLevelsStatus(levels, localStorageLevels) {
+function tagLevelsWithStatus(levels, initialLevels) {
   return levels.map(l => {
-    return {...l, status: localStorageLevels.find(cl => cl.id == l.id)?.status ?? l.status}
+    return {...l, status: initialLevels.find(cl => cl.id == l.id)?.status ?? l.status}
   })
 }
 
 function main() {
   let level = {};
-  const localStorageLevels = getLocalStorageLevels();
-  
-  fetchJsonFile("data/levels.json").then((data) => {
-    let levels = data.levels;
-    levels = tagLevelsStatus(levels, localStorageLevels);
-    setLatestLevel(levels, level);
+  const formElem = document.querySelector('form');
+
+  fetchJsonFile(`${PATH.PARENT}/${PATH.LEVELS_FILE}`).then((data) => {
+    let levels = tagLevelsWithStatus(data.levels, getLevels());
+    setStaticLevel(level, levels, getLastLevelIdOpened());
     attachEndLevelEvents();
 
     if (level.status == LevelStatus.completed) {
       let endLevelDialog = createEndLevelDialog(level.id);
       dispatchEndLevelEvent(endLevelDialog);   
     }
-
     createCardElements(LEVEL_CARD, levels);
     loadLevelAttributes(level);
     attachFormDataEvent(formElem, levels, level);
-    // TODO:
-    // 1: Remove guess in countryData from isGuessValid so that you can run this check first before having to await levelsData
-    // 2: Simplify isGuessValid function, it shouldn't check if guess in CountryData, that's not really for 'guess validity'
-    // 3: You should only use countryData when absolutely essential
   });
-
   handleDialogOpenEvent();
-  const formElem = document.querySelector('form');
   attachFormSubmitEvent(formElem);
 }
 

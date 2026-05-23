@@ -57,13 +57,27 @@ export function attachEndLevelEvents() {
 }
 
 function attachEndLevelEventReview() {
-  // TODO: Remove 'MORE' button in this state
   const reviewButton = document.getElementById(END_LEVEL.BUTTON.review);
+  const isSvg = true;
+  const isSvgElement = false;
+  const isHtmlElement = true; 
   reviewButton.addEventListener("click", () => {
-    setSVGHTMLElementDisplay(FORM_GUESS.PARENT, false, STYLE_ATTRIBUTES.DISPLAY.none)
-    setSVGHTMLElementDisplay(END_LEVEL.BUTTON.reviewExit, true, STYLE_ATTRIBUTES.DISPLAY.flex)
+    setHtmlOrSvgElementDisplayValue(
+      FORM_GUESS.PARENT, 
+      isHtmlElement, 
+      STYLE_ATTRIBUTES.DISPLAY.none
+    );
+    setHtmlOrSvgElementDisplayValue(
+      END_LEVEL.BUTTON.reviewExit, 
+      isSvgElement, 
+      STYLE_ATTRIBUTES.DISPLAY.flex
+    );
+    setHtmlOrSvgElementDisplayValue(
+      DIALOG_CONFIG.MORE.button, 
+      isHtmlElement, 
+      STYLE_ATTRIBUTES.DISPLAY.none
+    );
     showDialogModal(END_LEVEL.DIALOG, false);
-
     const reviewLevelContainer = document.getElementById(REVIEW_LEVEL_CONTAINER);
     reviewLevelContainer.setAttribute(STYLE_ATTRIBUTES.PARENT, "border-style: solid");
   });
@@ -71,11 +85,25 @@ function attachEndLevelEventReview() {
 
 function attachEndLevelEventReviewExit() {
   const reviewExitButton = document.getElementById(END_LEVEL.BUTTON.reviewExit);
+  const isSvgElement = false;
+  const isHtmlElement = true; 
   reviewExitButton.addEventListener("click", () => {
-    setSVGHTMLElementDisplay(FORM_GUESS.PARENT, false, STYLE_ATTRIBUTES.DISPLAY.flex)
-    setSVGHTMLElementDisplay(END_LEVEL.BUTTON.reviewExit, true, STYLE_ATTRIBUTES.DISPLAY.none)
+    setHtmlOrSvgElementDisplayValue(
+      FORM_GUESS.PARENT, 
+      isHtmlElement, 
+      STYLE_ATTRIBUTES.DISPLAY.flex
+    );
+    setHtmlOrSvgElementDisplayValue(
+      END_LEVEL.BUTTON.reviewExit, 
+      isSvgElement, 
+      STYLE_ATTRIBUTES.DISPLAY.none
+    );
+    setHtmlOrSvgElementDisplayValue(
+      DIALOG_CONFIG.MORE.button, 
+      isHtmlElement, 
+      STYLE_ATTRIBUTES.DISPLAY.flex
+    );
     showDialogModal(END_LEVEL.DIALOG, true);
-
     const reviewLevelContainer = document.getElementById(REVIEW_LEVEL_CONTAINER);
     reviewLevelContainer.setAttribute(STYLE_ATTRIBUTES.PARENT, "border-style: none");
   });
@@ -115,27 +143,22 @@ export function attachEndLevelEventNext(nextLevel) {
   }
 }
 
-
 /**
  * Sets the display value for a HTML or SVG element.
  * @param {string} id The id of the element.
- * @param {boolean} True if the element is an SVG; false otherwise.
+ * @param {boolean} True if the element is an HTML; false otherwise.
  * @param {string} newDisplayValue The new display value.
  * @return {undefined}
  */
-function setSVGHTMLElementDisplay(id, isSVG, newDisplayValue) {
+function setHtmlOrSvgElementDisplayValue(id, isHTMLElement, newDisplayValue) {
   const element = document.getElementById(id);
-  const displayValue = element.getAttribute('display');
-  if (isSVG) {
-    element.setAttributeNS(null, 'display', newDisplayValue);
-  } else {
-    element.setAttributeNS(null, STYLE_ATTRIBUTES.PARENT, `display: ${newDisplayValue};`);
-  }
+  isHTMLElement ? element.setAttributeNS(null, STYLE_ATTRIBUTES.PARENT, `display: ${newDisplayValue};`) 
+  : element.setAttributeNS(null, 'display', newDisplayValue) 
 }
 
-function showDialogModal(id, isShow) {
+function showDialogModal(id, showDialog) {
   const modal = document.getElementById(id); 
-  isShow ? modal.showModal() : modal.close();
+  showDialog ? modal.showModal() : modal.close();
 }
 
 export function closeDialogs(closeBtns) {

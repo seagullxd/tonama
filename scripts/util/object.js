@@ -1,4 +1,4 @@
-import { getLocalStorageLevels } from "../local-storage.js";
+
 
 // Source - https://stackoverflow.com/a
 // Posted by Christoph, modified by community. See post 'Timeline' for change history
@@ -7,10 +7,17 @@ export function isEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
 
-// Source - https://stackoverflow.com/a/21822316
-// Posted by Web_Designer, modified by community. See post 'Timeline' for change history
-// Retrieved 2026-03-08, License - CC BY-SA 3.0
-
+/**
+ * Return the sorted index to insert a number in an array of numbers.
+ * 
+ * Source - https://stackoverflow.com/a/21822316
+ * Posted by Web_Designer, modified by community. See post 'Timeline' for change history
+ * Retrieved 2026-03-08, License - CC BY-SA 3.0
+ * 
+ * @param {array} array array to insert into.
+ * @param {number} value value to insert.
+ * @return {number} the index to insert value into array.
+ */
 export function sortedIndex(array, value) {
   let low = 0;
   let high = array.length;
@@ -28,12 +35,6 @@ export function sortedIndex(array, value) {
 // Retrieved 2026-03-22, License - CC BY-SA 4.0
 export function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-export function isLevelInProgress(levelId) {
-  const levels = getLocalStorageLevels();
-  const level = levels.find((l) => l.id === levelId);
-  return level;
 }
 
 // Source - https://stackoverflow.com/a/2117523

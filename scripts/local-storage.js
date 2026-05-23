@@ -1,49 +1,76 @@
 import { sortedIndex } from "./util/object.js";
 
-export function getLocalStorageLevels() {
-  let localStorageLevels = [];
-  const stored = localStorage.getItem("levels");
-  if (stored) {
-    localStorageLevels = JSON.parse(stored);
-    if (!Array.isArray(localStorageLevels)) {
-    	localStorageLevels = [];
-    }
-   }
-  return localStorageLevels;
+// todo: consider renaming 'lastLevelIdOpened' to 'level'
+export function getLastLevelIdOpened() {
+	return localStorage.getItem("lastLevelIdOpened"); 
 }
 
-export function setLocalStorageLevels(level, guess) {
-	// Validate required inputs
-	if (!level.id || guess === undefined) {
-		console.warn("saveLocalStorage: missing required parameters", level.id, guess);
-		return;
-	}
+/**
+ * Sets a level id as the last level opened.
+ *
+ * @param {string} levelId the level id.
+ * @return {undefined}
+ */
+export function setLastLevelOpened(levelId) {
+	localStorage.setItem("lastLevelIdOpened", levelId); 
+}
 
-	let localStorageLevels  = getLocalStorageLevels();
-	let localStorageLevel = localStorageLevels.find((l) => l.id === level.id);
+export function getLevelIndex(levelId) {
+  return getLevels().findIndex((l) => l.id === levelId);
+}
 
-	if (localStorageLevel) {
-		const index = sortedIndex(localStorageLevel.guesses, guess.distance);
-		localStorageLevel.guesses.splice(index, 0, guess);
-		localStorageLevel.status = level.status;
+/**
+ * Returns a level using a level id.
+ * 
+ * @param {string} levelId the level id. 	// todo: confirm it's a string
+ * @return {object} the level found.
+ */
+export function getLevel(levelId) {
+  return getLevels().find((l) => l.id === levelId);
+}
+
+/**
+ * Returns the levels.
+ *
+ * @return {object} the levels
+ */
+export function getLevels() {
+	return localStorage.getItem("levels") ? 
+	JSON.parse(localStorage.getItem("levels")) : [];
+}
+
+/**
+ * Sets the levels.
+ *
+ * @param {array} levels The levels to set.
+ * @return {undefined}
+ */
+function setLevels(levels) {
+	localStorage.setItem("levels", JSON.stringify(levels))
+}
+
+/**
+ * Sets a guess for a given level. 
+ * If the level doesn't exist in local storage, a new one is made.
+ *
+ * @param {array} levels The levels to set.
+ * @return {undefined}
+ */
+export function setLevelGuess(level, guess) {
+	let levels  = getLevels();
+	let levelIndex = getLevelIndex(level.id);
+	if (levels[levelIndex]) {
+		const sortedGuessIndex = sortedIndex(levels[levelIndex].guesses, guess.distance);
+		levels[levelIndex].guesses.splice(sortedGuessIndex, 0, guess);
+		levels[levelIndex].status = level.status;
 	} else {
-		localStorageLevel = makeLevel(level, guess);
-		localStorageLevels.push(localStorageLevel);
+		levels[levelIndex] = createNewLevel(level, guess);
+		levels.push(levels[levelIndex]);
 	}
-
-	// Update lastLevelIdOpened (only if changed)
-	try {
-		localStorage.setItem("levels", JSON.stringify(localStorageLevels));
-		const currentLast = localStorage.getItem("lastLevelIdOpened");
-		if (currentLast !== level.id) {
-			localStorage.setItem("lastLevelIdOpened", level.id);
-		}
-	} catch (e) {
-		console.warn("Failed to save level data", e);
-	}
+	setLevels(levels);
 }
 
-function makeLevel(level, guess) {
+function createNewLevel(level, guess) {
 	const guesses = [];
 	guesses.push(guess);
 	const newLevel = {

@@ -1,32 +1,31 @@
 import { GUESSED_ERROR_MESSAGES } from "./constants.js";
 
+// todo: tech-debt - improve error and completion message functions.
 /**
+ * @param {string} id An identifier for the html tag
  * @param {string} message An error message to display
- * @param {string} id An identifier for the html tage
  * @returns {undefined}
  */
 export function displayErrorMessage(id, message) {
   let guessedMessageTag = document.querySelector(GUESSED_ERROR_MESSAGES.DUPLICATE.id);
   let invalidMessageTag = document.querySelector(GUESSED_ERROR_MESSAGES.INVALID.id);
-  if (guessedMessageTag || invalidMessageTag) {
-    return;
+  const noExistingErrorMessage = !(guessedMessageTag && invalidMessageTag);
+  if (noExistingErrorMessage) {    
+    const node = document.getElementById(GUESSED_ERROR_MESSAGES.CONTAINER);
+    const paragraphElement = document.createElement("p");
+    paragraphElement.setAttribute("class", "message");
+    paragraphElement.setAttribute("id", id);
+
+    const sampElement = document.createElement("samp");
+    sampElement.textContent = message;
+    node.appendChild(paragraphElement);
+    paragraphElement.appendChild(sampElement);
+
+    setTimeout(function () {
+      node.removeChild(paragraphElement);
+      console.log("Message removed");
+    }, 5000);
   }
-
-  console.log(message);
-  const node = document.getElementById(GUESSED_ERROR_MESSAGES.CONTAINER);
-  const paragraphElement = document.createElement("p");
-  paragraphElement.setAttribute("class", "message");
-  paragraphElement.setAttribute("id", id);
-
-  const sampElement = document.createElement("samp");
-  sampElement.textContent = message;
-  node.appendChild(paragraphElement);
-  paragraphElement.appendChild(sampElement);
-
-  setTimeout(function () {
-    node.removeChild(paragraphElement);
-    console.log("Message removed");
-  }, 5000);
 }
 
 // todo: see if this function is diff enoguh from about

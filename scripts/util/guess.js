@@ -1,3 +1,13 @@
+import { ENTITY_COLOURS } from "../models/entity-colours.js";
+import { getLevel, getLevels } from "../local-storage.js"
+import { displayErrorMessage } from "../errors.js";
+import { createCardElement, removeAllCards } from "../svg.js";
+import {
+  GUESSED_ERROR_MESSAGES,
+  LEVEL_CARD,
+  COUNTRY_CARD
+} from "../constants.js";
+
 // https://stackoverflow.com/a/196991
 export function toTitleCase(str) {
   return str.replace(
@@ -11,28 +21,61 @@ function hasAppropriateGuessLength(guess) {
   return minGuessLength <= guess.length && guess.length < maxGuessLength;
 }
 
-export function isGuessValid(guess, countryData) {
+function isGuessValid(guess) {
   return (
     hasAppropriateGuessLength(guess) &&
     hasOnlyLetterAndSpaces(guess) &&
-    toTitleCase(guess) in countryData &&
     !hasMisplacedCapital(guess)
   );
 }
 
 /**
- * Returns whether a valid guess has already been made.
+ * Returns whether a guess is an acceptable country guess 
+ * i.e., it is the correct name of a country.
+ *
+ * @param {object} guess The guess made.
+ * @param {countryData} countryData contains all acceptable the country names
+ * @param {number} levelId Level identifier
+ * @return {boolean} only true if the guess already exists.
+ */
+export function isGuessAcceptable(guess, countryData, levelId) {
+  let error = {};
+  if (!isGuessValid(guess.country)) {
+    error.type = GUESSED_ERROR_MESSAGES.INVALID.id;
+    error.message = `${guess.country} ${GUESSED_ERROR_MESSAGES.INVALID.message}`;
+  }
+  if (!(guess.country in countryData.distances)) {
+    error.type = GUESSED_ERROR_MESSAGES.INVALID.id;
+    error.message = `${guess.country} ${GUESSED_ERROR_MESSAGES.INVALID.message}`;
+  }
+  if (isGuessADuplicate(guess, levelId)) {
+    error.type = GUESSED_ERROR_MESSAGES.DUPLICATE.message;
+    error.message = `${guess.country} ${GUESSED_ERROR_MESSAGES.DUPLICATE.message}`;
+  }
+  if ('type' in error) {
+    displayErrorMessage(error.type, error.message);
+  }
+  return !('type' in error);
+}
+
+// remove me - just to remember it's here
+export function isGuessInCountryData(guess, countryData) {
+  return toTitleCase(guess) in countryData;
+}
+
+/**
+ * Returns whether the same valid guess has already been made.
  *
  * @param {object} guess The guess made.
  * @param {number} levelId Level identifier
  * @return {boolean} only true if the guess already exists.
  */
-export function isGuessADuplicate(guess, levelId) {
+function isGuessADuplicate(guess, levelId) {
   let id = localStorage.getItem("userId");
   let foundDuplicateGuess = false;
   if (id) {
     // handle duplicate guess
-    let localStorageLevels = JSON.parse(localStorage.getItem("levels"));
+    let localStorageLevels = getLevels();
     if (localStorageLevels) {
       const localStorageLevel = localStorageLevels.find((l) => l.id == levelId);
       if (localStorageLevel) {
@@ -60,5 +103,31 @@ function hasMisplacedCapital(str) {
     let charsToTest = word.slice(1);
     hasMisplacedCapital = containsUppercase(charsToTest);
     if (hasMisplacedCapital) return true;
+  }
+}
+
+/**
+ * Display country cards for a target level.
+ * 
+ * @param {number} levelId The level identifier to generate guessed cards for.
+ * @param {object} dynamicLevels The levels to load guessed cards from.
+ * @return {undefined} 
+ */
+export function createGuessedCardElements(levelId, dynamicLevels) {
+  if (dynamicLevels) {
+    const level = dynamicLevels.find((l) => l.id == levelId);
+    level?.guesses.forEach((guess) => {
+      const card = { title: guess.country, grade: `${guess.distance}km` };
+      COUNTRY_CARD.COLOUR = ENTITY_COLOURS[guess.country];
+      createCardElement(COUNTRY_CARD, card);
+    });
+  }
+}
+
+export function insertSortGuessedCards(levelId) {
+  if (getLevel(levelId)) {
+    removeAllCards(`.${COUNTRY_CARD.ID}`);
+    let dynamicLevels = getLevels();
+    createGuessedCardElements(levelId, dynamicLevels);
   }
 }

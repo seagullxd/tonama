@@ -4,6 +4,7 @@ import { isEmpty } from "./util/object.js";
 import { COLOUR } from "./models/entity-colours.js";
 import { LevelStatusToColour } from "./models/levels.js";
 import { LevelStatus } from "./models/levels.js";
+import { setLastLevelOpened } from "./local-storage.js";
 import { 
   createEndLevelDialog, 
   dispatchEndLevelEvent 
@@ -74,6 +75,7 @@ function attachNewLevelSelectEvent(svg, parentContainer, levelData) {
   button.addEventListener("click", () => {
     unloadLevel();
     loadLevelAttributes(levelData);
+    setLastLevelOpened(levelData.id);
    
     endLevelDialog.close();
     if (levelData.status == LevelStatus.completed) {
@@ -85,8 +87,8 @@ function attachNewLevelSelectEvent(svg, parentContainer, levelData) {
   parentContainer.appendChild(button);
 }
 
+/* See createCardElement(...) */
 export function createCardElements(attributes, contents) {
-  // todo: use this function to replace loadGuessedCards(...) in utilLevels.js
   const isLevelCard = attributes.ID == LEVEL_CARD.ID;
   for (const origContent of contents) {
     const content = { title: origContent.title, grade: origContent.difficulty };
@@ -136,4 +138,8 @@ export function removeElementTextValue(id) {
   const element = document.getElementById(id);
 
   element.value = "";
+}
+
+export function removeAllCards(selector) {
+  document.querySelectorAll(selector).forEach((e) => e.remove());
 }
