@@ -1,5 +1,6 @@
 import { displayCompletionMessage } from "./errors.js";
 import { loadLevelAttributes, unloadLevel } from "./util/utilLevels.js";
+import { setLastLevelOpened } from "./local-storage.js";
 import { 
   DIALOG_CONFIG, 
   END_LEVEL, 
@@ -138,6 +139,7 @@ export function attachEndLevelEventNext(nextLevel) {
     nextButton.addEventListener("click", () => {
       unloadLevel();
       loadLevelAttributes(nextLevel);
+      setLastLevelOpened(nextLevel.id);
       endLevelDialog.close();
     });
   }

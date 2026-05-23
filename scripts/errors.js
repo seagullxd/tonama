@@ -1,34 +1,30 @@
 import { GUESSED_ERROR_MESSAGES } from "./constants.js";
+import { createMessageElement } from "./svg.js";
 
-// todo: tech-debt - improve error and completion message functions.
 /**
  * @param {string} id An identifier for the html tag
  * @param {string} message An error message to display
  * @returns {undefined}
  */
 export function displayErrorMessage(id, message) {
-  let guessedMessageTag = document.querySelector(GUESSED_ERROR_MESSAGES.DUPLICATE.id);
-  let invalidMessageTag = document.querySelector(GUESSED_ERROR_MESSAGES.INVALID.id);
-  const noExistingErrorMessage = !(guessedMessageTag && invalidMessageTag);
-  if (noExistingErrorMessage) {    
+  let errorElement;
+  let guessErrorElement = document.getElementById(GUESSED_ERROR_MESSAGES.DUPLICATE.id);
+  let invalidErrorElement = document.getElementById(GUESSED_ERROR_MESSAGES.INVALID.id);
+  if (!(guessErrorElement || invalidErrorElement)) {    
     const node = document.getElementById(GUESSED_ERROR_MESSAGES.CONTAINER);
-    const paragraphElement = document.createElement("p");
-    paragraphElement.setAttribute("class", "message");
-    paragraphElement.setAttribute("id", id);
-
-    const sampElement = document.createElement("samp");
-    sampElement.textContent = message;
-    node.appendChild(paragraphElement);
-    paragraphElement.appendChild(sampElement);
+    errorElement = createMessageElement(id, undefined, message);
+    node.append(errorElement);
 
     setTimeout(function () {
-      node.removeChild(paragraphElement);
+      node.removeChild(errorElement);
       console.log("Message removed");
     }, 5000);
   }
 }
 
-// todo: see if this function is diff enoguh from about
+// todo #1: move this function out of error.js
+
+// todo #2: see if this function is diff enoguh from about
 // if not, just use the above
 // want the style to be not red (this is not a temp error msg!)
 /**
@@ -39,19 +35,8 @@ export function displayErrorMessage(id, message) {
 export function displayCompletionMessage(parent, id, message) {
   let guessedMessageTag = document.querySelector(GUESSED_ERROR_MESSAGES.DUPLICATE.id);
   let invalidMessageTag = document.querySelector(GUESSED_ERROR_MESSAGES.INVALID.id);
-  if (guessedMessageTag || invalidMessageTag) {
-    return;
+  if (!(guessedMessageTag || invalidMessageTag)) {
+    const node = document.getElementById(parent);
+    node.appendChild(createMessageElement(id, undefined, message));
   }
-
-  console.log(message);
-  const node = document.getElementById(parent);
-  console.log(`node is: ${node}`);
-  const paragraphElement = document.createElement("p");
-  paragraphElement.setAttribute("class", "message");
-  paragraphElement.setAttribute("id", id);
-
-  const sampElement = document.createElement("samp");
-  sampElement.textContent = message;
-  node.appendChild(paragraphElement);
-  paragraphElement.appendChild(sampElement);
 }

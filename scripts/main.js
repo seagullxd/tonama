@@ -14,7 +14,7 @@ import {
 } from "./svg.js";
 import { 
   toTitleCase, 
-  isGuessAcceptable,
+  isGuessValid,
   insertSortGuessedCards
 } from "./util/guess.js";
 import { 
@@ -76,7 +76,7 @@ function applyGuess(guess, levels, level, countryData) {
   insertSortGuessedCards(level.id);
 }
 
-function attachFormDataEvent(formElem, levels, level) {
+function attachFormDataEvent(formElem, levels) {
   let guess = {
     country: undefined,
     distance: undefined,
@@ -87,10 +87,12 @@ function attachFormDataEvent(formElem, levels, level) {
     }
     guess.country = toTitleCase(guess.country);
     let lastLevelIdOpened = getLastLevelIdOpened();
+    let level = {}; // todo: should we just do level = getStaticLevel??
     fetchJsonFile(`${PATH.PARENT}/${PATH.COUNTRIES_FILE}`).then((countryData) => {
-      isGuessAcceptable(guess, countryData, level.id);
       setStaticLevel(level, levels, lastLevelIdOpened,); // todo: why is this set again?
-      applyGuess(guess, levels, level, countryData);
+      if (isGuessValid(guess, countryData, level.id)) {
+        applyGuess(guess, levels, level, countryData);  
+      }
     });
   });
 }
@@ -112,18 +114,23 @@ function tagLevelsWithStatus(levels, initialLevels) {
 function main() {
   let level = {};
   const formElem = document.querySelector('form');
+  attachEndLevelEvents();
 
   fetchJsonFile(`${PATH.PARENT}/${PATH.LEVELS_FILE}`).then((data) => {
     let levels = tagLevelsWithStatus(data.levels, getLevels());
-    setStaticLevel(level, levels, getLastLevelIdOpened());
-    attachEndLevelEvents();
+    setStaticLevel(level, levels, getLastLevelIdOpened()); 
+    // todo: what is the purpose of this again?
+    // why can't we just live fetch the latest level? in each new function instead of relying on this?
+    // i think it's because of the level.origin... as part of obfuscation
 
+    // todo: create an event listener for this?
     if (level.status == LevelStatus.completed) {
       let endLevelDialog = createEndLevelDialog(level.id);
       dispatchEndLevelEvent(endLevelDialog);   
     }
     createCardElements(LEVEL_CARD, levels);
     loadLevelAttributes(level);
+
     attachFormDataEvent(formElem, levels, level);
   });
   handleDialogOpenEvent();

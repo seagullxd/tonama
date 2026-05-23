@@ -68,6 +68,17 @@ export function createDivElement(id, className) {
   return container;
 }
 
+export function createMessageElement(id, className, content) {
+  const paragraph = document.createElement("p");
+  paragraph.setAttribute("id", id);
+  paragraph.setAttribute("class", className);
+
+  const samp = document.createElement("samp");
+  samp.textContent = content;
+  paragraph.appendChild(samp);
+  return paragraph;
+}
+
 function attachNewLevelSelectEvent(svg, parentContainer, levelData) {
   const { id, level, difficulty, name, origin } = levelData;
   let button = createButtonElement(`level-${levelData.id}`, LEVEL_CLASS, "submit");
