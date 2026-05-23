@@ -74,7 +74,7 @@ export function isGuessInCountryData(guess, countryData) {
 function isGuessADuplicate(guess, levelId) {
   let foundDuplicateGuess = false;
   const level = getLevels().find((l) => l.id == levelId);
-  return level.guesses.find((g) => g.country == guess.country) ? true : false;
+  return level?.guesses.find((g) => g.country == guess.country) ? true : false;
 }
 
 function hasOnlyLetterAndSpaces(str) {
