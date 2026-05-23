@@ -1,39 +1,46 @@
-import { COLOUR, ENTITY_COLOURS } from "./models/entity-colours.js";
-import { COUNTRY_CARD, LEVEL_CARD, LEVEL_CLASS, DIALOG_CONFIG } from "./constants.js";
-import { saveLocalStorage, getUserId, loadGuessCards } from "./local-storage.js";
-import { toTitleCase, isGuessValid, isGuessADuplicate } from "./util/guess.js";
-import { createCardElement, loadLevelTitleElement } from "./svg.js";
+import { LevelStatus } from "./models/levels.js";
+import { displayErrorMessage } from "./errors.js";
 import {
-  duplicateGuessErrorMessage,
-  invalidCountryErrorMessage,
-  duplicateGuessTag,
-  invalidCountryTag,
-  displayErrorMessage,
-} from "./errors.js";
+  GUESSED_ERROR_MESSAGES,
+  LEVEL_CARD,
+  COUNTRY_CARD,
+  PATH
+} from "./constants.js";
+import { 
+  createCardElement, 
+  createCardElements, 
+  createSvgElement,
+  createDivElement
+} from "./svg.js";
+import { 
+  toTitleCase, 
+  isGuessAcceptable,
+  insertSortGuessedCards
+} from "./util/guess.js";
+import { 
+  handleDialogOpenEvent,
+  attachEndLevelEvents,
+  attachEndLevelEventNext,
+  createEndLevelDialog,
+  dispatchEndLevelEvent
+} from "./menu.js";
+import {
+  getLevels,
+  setLevelGuess,
+  getLastLevelIdOpened,
+  setLastLevelOpened
+} from "./local-storage.js";
+import { 
+  loadLevelAttributes,
+  setStaticLevel,
+  reloadLevelCards,
+  findNextLevelsToComplete
+} from "./util/utilLevels.js";
 
-function handleDialogEvent() {
-  const closeBtns = document.querySelectorAll(".close");
-  Object.entries(DIALOG_CONFIG).forEach(([key, { button, dialog }]) => {
-    const buttonElement = document.getElementById(button);
-    const dialogElement = document.getElementById(dialog);
-    buttonElement.addEventListener("click", () => {
-      handleDialogClose(closeBtns);
-      dialogElement.showModal();
-    });
-  });
-
-  closeBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      btn.parentElement.close();
-    });
-  });
-}
-
-export function handleDialogClose(closeBtns) {
-  closeBtns.forEach((btn) => {
-    btn.parentElement.close();
-  });
-}
+// todo: refactor so that js files contain functions that make sense
+// want to eliminate menu.js and just group into business logic 
+// e.g., attachFormDataEvent should be in guess.js, applyGuess should be in guess.js
+// meanwhile, you should rename utilLevels.js to just levels because its role is beyond just helper functions now
 
 export async function fetchJsonFile(filename) {
   const response = await fetch(filename);
@@ -41,68 +48,35 @@ export async function fetchJsonFile(filename) {
     const message = `An error has occured: ${response.status}`;
     throw new Error(message);
   }
-
   const data = await response.json();
   return data;
 }
 
-function loadLevelCards(allLevelsData) {
-  for (const l of allLevelsData) {
-    createCardElement(
-      {
-        level: l.level,
-        difficulty: l.difficulty,
-        ...LEVEL_CARD,
-        colour: COLOUR.FRESH_SKY,
-      },
-      l
-    );
-  }
-}
+function applyGuess(guess, levels, level, countryData) {
+  if (guess.country === level.origin) {
+    guess.distance = 0;
+    // todo: should var naming distinguish between local storage and static?
+    level.status = LevelStatus.completed; 
+    const levelIndex = levels.findIndex(l => l.id == level.id);
+    levels[levelIndex].status = LevelStatus.completed;
+    reloadLevelCards(levels); // to re-tag levels
 
-/**
- * Load the last level opened by using local storage.
- * @param {object} allLevelsData all levels
- * @param {object} currentLevel level to be replaced
- * @param {boolean} triggerLoadInGuessCards false by default
- * @return {object} the last level to be modified in local storage
- */
-function loadLastLevelOpened(
-  allLevelsData,
-  currentLevel,
-  triggerLoadInGuessCards = false
-) {
-  let lastLevelIdOpened = localStorage.getItem("lastLevelIdOpened");
-  let newLevelToSet;
-  if (lastLevelIdOpened) {
-    newLevelToSet = allLevelsData.find((level) => level.id == lastLevelIdOpened);
-    if (triggerLoadInGuessCards) {
-      loadGuessCards(lastLevelIdOpened);
-    }
+    const nextLevelToComplete = findNextLevelsToComplete(levels, level)?.[0];
+    attachEndLevelEventNext(nextLevelToComplete);
+    const endLevelDialog = createEndLevelDialog(level.id);
+    dispatchEndLevelEvent(endLevelDialog);
   } else {
-    newLevelToSet = allLevelsData[allLevelsData.length - 1]; // default is latest level
+    guess.distance = Math.round(countryData.distances[guess.country][level.origin]);
+    level.status = LevelStatus.inProgress;
   }
-
-  currentLevel.id = newLevelToSet.id;
-  currentLevel.level = newLevelToSet.level;
-  currentLevel.difficulty = newLevelToSet.difficulty;
-  currentLevel.name = newLevelToSet.name;
-  currentLevel.origin = newLevelToSet.origin;
-
-  return currentLevel;
+  setLevelGuess(level, guess);
+  if (getLastLevelIdOpened() != level.id) {
+    setLastLevelOpened(level.id);
+  }
+  insertSortGuessedCards(level.id);
 }
 
-function handleFormSubmitEvent(formElem) {
-  formElem.addEventListener("submit", (e) => {
-    // on form submission, prevent default
-    e.preventDefault();
-
-    // construct a FormData object, which fires the formdata event
-    new FormData(formElem);
-  });
-}
-
-function handleFormDataEvent(formElem, allLevelsData, currentLevel) {
+function attachFormDataEvent(formElem, levels, level) {
   let guess = {
     country: undefined,
     distance: undefined,
@@ -111,50 +85,49 @@ function handleFormDataEvent(formElem, allLevelsData, currentLevel) {
     for (const value of e.formData.values()) {
       guess.country = value;
     }
-
-    fetchJsonFile("data/comprehensive_country_distances.json").then((data) => {
-      if (!isGuessValid(guess.country, data.distances)) {
-        displayErrorMessage(
-          `${guess.country} ${invalidCountryErrorMessage}`,
-          invalidCountryTag
-        );
-      } else {
-        loadLastLevelOpened(allLevelsData, currentLevel);
-        if (isGuessADuplicate(guess, currentLevel.id)) {
-          displayErrorMessage(
-            `${guess.country} ${duplicateGuessErrorMessage}`,
-            duplicateGuessTag
-          );
-        } else {
-          guess.country = toTitleCase(guess.country);
-          let distance = Math.round(data.distances[guess.country][currentLevel.origin]);
-          guess.distance = guess.country == currentLevel.origin ? 0 : distance;
-          saveLocalStorage(currentLevel.id, currentLevel.level, guess, 0);
-          createCardElement({
-            ...guess,
-            ...COUNTRY_CARD,
-            colour: ENTITY_COLOURS[guess.country],
-          });
-        }
-      }
+    guess.country = toTitleCase(guess.country);
+    let lastLevelIdOpened = getLastLevelIdOpened();
+    fetchJsonFile(`${PATH.PARENT}/${PATH.COUNTRIES_FILE}`).then((countryData) => {
+      isGuessAcceptable(guess, countryData, level.id);
+      setStaticLevel(level, levels, lastLevelIdOpened,); // todo: why is this set again?
+      applyGuess(guess, levels, level, countryData);
     });
   });
 }
 
-function main() {
-  let currentLevel = {};
-  // initial level load in
-  fetchJsonFile("data/levels.json").then((rawLevelsData) => {
-    const allLevelsData = rawLevelsData.levels;
-    loadLevelCards(allLevelsData);
-    loadLastLevelOpened(allLevelsData, currentLevel, true);
-    handleFormDataEvent(formElem, allLevelsData, currentLevel);
-    loadLevelTitleElement(currentLevel);
+function attachFormSubmitEvent(formElem) {
+  formElem.addEventListener("submit", (e) => {
+    e.preventDefault();
+    // construct a FormData object, which fires the formdata event
+    new FormData(formElem);
   });
+}
 
-  handleDialogEvent();
-  const formElem = document.querySelector("form");
-  handleFormSubmitEvent(formElem);
+function tagLevelsWithStatus(levels, initialLevels) {
+  return levels.map(l => {
+    return {...l, status: initialLevels.find(cl => cl.id == l.id)?.status ?? l.status}
+  })
+}
+
+function main() {
+  let level = {};
+  const formElem = document.querySelector('form');
+
+  fetchJsonFile(`${PATH.PARENT}/${PATH.LEVELS_FILE}`).then((data) => {
+    let levels = tagLevelsWithStatus(data.levels, getLevels());
+    setStaticLevel(level, levels, getLastLevelIdOpened());
+    attachEndLevelEvents();
+
+    if (level.status == LevelStatus.completed) {
+      let endLevelDialog = createEndLevelDialog(level.id);
+      dispatchEndLevelEvent(endLevelDialog);   
+    }
+    createCardElements(LEVEL_CARD, levels);
+    loadLevelAttributes(level);
+    attachFormDataEvent(formElem, levels, level);
+  });
+  handleDialogOpenEvent();
+  attachFormSubmitEvent(formElem);
 }
 
 main();

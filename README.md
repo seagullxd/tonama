@@ -28,6 +28,11 @@ Install in Sublime Text Command Pallette:
 - Prettier
 - JsHint
 
+## Run a simple local HTTP server
+```
+$ npx live-server 
+```
+
 Make sure the sublime settings for JsHint and Prettier reference the ./node_modules/.bin
 
 ## Get started locally
