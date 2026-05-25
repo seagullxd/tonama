@@ -14,7 +14,8 @@ import {
 	FORM_GUESS,
 	LEVEL_TITLE,
 	COUNTRY_CARD,
-	LEVEL_CARD
+	LEVEL_CARD,
+  HTML_CHARACTER_REFERENCE
 } from "../constants.js";
 
 /**
@@ -104,7 +105,7 @@ function setElementTitle(dateString, superscript) {
 
 function setElementName(name) {
 	const familyName = document.getElementById(LEVEL_TITLE.FAMILY_NAME);
-  familyName.innerHTML = `"${name}"`;
+  familyName.innerHTML = `${HTML_CHARACTER_REFERENCE.QUOTE}${name}${HTML_CHARACTER_REFERENCE.QUOTE}`;
 }
 
 /** 

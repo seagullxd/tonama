@@ -122,3 +122,7 @@ export const PATH = {
   LEVELS_FILE: "levels.json",
   COUNTRIES_FILE: "comprehensive_country_distances.json"
 }
+
+export const HTML_CHARACTER_REFERENCE = {
+  QUOTE: "&quot;"
+}
