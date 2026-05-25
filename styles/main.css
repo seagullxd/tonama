@@ -102,23 +102,37 @@ dialog p {
 }
 
 
+
 .focus-paragraph {
   text-align: center;
 }
 
-dialog p {
-  font-size: 14px;
+/* Menu */
+dialog {
+  article {
+    display: grid;
+    justify-content: center;    
+  }
+
+  p {
+    font-size: 14px;
+  }
+
 }
 
-dialog article {
+.dialog-content-block {
   display: grid;
   justify-content: center;
+}
 
-  .dialog-article-article {
-    display: grid;
-    justify-content: center;
-
-  }
+/* Guessed cards */
+.guessed-card-rect {
+  transform: translate(5px, 5px);
+  rx: 10px;
+  ry: 10px;
+  stroke-linejoin: round;
+  stroke-width: 5px;
+  fill-opacity: 0.5;
 }
 
 .guessed-card-reference {
@@ -132,7 +146,6 @@ dialog article {
   text {
     font-size: 16px;
   } 
-
 }
 
 .guessed-card-reference-title {
@@ -141,5 +154,24 @@ dialog article {
 
 .guessed-card-reference-grade {
   transform: translate(160px, 60%);
+}
+
+/* COLOURS */
+.flag-red {
+  stroke: #D62828;
+  fill: #D62828;
+}
+
+.platinum {
+  fill: #EDEDED;
+  stroke: #EDEDED;
+}
+
+.baltic-blue {
+  fill: #005786;
+}
+
+.white {
+  fill: white;
 }
 
