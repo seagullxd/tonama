@@ -99,12 +99,70 @@
                         <button class="close">Close</button>
                     </dialog>
                     <dialog id="how-to-play-dialog" closedby="any">
-                        <h2><code>How to Play</code></h2>
-                        <p>
-                            The distance between two countries is based on bilateral distances between the biggest
-                            cities of those two
-                            countries
-                        </p>
+                        <article class="dialog-article">
+                            <h2>
+                                How to Play?
+                            </h2>
+                            <p>
+                                You're given a surname, for example:
+                            </p>
+                            <h3 class="focus-paragraph">
+                                &quot;Smith&quot;
+                            </h3>
+                            <p>
+                                You want to guess what country this surname originally comes from.
+                            </p>
+                            <p>
+                                Say you guess "Wales". A card will then appear containing the country you guessed.
+                            </p>
+                            <section class="dialog-article-article">
+                                <svg class="guessed-card-reference">
+                                    <rect x="5" y="5" width="250" height="45" stroke="#D62828" stroke-width="5px" rx="10px"
+                                        ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#D62828"/>
+                                    <text fill="white" class="guessed-card-reference-title">
+                                        Wales
+                                    </text>
+                                    <text fill="white" class="guessed-card-reference-grade">
+                                        180km
+                                    </text> 
+
+                                </svg>
+                            </section>
+                            <p>
+                                The value on the right hand side is the distance from the centre of the country you guessed to the centre of the correct country.
+                            </p>
+                            <p>
+                                Use this distance as a guide to solve the puzzle. Keep guessing until you guess the correct country. In this example, the correct country is...
+                            </p>
+                            <section class="dialog-article-article">
+                                <svg class="guessed-card-reference">
+                                    <!-- TODO: abstract the rect attributes into a css file -->
+                                    <rect x="5" y="5" stroke="#EDEDED" stroke-width="5px" rx="10px"
+                                        ry="10px" stroke-linejoin="round" fill-opacity="0.5" fill="#EDEDED">
+                                    </rect>
+                                    <text fill="#005786" class="guessed-card-reference-title">
+                                        England
+                                    </text>
+                                    <text fill="#005786" class="guessed-card-reference-grade">
+                                        0km
+                                    </text> 
+                                </svg>
+                            </section>
+                            <p>
+                            </p>
+                            <h3>
+                                Helpful tips?
+                            </h3>
+                            <p>
+                                The distance between two countries is based on bilateral distances between the biggest cities of those two countries. Here, while Wales and England are neighbouring countries, the distance is still large. Be mindful when trying to guess a country with a large land mass, e.g., China or Russia.
+                            </p>
+                            <p>
+                                Make use of hints when you get stuck!
+                            </p>
+                            <p>
+                                
+                            </p>
+                        </article>
                         <button class="close">Close</button>
                     </dialog>
                     <dialog id="faq-dialog" closedby="any">

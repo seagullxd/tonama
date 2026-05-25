@@ -15,10 +15,14 @@ div {
 }
 
 dialog {
-  width: 420px;
+  width: 360px;
   border-radius: 16px;
-
   border: 0.5rem solid #E7E7E7;
+}
+
+#how-to-play-dialog {
+  width: 340px;
+  height: 480px;
 }
 
 dialog h2 {
@@ -79,7 +83,7 @@ dialog p {
   border-radius: 16px;
 }
 
-.guessed-card, .level-card {
+.guessed-card, .level-card, .guessed-card-reference {
   /* Define the font family using web fonts */
   @font-face {
     font-family: "FiraSans";
@@ -90,12 +94,52 @@ dialog p {
         format("woff2");
   }
 
-  /* Style the text */
   text {
-    /* Specify the system or custom font to use */
     font-family: "Noto Sans", sans-serif;
     font-weight: bold;
-    /* Add other styling */
     font-size: 17px;
   } 
 }
+
+
+.focus-paragraph {
+  text-align: center;
+}
+
+dialog p {
+  font-size: 14px;
+}
+
+dialog article {
+  display: grid;
+  justify-content: center;
+
+  .dialog-article-article {
+    display: grid;
+    justify-content: center;
+
+  }
+}
+
+.guessed-card-reference {
+  width: 260px;
+  height: 55px;
+
+  rect {
+    width: 250px;
+    height: 45px;
+  }
+  text {
+    font-size: 16px;
+  } 
+
+}
+
+.guessed-card-reference-title {
+  transform: translate(36px, 60%);
+}
+
+.guessed-card-reference-grade {
+  transform: translate(160px, 60%);
+}
+
