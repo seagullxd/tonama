@@ -20,7 +20,7 @@ dialog {
   border: 0.5rem solid #E7E7E7;
 }
 
-#how-to-play-dialog {
+.dialog-informative {
   width: 340px;
   height: 480px;
 }
@@ -118,6 +118,19 @@ dialog {
     font-size: 14px;
   }
 
+}
+
+/* Dialog: FAQ */
+.trim-vertical-margins {
+  font-weight: bold;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.faq-dialog-answer {
+  font-weight: 500;
+  margin-top: 4px;
+  margin-bottom: 24px;
 }
 
 .dialog-content-block {

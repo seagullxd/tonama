@@ -67,6 +67,20 @@ export const END_LEVEL = {
   }
 };
 
+export const DIALOG_FAQ = {
+  ARTICLE: "faq-dialog-article",
+  ANSWER: "faq-dialog-answer"
+}
+
+// Identifiers
+export const ID_TRIM_VERTICAL_MARGINS = "trim-vertical-margins";
+
+// Classes 
+
+export const CLASS_TRIM_VERTICAL_MARGINS = "trim-vertical-margins";
+
+// Error Messages 
+
 export const GUESSED_ERROR_MESSAGES = {
   CONTAINER: "guessed-message-container",
   DUPLICATE: {
@@ -120,7 +134,8 @@ export const LEVEL_CLASS = "level";
 export const PATH = {
   PARENT: "data",
   LEVELS_FILE: "levels.json",
-  COUNTRIES_FILE: "comprehensive_country_distances.json"
+  COUNTRIES_FILE: "comprehensive_country_distances.json",
+  FAQ_FILE: "faq.json"
 }
 
 export const HTML_CHARACTER_REFERENCE = {
