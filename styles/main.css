@@ -15,10 +15,14 @@ div {
 }
 
 dialog {
-  width: 420px;
+  width: 360px;
   border-radius: 16px;
-
   border: 0.5rem solid #E7E7E7;
+}
+
+.dialog-informative {
+  width: 340px;
+  height: 480px;
 }
 
 dialog h2 {
@@ -79,7 +83,7 @@ dialog p {
   border-radius: 16px;
 }
 
-.guessed-card, .level-card {
+.guessed-card, .level-card, .guessed-card-reference {
   /* Define the font family using web fonts */
   @font-face {
     font-family: "FiraSans";
@@ -90,12 +94,97 @@ dialog p {
         format("woff2");
   }
 
-  /* Style the text */
   text {
-    /* Specify the system or custom font to use */
     font-family: "Noto Sans", sans-serif;
     font-weight: bold;
-    /* Add other styling */
     font-size: 17px;
   } 
 }
+
+
+
+.focus-paragraph {
+  text-align: center;
+}
+
+/* Menu */
+dialog {
+  article {
+    display: grid;
+    justify-content: center;    
+  }
+
+  p {
+    font-size: 14px;
+  }
+
+}
+
+/* Dialog: FAQ */
+.trim-vertical-margins {
+  font-weight: bold;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.faq-dialog-answer {
+  font-weight: 500;
+  margin-top: 4px;
+  margin-bottom: 24px;
+}
+
+.dialog-content-block {
+  display: grid;
+  justify-content: center;
+}
+
+/* Guessed cards */
+.guessed-card-rect {
+  transform: translate(5px, 5px);
+  rx: 10px;
+  ry: 10px;
+  stroke-linejoin: round;
+  stroke-width: 5px;
+  fill-opacity: 0.5;
+}
+
+.guessed-card-reference {
+  width: 260px;
+  height: 55px;
+
+  rect {
+    width: 250px;
+    height: 45px;
+  }
+  text {
+    font-size: 16px;
+  } 
+}
+
+.guessed-card-reference-title {
+  transform: translate(36px, 60%);
+}
+
+.guessed-card-reference-grade {
+  transform: translate(160px, 60%);
+}
+
+/* COLOURS */
+.flag-red {
+  stroke: #D62828;
+  fill: #D62828;
+}
+
+.platinum {
+  fill: #EDEDED;
+  stroke: #EDEDED;
+}
+
+.baltic-blue {
+  fill: #005786;
+}
+
+.white {
+  fill: white;
+}
+

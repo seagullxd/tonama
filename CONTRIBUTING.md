@@ -6,6 +6,10 @@
 - [Pick a GitHub issue to work on](https://github.com/seagullxd/tonama/issues)
 - Communicate with other devs on [Discord](https://discord.gg/tonama).
 
+## Best practices
+- [HTML best practices](https://github.com/hail2u/html-best-practices)
+- 
+
 ## Contribute artwork or documentation
 
 There *may occasionally* be issues that need artwork and documentation to be resolved

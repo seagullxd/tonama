@@ -4,13 +4,16 @@ import {
   GUESSED_ERROR_MESSAGES,
   LEVEL_CARD,
   COUNTRY_CARD,
-  PATH
+  PATH,
+  DIALOG_FAQ,
+  CLASS_TRIM_VERTICAL_MARGINS
 } from "./constants.js";
 import { 
   createCardElement, 
   createCardElements, 
   createSvgElement,
-  createDivElement
+  createDivElement,
+  createParagraphElement
 } from "./svg.js";
 import { 
   toTitleCase, 
@@ -111,10 +114,23 @@ function tagLevelsWithStatus(levels, initialLevels) {
   })
 }
 
+function createFaqQuestionsAndAnswers() {
+  const parent = document.getElementById(DIALOG_FAQ.ARTICLE);
+  fetchJsonFile(`${PATH.PARENT}/${PATH.FAQ_FILE}`).then((data) => {
+    data.faq.forEach(qa => {
+      let question = createParagraphElement(undefined, CLASS_TRIM_VERTICAL_MARGINS, qa.question);
+      let answer = createParagraphElement(undefined, DIALOG_FAQ.ANSWER, qa.answer);
+      parent.appendChild(question);
+      parent.appendChild(answer);
+    })
+  })
+}
+
 function main() {
   let level = {};
   const formElem = document.querySelector('form');
   attachEndLevelEvents();
+  createFaqQuestionsAndAnswers();
 
   fetchJsonFile(`${PATH.PARENT}/${PATH.LEVELS_FILE}`).then((data) => {
     let levels = tagLevelsWithStatus(data.levels, getLevels());

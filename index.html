@@ -1,8 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en-US">
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="description" content="tonama is a surname (or family name) guessing game.">
     <meta property="og:image" content="">
     <meta property="og:description" content="tonama is a surname (or family name) guessing game.">
@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link rel="icon" href="images/globe.svg" type="image/x-icon">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles/main.css">
     <script src="scripts/main.js" type="module" defer></script>
 </head>
@@ -41,15 +41,22 @@
             </table>
         </aside>
         <div id="review-level-container">
-        <article id="page-header-content">
-            
-                <svg id="end-level-review-exit-btn" width="45px" height="45px" viewBox="0 0 1024.00 1024.00" display="none" xmlns="http://www.w3.org/2000/svg" fill="#1a181b" style="--darkreader-inline-fill: var(--darkreader-background-72fa78, #3b753c);" data-darkreader-inline-fill="" stroke="#1a181b" stroke-width="0.01024">
+            <article id="page-header-content">
+                <svg id="end-level-review-exit-btn" width="45px" height="45px" viewBox="0 0 1024.00 1024.00" display="none"
+                    xmlns="http://www.w3.org/2000/svg" fill="#1a181b" style="--darkreader-inline-fill: var(--darkreader-background-72fa78, #3b753c);"
+                    data-darkreader-inline-fill="" stroke="#1a181b" stroke-width="0.01024">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#1a181b" stroke-width="102.4" style="--darkreader-inline-stroke: var(--darkreader-text-cccccc, #e8d7ba);" data-darkreader-inline-stroke="">
-                        <path fill="#3c3c3b" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z" style="--darkreader-inline-fill: var(--darkreader-background-000000, #3c3c3b);" data-darkreader-inline-fill=""></path>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#1a181b"
+                        stroke-width="102.4" style="--darkreader-inline-stroke: var(--darkreader-text-cccccc, #e8d7ba);"
+                        data-darkreader-inline-stroke="">
+                        <path fill="#3c3c3b" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"
+                            style="--darkreader-inline-fill: var(--darkreader-background-000000, #3c3c3b);"
+                            data-darkreader-inline-fill=""></path>
                     </g>
                     <g id="SVGRepo_iconCarrier">
-                        <path fill="#3c3c3b" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z" style="--darkreader-inline-fill: var(--darkreader-background-000000, #3c3c3b);" data-darkreader-inline-fill=""></path>
+                        <path fill="#3c3c3b" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"
+                            style="--darkreader-inline-fill: var(--darkreader-background-000000, #3c3c3b);"
+                            data-darkreader-inline-fill=""></path>
                     </g>
                 </svg>
                 <h2 id="page-header-content-heading">
@@ -64,6 +71,7 @@
                             dialog. "Light dismiss" behavior.
                         </p>
                         <div id="controls">
+                            <!-- todo: You might like to replace this with a JSON object! -->
                             <button id="restart-btn"><code>Restart</code></button>
                             <button id="levels-btn"><code>Levels</code></button>
                             <button id="how-to-play-btn"><code>How to Play</code></button>
@@ -91,20 +99,82 @@
                         </div>
                         <button class="close">Close</button>
                     </dialog>
-                    <dialog id="how-to-play-dialog" closedby="any">
-                        <h2><code>How to Play</code></h2>
-                        <p>
-                            The distance between two countries is based on bilateral distances between the biggest cities of those two countries
-                        </p>
+                    <dialog id="how-to-play-dialog" class="dialog-informative" closedby="any">
                         <button class="close">Close</button>
+                        <article class="dialog-article">
+                            <h2>
+                                How to Play?
+                            </h2>
+                            <p class="trim-vertical-margins">
+                                You're given a surname, for example:
+                            </p>
+                            <h3 class="focus-paragraph">
+                                &quot;Smith&quot;
+                            </h3>
+                            <p class="trim-vertical-margins">
+                                You want to guess what country this surname originally comes from.
+                            </p>
+                            <p>
+                                Say you guess "Wales". A card will then appear containing the country you guessed.
+                            </p>
+                            <section class="dialog-content-block">
+                                <svg class="guessed-card-reference">
+                                    <rect class="guessed-card-rect flag-red" />
+                                    <text class="guessed-card-reference-title white">
+                                        Wales
+                                    </text>
+                                    <text class="guessed-card-reference-grade white">
+                                        180km
+                                    </text>
+                                </svg>
+                            </section>
+                            <p>
+                                The value on the right hand side is the distance between the biggest cities of both
+                                your guess, Wales, and the correct country.
+                            </p>
+                            <p>
+                                Use this distance as a guide to solve the puzzle. Keep guessing until you guess the
+                                correct country. In this example, the correct country is...
+                            </p>
+                            <section class="dialog-content-block">
+                                <svg class="guessed-card-reference">
+                                    <rect class="guessed-card-rect platinum" />
+                                    <text class="guessed-card-reference-title baltic-blue">
+                                        England
+                                    </text>
+                                    <text class="guessed-card-reference-grade baltic-blue">
+                                        0km
+                                    </text>
+                                </svg>
+                            </section>
+                            <p>
+                            </p>
+                            <h3 class="trim-vertical-margins">
+                                Helpful tips?
+                            </h3>
+                            <p class="trim-vertical-margins">
+                                The distance between two countries is based on bilateral distances between the biggest
+                                cities of those two countries. For example, the distance between Cardiff, Wales and
+                                London, England is 180km.
+                            </p>
+                            <p>
+                                Be mindful when trying to guess a country with a large land mass, e.g., China or
+                                Russia.
+                            </p>
+                            <p>
+                                Make use of hints when you get stuck!
+                            </p>
+                            <p>
+                            </p>
+                        </article>
                     </dialog>
-                    <dialog id="faq-dialog" closedby="any">
-                        <h2><code>FAQ</code></h2>
-                        <p>
-                            Closable using the "Close" button, the Esc key, or by clicking outside the
-                            dialog. "Light dismiss" behavior.
-                        </p>
+                    <dialog id="faq-dialog" class="dialog-informative" closedby="any">
                         <button class="close">Close</button>
+                        <article id="faq-dialog-article" class="dialog-article">
+                            <h2>
+                                FAQ
+                            </h2>
+                        </article>
                     </dialog>
                     <dialog id="settings-dialog" closedby="any">
                         <h2><code>Settings</code></h2>
@@ -125,21 +195,20 @@
                         <button id="end-level-select-btn">Select a level</button>
                     </dialog>
                 </h2>
-         
-        </article>
-        <article>
-            <p>Guess the origin country of the surname below.</p>
-            <h2 id="level-title-family-name">"Morgan"</h2>
-            <img src="images/bulb2.svg" alt="streak">
-            <form id="form-guess" style="display: ;">
-                <input type="text" id="form-guess-input" name="country_name" placeholder="Enter a country" required>
-                <button type="submit" id="form-guess-submit">▶︎</button>
-            </form>
-            <div id="guessed-message-container">
+            </article>
+            <article>
+                <p>Guess the origin country of the surname below.</p>
+                <h2 id="level-title-family-name">&quot;Morgan&quot;</h2>
+                <img src="images/bulb2.svg" alt="streak">
+                <form id="form-guess" style="display: ;">
+                    <input type="text" id="form-guess-input" name="country_name" placeholder="Enter a country" required>
+                    <button type="submit" id="form-guess-submit">▶︎</button>
+                </form>
+                <div id="guessed-message-container">
+                </div>
+            </article>
+            <div id="guessed-cards-container">
             </div>
-        </article>
-        <div id="guessed-cards-container">
-        </div>
     </main>
     <footer>
         <a href="https://www.example.com">about tonama</a>
