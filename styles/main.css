@@ -1,3 +1,43 @@
+/* Remember:
+ * Trim constants are to be order first
+ */
+/* Constants */
+.trim-top-margin {
+  margin-top: 0px;
+}
+
+.trim-vertical-margins {
+  font-weight: bold;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.margin-bottom-small {
+  margin-bottom: 12px;
+}
+
+.heading-large {
+  font-size: 36px;
+}
+
+.paragraph-small {
+  font-size: 14px;
+}
+
+.text-align-off-center {
+  margin-left: 16%;
+}
+
+.no-button-style {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
 body {
 	background-color: #003049;
 	color: #E7E7E7;
@@ -37,7 +77,7 @@ dialog p {
 	overflow-y: hidden;
 }
 
-#levels-rounded-corners {
+#levels-rounded-corners, .new-cards-parent {
   height:380px;
   width:380px;
   border-radius: 16px; 
@@ -45,7 +85,16 @@ dialog p {
   background: #003049;
 }
 
-#levels-cards-container {
+#level-title-date {
+  font-size: 24px;
+}
+
+.new-cards-parent {
+  border-radius: 16px; 
+  border: 0.15rem solid #E7E7E7;
+}
+
+.cards-container {
   height:380px;
   width:380px;
   background-color: #003049;
@@ -78,8 +127,6 @@ dialog p {
 
 #review-level-container {
   height:680px;
-  width:580px;
-/*  border-style: solid;*/
   border-radius: 16px;
 }
 
@@ -107,7 +154,88 @@ dialog p {
   text-align: center;
 }
 
-/* Menu */
+/*main section {
+  column-count: 3;
+  column-width: 40ch;
+  max-width: 100ch;
+  column-rule-width: 5px;
+  column-rule-style: dotted;
+  column-rule-color: rebeccapurple;
+}
+
+#section-1 {
+  height: 40ch;
+}*/
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.halves {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.thirds {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/*main {
+  margin-inline: auto;
+  max-width: 100ch;
+  column-width: 40ch;
+  column-gap: 3rem;
+  column-rule: .5px solid #98838F;
+  container-type: inline-size;
+}
+
+section:has(> aside) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 3rem;
+}
+
+section:has(> aside) main {
+  flex: 1;
+  margin-inline: 0;
+  min-width: min(100%, 30rem);
+}
+
+section:has(> aside) aside {
+  flex: 4;
+  min-width: min(100%, 30rem);
+}
+
+h1 { font-size: clamp(5.6526rem, 5.4068rem + 1.2288cqi, 6.3592rem); }
+
+h2 { font-size: clamp(1.9994rem, 1.9125rem + 0.4347cqi, 2.2493rem); }
+
+p { font-size: clamp(1rem, 0.9565rem + 0.2174cqi, 1.125rem); }
+
+h1, h2, blockquote {
+  column-span: all; 
+}*/
+
+
+/* Navigation Bar */
+.nav-bar {
+  padding-top: 2px;
+}
+
+.nav-bar-item {
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+  margin-left: 33%;
+}
+
+.no-bullets-list {
+  list-style-type: none;
+}
+
+/* More Menu */
 dialog {
   article {
     display: grid;
@@ -121,11 +249,7 @@ dialog {
 }
 
 /* Dialog: FAQ */
-.trim-vertical-margins {
-  font-weight: bold;
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
+
 
 .faq-dialog-answer {
   font-weight: 500;

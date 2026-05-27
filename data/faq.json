@@ -1,0 +1,28 @@
+{
+	"faq": [
+		{
+			"question": "What are some tips for guessing the country?",
+			"answer": "Think about which countries many people have migrated from. Consider the people in your life with the same surname."
+		},
+		{
+			"question": "I find the country distances to be misleading. What gives? For example, Sweden is next door to Norway, yet the distance is 561km.",
+			"answer": "This is by design. The value on the country card given is the distance between the two largest cities of the two countries. In this example, it is 561km. Be mindful of this when guessing for countries with a large land mass e.g., Russia or Canada."
+		},
+		{
+			"question": "How are the surnames matched to countries?",
+			"answer": "The surnames are matched to countries based on various publicly accessible datasets."
+		},
+		{
+			"question": "I played a game where the surname does not correctly match its respective country. What gives?",
+			"answer": "While the data has been cleansed to minimise as many of these cases as possible, some may have been missed. Feel free to raise an issue for it."
+		},
+		{
+			"question": "I want to suggest a surname to be added in. How can I do this?",
+			"answer": "Raise an issue tagged as a suggestion on Github."
+		},
+		{
+			"question": "My question hasn't been answered here. What do I do?",
+			"answer": "Raise an issue tagged as a question on Github."
+		}
+	]
+}
