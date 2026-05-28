@@ -125,8 +125,8 @@ export const STYLE_ATTRIBUTES = {
 
 export const FORM_GUESS = {
   PARENT: "form-guess",
-  INPUT: "form-guess-input",
-  SUBMIT: "form-guess-submit"
+  INPUT: "form-container-input-text",
+  SUBMIT: "form-container-input-submit"
 }
 
 export const LEVEL_CLASS = "level";

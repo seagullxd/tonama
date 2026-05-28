@@ -14,6 +14,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="styles/constants.css">
     <link rel="stylesheet" href="styles/main.css">
     <script src="scripts/main.js" type="module" defer></script>
 </head>
@@ -31,10 +32,10 @@
             <li></li>
         </ul>
     </nav>
-    <main>
+    <main class="thirds-heavy-ends column-gap-very-small">
         <aside id="section-1"></aside>
         <article id="review-level-container">
-                <header id="page-header-content" class="halves">
+                <header id="page-header-content" class="halves-heavy-first">
                     <svg id="end-level-review-exit-btn" width="45px" height="45px" viewBox="0 0 1024.00 1024.00"
                         display="none" xmlns="http://www.w3.org/2000/svg" fill="#1a181b" style="--darkreader-inline-fill: var(--darkreader-background-72fa78, #3b753c);"
                         data-darkreader-inline-fill="" stroke="#1a181b" stroke-width="0.01024">
@@ -52,15 +53,16 @@
                                 data-darkreader-inline-fill=""></path>
                         </g>
                     </svg>
-                    <h2 id="page-header-content-heading" class="trim-vertical-margins margin-bottom-small">
+                    <h2 id="page-header-content-heading" class="margin-vertical-none margin-bottom-small">
                         <a id="level-title-date">
                             <time id="level-title-date-time">
                                 <sup id="level-title-date-time-sup"></sup>
                             </time>
                         </a>
                     </h2>
+                    <!-- <nav></nav> -->
                         <!-- todo: change title format to day dd mm e.g., Tues 12th Aug -->
-                    <nav>
+                    <nav class="text-align-end">
                         <img src="images/globe-svgrepo-com.svg" alt="streak">
                         <button id="how-to-play-btn" class="no-button-style">
                             <img src="images/help-3-svgrepo-com.svg" alt="help">
@@ -69,7 +71,6 @@
                             <img src="images/more-circle-vertical-svgrepo-com.svg" alt="more">
                         </button>
                     </nav>
-
                         
                         <dialog id="more-dialog" closedby="any">
                             <h2><code>More</code></h2>
@@ -110,13 +111,13 @@
                                 <h2>
                                     How to Play?
                                 </h2>
-                                <p class="trim-vertical-margins">
+                                <p class="margin-vertical-none paragraph-bold">
                                     You're given a surname, for example:
                                 </p>
                                 <h3 class="focus-paragraph">
                                     &quot;Smith&quot;
                                 </h3>
-                                <p class="trim-vertical-margins">
+                                <p class="margin-vertical-none paragraph-bold">
                                     You want to guess what country this surname originally comes from.
                                 </p>
                                 <p>
@@ -154,10 +155,10 @@
                                 </section>
                                 <p>
                                 </p>
-                                <h3 class="trim-vertical-margins">
+                                <h3 class="margin-vertical-none">
                                     Helpful tips?
                                 </h3>
-                                <p class="trim-vertical-margins">
+                                <p class="margin-vertical-none paragraph-bold">
                                     The distance between two countries is based on bilateral distances between the
                                     biggest
                                     cities of those two countries. For example, the distance between Cardiff, Wales and
@@ -201,16 +202,40 @@
                             <button id="end-level-select-btn">Select a level</button>
                         </dialog>
                 </header>
-                <p class="paragraph-small trim-top-margin">Guess the origin country of the surname below.</p>
-                <h1 id="level-title-family-name" class="heading-large text-align-off-center">&quot;Morgan&quot;</h1>
-                <img src="images/knowledge-svgrepo-com.svg" alt="streak">
+                <h1 id="level-title-family-name" class="heading-large text-align-off-center margin-bottom-small-2 margin-top-large">&quot;Morgan&quot;</h1>
+                <figure class="margin-none text-align-end">
+                    <img src="images/knowledge-svgrepo-com.svg" alt="streak">
+                </figure>
+                
                 <article>
                     
                     
-                    <form id="form-guess" style="display: ;">
-                        <input type="text" id="form-guess-input" name="country_name" placeholder="Enter a country"
-                            required>
-                        <button type="submit" id="form-guess-submit">▶︎</button>
+                    <form id="form-container" novalidate >
+                        <label for="form-container-label">Guess what country the family name is from</label>
+                        <div class="form-row">
+                            <input 
+                              type="text" 
+                              class="background-none border-solid-white" 
+                              id="form-container-input-text" 
+                              name="country_name" 
+                              placeholder="e.g., Sweden, Portugal"
+                              minlength="4"
+                              maxlength="56"
+                              required
+                            >
+                            <!-- todo: replace the samp with a span error message -->
+                            <!-- <span class="error" aria-live="polite"></span> -->
+
+                            <!-- todo: spend some time working on the input validation -->
+                            <!-- in my eyes, the general validation message is good  -->
+                            <!-- i just need to add more messages to cover < minlength and > maxlength, empty input, valid characters only i.e., alphabetical, valid country name  -->
+
+                            <!-- see: A more detailed example  -->
+                            <!-- https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Form_validation#validating_forms_using_javascript -->
+                            <input type="image" id="form-container-input-submit" src="/images/send-1-svgrepo-com.svg" alt="submit" />
+
+                        </div>
+                        
                     </form>
                     <div id="guessed-message-container">
                     </div>
@@ -218,7 +243,7 @@
                 <div id="guessed-cards-container" class="new-cards-parent">
                 </div>
         </article>
-        <aside>
+        <aside class="text-align-off-left">
             <table>
                 <tr>
                     <td>elapsed time:</td>
