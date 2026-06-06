@@ -62,39 +62,36 @@
                     </nav>
                         
                         <dialog id="more-dialog" closedby="any">
-                            <h2><code>More</code></h2>
+                            <button id="more-options-menu-controls-close" class="no-button-style close">
+                                <img src="images/x-round-svgrepo-com-dark.svg" alt="exit button">
+                            </button>
+                            <h2>More</h2>
                             <p>
-                                Closable using the "Close" button, the Esc key, or by clicking outside the
-                                dialog. "Light dismiss" behavior.
+                                Select one of the options below
                             </p>
                             <div id="controls">
                                 <!-- todo: You might like to replace this with a JSON object! -->
-                                <button id="restart-btn"><code>Restart</code></button>
                                 <button id="levels-btn"><code>Levels</code></button>
                                 <button id="faq-btn"><code>FAQ</code></button>
                                 <button id="settings-btn"><code>Settings</code></button>
                             </div>
-                            <button id="more-options-menu-controls-close" class="close">Close</button>
                         </dialog>
                         <!-- todo: consider creating a js function to dynamically generate a basic dialog for each, then can add unique text content after -->
-                        <dialog id="restart-dialog" closedby="any">
-                            <h2><code>Restart</code></h2>
-                            <p>
-                                Are you sure you want to restart the level?
-                            </p>
-                            <button id="more-options-menu-restart-close" class="close">Close</button>
-                        </dialog>
                         <dialog id="levels-dialog" closedby="any">
-                            <h2><code>Levels</code></h2>
+                            <button id="more-options-menu-levels-close" class="no-button-style close">
+                                <img src="images/x-round-svgrepo-com-dark.svg" alt="exit button">
+                            </button>
+                            <h2>Levels</h2>
                             <p>
-                                Closable using the "Close" button, the Esc key, or by clicking outside the
-                                dialog. "Light dismiss" behavior.
+                                Select one of the levels below
                             </p>
                             <div id="levels-cards-container" class="new-cards-container padding-vertical-small border-solid-deep-space-blue"></div>
-                            <button id="more-options-menu-levels-close" class="close">Close</button>
                         </dialog>
                         <dialog id="how-to-play-dialog" class="dialog-informative" closedby="any">
-                            <button id="how-to-play-close" class="close">Close</button>
+                            <!-- todo: make this right aligned -->
+                            <button id="how-to-play-close" class="no-button-style close">
+                                <img src="images/x-round-svgrepo-com-dark.svg" alt="exit button">
+                            </button>
                             <article class="dialog-article">
                                 <h2>
                                     How to Play?
@@ -166,7 +163,9 @@
                             </article>
                         </dialog>
                         <dialog id="faq-dialog" class="dialog-informative" closedby="any">
-                            <button id="more-options-menu-faq-close" class="close">Close</button>
+                            <button id="more-options-menu-faq-close" class="no-button-style close">
+                                <img src="images/x-round-svgrepo-com-dark.svg" alt="exit button">
+                            </button>
                             <article id="faq-dialog-article" class="dialog-article">
                                 <h2>
                                     FAQ
@@ -174,15 +173,16 @@
                             </article>
                         </dialog>
                         <dialog id="settings-dialog" closedby="any">
-                            <h2><code>Settings</code></h2>
+                            <button id="more-options-menu-settings-close" class="no-button-style close">
+                                <img src="images/x-round-svgrepo-com-dark.svg" alt="exit button">
+                            </button>
+                            <h2>Settings</h2>
                             <p>
-                                Closable using the "Close" button, the Esc key, or by clicking outside the
-                                dialog. "Light dismiss" behavior.
+                                Dialog not yet made...
                             </p>
-                            <button id="more-options-menu-settings-close" class="close">Close</button>
                         </dialog>
                         <dialog id="end-level-dialog" closedby="none">
-                            <h2><code>Level completed!</code></h2>
+                            <h2>Level completed!</h2>
                             <p>
                                 You guessed correct!
                             </p>

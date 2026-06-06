@@ -34,10 +34,6 @@ export const DIALOG_CONFIG = {
     button: "more-btn",
     dialog: "more-dialog"
   },
-  RESTART: {
-    button: "restart-btn",
-    dialog: "restart-dialog"
-  },
   LEVELS: {
     button: "levels-btn",
     dialog: "levels-dialog"
