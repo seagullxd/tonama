@@ -35,25 +35,7 @@
         <aside id="section-1"></aside>
         <!-- todo: fix UI on review level container -->
         <article id="review-level-container">
-                <header id="page-header-content" class="halves-heavy-first">
-                    <!-- todo: replace svg with separate file -->
-                    <svg id="end-level-review-exit-btn" width="45px" height="45px" viewBox="0 0 1024.00 1024.00"
-                        display="none" xmlns="http://www.w3.org/2000/svg" fill="#1a181b" style="--darkreader-inline-fill: var(--darkreader-background-72fa78, #3b753c);"
-                        data-darkreader-inline-fill="" stroke="#1a181b" stroke-width="0.01024">
-                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#1a181b"
-                            stroke-width="102.4" style="--darkreader-inline-stroke: var(--darkreader-text-cccccc, #e8d7ba);"
-                            data-darkreader-inline-stroke="">
-                            <path fill="#3c3c3b" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"
-                                style="--darkreader-inline-fill: var(--darkreader-background-000000, #3c3c3b);"
-                                data-darkreader-inline-fill=""></path>
-                        </g>
-                        <g id="SVGRepo_iconCarrier">
-                            <path fill="#3c3c3b" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"
-                                style="--darkreader-inline-fill: var(--darkreader-background-000000, #3c3c3b);"
-                                data-darkreader-inline-fill=""></path>
-                        </g>
-                    </svg>
+                <header id="page-header-content" class="halves-heavy-first"> 
                     <h2 id="page-header-content-heading" class="margin-vertical-none margin-bottom-small">
                         <a id="level-title-date">
                             <!-- todo: make the date include the day e.g., Mon 6th June -->
@@ -64,13 +46,18 @@
                     </h2>
                     <!-- <nav></nav> -->
                         <!-- todo: change title format to day dd mm e.g., Tues 12th Aug -->
-                    <nav class="text-align-end">
+                    <nav id="in-game-nav-bar" class="text-align-end hide-in-review-state">
                         <img src="images/globe-svgrepo-com.svg" alt="streak">
                         <button id="how-to-play-btn" class="no-button-style">
                             <img src="images/help-3-svgrepo-com.svg" alt="help">
                         </button>
                         <button id="more-btn" class="no-button-style">
                             <img src="images/more-circle-vertical-svgrepo-com.svg" alt="more">
+                        </button>
+                    </nav>
+                    <nav class="text-align-end show-in-review-state hidden">
+                        <button id="end-level-review-exit-btn" class="no-button-style">
+                            <img src="images/x-round-svgrepo-com.svg" alt="exit button">
                         </button>
                     </nav>
                         
@@ -206,14 +193,15 @@
                         </dialog>
                 </header>
                 <h1 id="level-title-family-name" class="heading-large text-align-off-center margin-bottom-small-2 margin-top-medium">&quot;Morgan&quot;</h1>
-                <figure class="margin-none text-align-end">
+                <figure class="margin-none text-align-end hide-in-review-state">
                     <img src="images/knowledge-svgrepo-com.svg" alt="streak">
                 </figure>
-                
+                <figure class="figure-for-review-state show-in-review-state hidden">
+                </figure>
                 <article>
-                    <form id="form-container" novalidate >
+                    <form class="form-container" novalidate >
                         <label for="form-container-label">Guess what country the family name is from</label>
-                        <div class="form-row">
+                        <div class="form-row hide-in-review-state">
                             <input 
                               type="text" 
                               name="country"
@@ -228,6 +216,7 @@
                             <!-- pattern captures basic latin, common European accents, space or hypen between words -->
                             <input type="image" id="form-container-input-submit" src="/images/send-1-svgrepo-com.svg" alt="submit" />
                         </div>
+                        <div class="form-row-for-review-state show-in-review-state hidden"></div>
                         
                         <div id="placeholder-for-error" class="margin-bottom-very-small">
                             <span id="error" class="visually-hidden" aria-live="polite" aria-atomic="true">

@@ -67,6 +67,10 @@ export const END_LEVEL = {
   }
 };
 
+export const END_LEVEL_REVIEW_HIDE = {
+  NAVBAR: "in-game-nav-bar"
+}
+
 export const DIALOG_FAQ = {
   ARTICLE: "faq-dialog-article",
   ANSWER: "faq-dialog-answer"
