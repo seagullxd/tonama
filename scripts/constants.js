@@ -1,22 +1,22 @@
 import { COLOUR } from "./models/entity-colours.js";
 
-// Sizes
-export const COUNTRY_CARD = {
-  PARENT: "guessed-cards-container",
-  ID: "guessed-card",
-	WIDTH: 290,
-	HEIGHT: 50,
+export const CARD_ATTRIBUTES = {
+  WIDTH: 290,
+  HEIGHT: 50,
   COLOUR: COLOUR.FRESH_SKY,
-};
+}
 
-export const LEVEL_CARD = {
-  GRANDPARENT: "levels-rounded-corners",
+export const GUESSED_CARD_ATTRIBUTES = {
+  ...CARD_ATTRIBUTES,
+  PARENT: "guessed-cards-container",
+  CLASS: "card"
+}
+
+export const LEVEL_CARD_ATTRIBUTES = {
+  ...CARD_ATTRIBUTES,
   PARENT: "levels-cards-container",
-  ID: "level-card",
-  BUTTON: "level",
-	WIDTH: 290,
-	HEIGHT: 50,
-  COLOUR: COLOUR.FRESH_SKY,
+  CLASS: "level-card",
+  BUTTON: "level"
 };
 
 export const REVIEW_LEVEL_CONTAINER = "review-level-container";
@@ -89,6 +89,11 @@ export const GUESSED_ERROR_MESSAGES = {
   },
   INVALID: {
     message: "is not a valid country.",
+    message2: "You must enter a guess",
+    message3: "Your guess is too short, it must be at least 4 characters.",
+    message4: "Your guess is too long, it must not be over 56 characters.",
+    message5: "Your guess contains invalid characters.",
+    message6: "Your guess contains a misplaced capital letter.",
     id: "guessed-message-invalid"
   }
 };
@@ -123,8 +128,13 @@ export const STYLE_ATTRIBUTES = {
   }
 }
 
+export const DISPLAY_CLASS = {
+  HIDE: "visually-hidden",
+  SHOW: "visually-showing"
+}
+
 export const FORM_GUESS = {
-  PARENT: "form-guess",
+  PARENT: "form-container",
   INPUT: "form-container-input-text",
   SUBMIT: "form-container-input-submit"
 }

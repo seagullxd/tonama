@@ -1,20 +1,20 @@
 import { removeElementTextValue } from "../svg.js";
-import { closeDialogs } from "../menu.js";
+import { closeButtonParentDialogs } from "../menu.js";
 import { classifyDate } from "./utilDate.js";
 import { LevelStatus } from "../models/levels.js";
 import { getLevels } from "../local-storage.js";
 import { createGuessedCardElements } from "./guess.js";
 import { 
 	createCardElement, 
-	createCardElements, 
+	createLevelCardElements, 
 	createDivElement,
 	removeAllCards
 } from "../svg.js";
 import {  
 	FORM_GUESS,
 	LEVEL_TITLE,
-	COUNTRY_CARD,
-	LEVEL_CARD,
+	LEVEL_CARD_ATTRIBUTES,
+  GUESSED_CARD_ATTRIBUTES,
   HTML_CHARACTER_REFERENCE
 } from "../constants.js";
 
@@ -29,9 +29,8 @@ export function unloadLevel() {
 	}
 	removeElementTextValue(LEVEL_TITLE.FAMILY_NAME);
 	removeElementTextValue(FORM_GUESS.INPUT);
-	removeAllCards(`.${COUNTRY_CARD.ID}`);
-	const closeBtns = document.querySelectorAll(".close");
-  closeDialogs(closeBtns);
+	removeAllCards(`.${GUESSED_CARD_ATTRIBUTES.CLASS}`);
+  closeButtonParentDialogs();
 }
 
 /**
@@ -40,14 +39,14 @@ export function unloadLevel() {
  * @return {undefined}
  */
 export function reloadLevelCards(levels) {
-  const node = document.getElementById(LEVEL_CARD.GRANDPARENT);
-  const levelCardsContainer = document.getElementById(LEVEL_CARD.PARENT);
-  const newLevelCardsContainer = createDivElement(LEVEL_CARD.PARENT);
+  const node = document.getElementById(LEVEL_CARD_ATTRIBUTES.GRANDPARENT);
+  const levelCardsContainer = document.getElementById(LEVEL_CARD_ATTRIBUTES.PARENT);
+  const newLevelCardsContainer = createDivElement(LEVEL_CARD_ATTRIBUTES.PARENT);
 
   levelCardsContainer.remove();
   node.appendChild(newLevelCardsContainer);
 
-  createCardElements(LEVEL_CARD, levels); 
+  createLevelCardElements(levels); 
 }
 
 /**
@@ -61,11 +60,9 @@ export function loadLevelAttributes(level) {
 	setElementTitle(dateString, superscript);
 	setElementName(level.name);
 
-	let dynamicLevels = getLevels();
-  createGuessedCardElements(level.id, dynamicLevels);
-
-  const closeBtns = document.querySelectorAll(".close");
-  closeDialogs(closeBtns);
+  const levelLocalStorage = getLevels()?.find((l) => l.id == level.id);
+  createGuessedCardElements(levelLocalStorage?.guesses);
+  closeButtonParentDialogs();
 }
 
 /**

@@ -12,13 +12,15 @@ import {
 } from "./constants.js";
 
 export function handleDialogOpenEvent() {
-  const closeBtns = document.querySelectorAll(".close");
   Object.entries(DIALOG_CONFIG).forEach(([key, { button, dialog }]) => {
     const buttonElement = document.getElementById(button);
     const dialogElement = document.getElementById(dialog);
     attachDialogOpenEvent(buttonElement, dialogElement);
   });
+}
 
+export function attachButtonParentDialogCloseEvents() {
+  const closeBtns = document.querySelectorAll(".close");
   closeBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       btn.parentElement.close();
@@ -27,9 +29,8 @@ export function handleDialogOpenEvent() {
 }
 
 function attachDialogOpenEvent(buttonElement, dialogElement) {
-  const closeBtns = document.querySelectorAll(".close");
   buttonElement.addEventListener("click", () => {
-    closeDialogs(closeBtns);
+    closeButtonParentDialogs();
     dialogElement.showModal();
   });
 }
@@ -163,7 +164,8 @@ function showDialogModal(id, showDialog) {
   showDialog ? modal.showModal() : modal.close();
 }
 
-export function closeDialogs(closeBtns) {
+export function closeButtonParentDialogs() {
+  const closeBtns = document.querySelectorAll(".close");
   closeBtns.forEach((btn) => {
     btn.parentElement.close();
   });

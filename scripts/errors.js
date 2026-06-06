@@ -1,25 +1,26 @@
-import { GUESSED_ERROR_MESSAGES } from "./constants.js";
+import { 
+  GUESSED_ERROR_MESSAGES,
+  DISPLAY_CLASS
+} from "./constants.js";
 import { createMessageElement } from "./svg.js";
 
 /**
- * @param {string} id An identifier for the html tag
- * @param {string} message An error message to display
+ * Display a new error message about a user's input.
+ * 
+ * @param {string} textContent An error message to display
  * @returns {undefined}
  */
-export function displayErrorMessage(id, message) {
-  let errorElement;
-  let guessErrorElement = document.getElementById(GUESSED_ERROR_MESSAGES.DUPLICATE.id);
-  let invalidErrorElement = document.getElementById(GUESSED_ERROR_MESSAGES.INVALID.id);
-  if (!(guessErrorElement || invalidErrorElement)) {    
-    const node = document.getElementById(GUESSED_ERROR_MESSAGES.CONTAINER);
-    errorElement = createMessageElement(id, undefined, message);
-    node.append(errorElement);
+export function displayNewError(textContent) {
+  let errorElement = document.getElementById("error");
+  errorElement.removeAttribute("class");
 
+  if (errorElement.getAttribute("class") != DISPLAY_CLASS.SHOW) {
+    errorElement.textContent = textContent;
+    errorElement.setAttribute("class", DISPLAY_CLASS.SHOW);
     setTimeout(function () {
-      node.removeChild(errorElement);
-      console.log("Message removed");
-    }, 5000);
-  }
+      errorElement.setAttribute("class", DISPLAY_CLASS.HIDE);
+    }, 8000);
+  }  
 }
 
 // todo #1: move this function out of error.js
