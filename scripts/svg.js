@@ -1,18 +1,39 @@
 /* Dynamically create svgs and elements for use in HTML */
-
-import { loadLevelHandler } from "./main.js";
-import { TEXT_COORDINATES, LEVEL_CLASS, CARD_PADDING } from "./constants.js";
+import { unloadLevel, loadLevelAttributes } from "./util/utilLevels.js";
+import { isEmpty } from "./util/object.js";
+import { COLOUR } from "./models/entity-colours.js";
+import { LevelStatusToColour } from "./models/levels.js";
+import { LevelStatus } from "./models/levels.js";
+import { setLastLevelOpened } from "./local-storage.js";
+import { 
+  createEndLevelDialog, 
+  dispatchEndLevelEvent 
+} from "./menu.js";
+import {
+  TEXT_COORDINATES,
+  LEVEL_CLASS,
+  CARD_PADDING,
+  LEVEL_CARD_ATTRIBUTES,
+  FORM_GUESS,
+  END_LEVEL
+} from "./constants.js";
 
 // https://developer.mozilla.org/en-US/docs/Web/SVG/Guides/Scripting
-function createSvgElement(width, height, className) {
+export function createSvgElement(id, className, width, height) {
   let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttributeNS(null, "id", id);
+  svg.setAttributeNS(null, "class", className);
   svg.setAttributeNS(null, "width", width);
   svg.setAttributeNS(null, "height", height);
-  svg.setAttributeNS(null, "class", className);
+
+  
+  // svg.addEventListener('animationend', () => {
+  //   svg.classList.add('new-drop-shadow-platinum');
+  // }, { once: true }); 
   return svg;
 }
 
-function createRectElement(colour, width, height) {
+function createRectElement(width, height, colour) {
   let rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
   rect.setAttributeNS(null, "x", "5");
   rect.setAttributeNS(null, "y", "5");
@@ -37,57 +58,116 @@ function createTextElement(x, text) {
   return textNS;
 }
 
-function createButtonElement(type, id, className) {
-  const buttonNS = document.createElementNS(
-    "http://www.w3.org/1999/xhtml",
-    "button",
-  );
-  buttonNS.setAttributeNS(null, "type", type);
+export function createButtonElement(id, className, type) {
+  const buttonNS = document.createElementNS("http://www.w3.org/2000/xhtml", "button");
   buttonNS.setAttributeNS(null, "id", id);
   buttonNS.setAttributeNS(null, "class", className);
+  buttonNS.setAttributeNS(null, "type", type);
   return buttonNS;
 }
 
-function handleIncludeButton(svg, parentContainer, levelData) {
-  const { id, level, difficulty, name, origin } = levelData;
-  let button = createButtonElement("submit", `level-${levelData.id}`, LEVEL_CLASS);
-  button.addEventListener("click", () => {
-    loadLevelHandler(levelData);
-  });
-  button.appendChild(svg);
-  parentContainer.appendChild(button);
+export function createDivElement(id, className) {
+  const container = document.createElement('div');
+  container.setAttribute("id", id);
+  container.setAttribute("class", className);
+  return container;
 }
 
-export function createCardElement(
-  title,
-  measure,
-  colour,
-  parentContainerHtmlId,
-  width,
-  height,
-  includeButton = false,
-  levelData = {}
-) {
-  
-  let parentContainer = document.getElementById(parentContainerHtmlId);
-  if ((!width && !height) || !parentContainer) {
-    return;
-  }
+export function createMessageElement(id, className, content) {
+  const paragraph = document.createElement("p");
+  paragraph.setAttribute("id", id);
+  paragraph.setAttribute("class", className);
 
+  const samp = document.createElement("samp");
+  samp.textContent = content;
+  paragraph.appendChild(samp);
+  return paragraph;
+}
 
-  // tech debt: using includeButton to determine if card is for guess or level
-  let svg = createSvgElement(width + CARD_PADDING, height + CARD_PADDING, includeButton ? "level-card" : "guess-card");
-  if (includeButton) {
-    handleIncludeButton(svg, parentContainer, levelData);
-  } else {
-    parentContainer.appendChild(svg);
+export function createParagraphElement(id, className, content) {
+  const paragraph = document.createElement("p");
+  paragraph.setAttribute("id", id);
+  paragraph.setAttribute("class", className);
+
+  paragraph.innerHTML = content;
+  return paragraph;
+}
+
+function attachNewLevelSelectEvent(level, button) {
+  const endLevelDialog = document.getElementById(END_LEVEL.DIALOG);
+  button.addEventListener("click", () => {
+    unloadLevel();
+    loadLevelAttributes(level);
+    setLastLevelOpened(level.id);
+   
+    endLevelDialog.close();
+    if (level.status == LevelStatus.completed) {
+      let endLevelDialog = createEndLevelDialog(level.id);
+      dispatchEndLevelEvent(endLevelDialog);
+    }
+  });
+}
+
+// todo: goal is to make a card.js file, acknowledge this is very similar to 
+// createGuessedCardElements and have them next to each other so the developer knows
+
+/* See createCardElement(...) */
+export function createLevelCardElements(levels) {
+  for (const level of levels) {
+    const newCard = { title: level.title, measurement: level.difficulty };
+    LEVEL_CARD_ATTRIBUTES.COLOUR = LevelStatusToColour[level.status];
+    createCardElement(LEVEL_CARD_ATTRIBUTES, newCard, level);
   }
-  let r = createRectElement(colour, width, height);
+}
+
+/**
+ * Creates a card element
+ * @param {object} cardAttributes A card's HTML attributes
+ * @param {object} newCard A newly prepared card with properties: title, measurement
+ * @param {object} level A level's attributes
+ * @return {undefined}
+ */
+export function createCardElement(cardAttributes, newCard, level = undefined) {
+  const svgId = newCard.title.split(" ").join("-"); // todo: make this into a numeric identifier
+  const svg = createSvgElement(
+    svgId,
+    cardAttributes.CLASS,
+    cardAttributes.WIDTH + CARD_PADDING,
+    cardAttributes.HEIGHT + CARD_PADDING
+  );
+
+  const parentContainer = document.getElementById(cardAttributes.PARENT);
+  if (level) {
+    const button = createButtonElement(`level-${level.id}`, LEVEL_CLASS, "submit");
+    attachNewLevelSelectEvent(level, button);
+    button.appendChild(svg);
+    parentContainer.appendChild(button);
+  }
+  else parentContainer.appendChild(svg);
+
+  const r = createRectElement(
+    cardAttributes.WIDTH, 
+    cardAttributes.HEIGHT, 
+    cardAttributes.COLOUR
+  );
   svg.appendChild(r);
-  let t1 = createTextElement(TEXT_COORDINATES.X, title);
+  const t1 = createTextElement(TEXT_COORDINATES.X, newCard.title);
   svg.appendChild(t1);
-  let t2 = createTextElement(TEXT_COORDINATES.Y, measure);
+  const t2 = createTextElement(TEXT_COORDINATES.Y, newCard.measurement);
   svg.appendChild(t2);
+}
 
-  console.log('create card element successfully called!');
+export function removeGuessTextInput() {
+  const textInput = document.getElementById(FORM_GUESS.INPUT);
+  textInput.value = "";
+}
+
+export function removeElementTextValue(id) {
+  const element = document.getElementById(id);
+
+  element.value = "";
+}
+
+export function removeAllCards(selector) {
+  document.querySelectorAll(selector).forEach((e) => e.remove());
 }

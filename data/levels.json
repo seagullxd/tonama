@@ -2,43 +2,49 @@
 	"levels": [
 		{
 			"id": "020326",
-			"level": "2 March 2026",
+			"title": "2 March 2026",
 			"difficulty": "easy",
+			"status": 0,
 			"name": "Anthony",
 			"origin": "Wales"
 		},
 		{
 			"id": "090326",
-			"level": "9 March 2026",
+			"title": "9 March 2026",
 			"difficulty": "easy",
+			"status": 0,
 			"name": "Bellamy",
 			"origin": "France"	
 		},
 		{
 			"id": "160326",
-			"level": "16 March 2026",
+			"title": "16 March 2026",
 			"difficulty": "easy",
+			"status": 0,
 			"name": "Fujikawa",
 			"origin": "Japan"	
 		},
 			{
 			"id": "230326",
-			"level": "23 March 2026",
+			"title": "23 March 2026",
 			"difficulty": "intermediate",
+			"status": 0,
 			"name": "Furlong",
 			"origin": "England"	
 		},
 		{
 			"id": "300326",
-			"level": "30 March 2026",
+			"title": "30 March 2026",
 			"difficulty": "intermediate",
+			"status": 0,
 			"name": "Gabriel",
 			"origin": "England"	
 		},
 		{
 			"id": "060426",
-			"level": "6 April 2026",
+			"title": "6 April 2026",
 			"difficulty": "easy",
+			"status": 0,
 			"name": "Gill",
 			"origin": "Ireland"	
 		}

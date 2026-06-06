@@ -28,6 +28,11 @@ Install in Sublime Text Command Pallette:
 - Prettier
 - JsHint
 
+## Run a simple local HTTP server
+```
+$ npx live-server 
+```
+
 Make sure the sublime settings for JsHint and Prettier reference the ./node_modules/.bin
 
 ## Get started locally
@@ -39,6 +44,21 @@ Steps to run tonama locally
 3. Search for "SublimeServer: Start Sublime Server"
 4. Open index.html in your editor
 5. Right click then select "View in Sublime Server'
+
+#### Setup build system
+1. Go to Tools > Build System > New Build System...
+2. Start with the below code block - add to it as you like
+3. Save the build system
+4. Set it as the preset build system in Tools > Build System 
+
+```
+tonama.sublime-build
+// activates on save
+{   
+  "cmd": ["/path/to/jshint", "$file"],   
+  "selector": "*.js"   
+}
+```
 
 ## Contributing
 

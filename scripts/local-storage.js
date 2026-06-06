@@ -1,116 +1,86 @@
-import { LevelStatus } from "./models/levels.js";
-import { isEmpty } from "./util/object.js";
-import { ENTITY_COLOURS } from "./models/entity-colours.js";
-import { createCardElement } from "./svg.js";
-import { CONTAINER, COUNTRY_CARD, LEVEL_CARD } from "./constants.js";
+import { sortedIndex } from "./util/object.js";
 
-export function saveLocalStorage(
-	userId,
-	levelId,
-	levelTitle,
-	guess,
-	additionalHintsUsed = 0,
-) {
-	let storedLevels = JSON.parse(localStorage.getItem("levels"));
-	let storedLevel;
-	if (storedLevels) {
-		storedLevel = storedLevels.find((l) => l.id == levelId);
-		if (storedLevel) {
-			storedLevel.guesses.push(guess);
-		} else {
-			storedLevel = makeLevel(levelId, levelTitle, additionalHintsUsed, guess);
-			storedLevels.push(storedLevel);
-		}
-	} else {
-		storedLevels = [];
-		storedLevel = makeLevel(levelId, levelTitle, additionalHintsUsed, guess);
-		storedLevels.push(storedLevel);
-	}
-
-	localStorage.setItem("levels", JSON.stringify(storedLevels));
-
-	let storedLastLevelIdOpen = localStorage.getItem("lastLevelIdOpen");
-	if (!storedLastLevelIdOpen) {
-		localStorage.setItem("lastLevelIdOpen", levelId);
-	} else if (storedLastLevelIdOpen != levelId) {
-		localStorage.setItem("lastLevelIdOpen", storedLastLevelIdOpen);
-	}
-}
-
-function isUserExisting(id) {
-	const storedId = localStorage.getItem("userId");
-	return id === storedId;
-}
-
-export function getUserId() {
-	let id = localStorage.getItem("userId");
-	if (!id | !isUserExisting(id)) {
-		id = uuidv4();
-		localStorage.setItem("userId", id);
-	}
-	return id;
-}
-
-function makeLevel(levelId, level, hintsUsed, guess) {
-	const guesses = [];
-	guesses.push(guess);
-	const newLevelObj = {
-		id: levelId,
-		title: level,
-		status: LevelStatus.inProgress,
-		hintsUsed: hintsUsed,
-		guesses: guesses,
-	};
-	return newLevelObj;
+export function getLastLevelIdOpened() {
+	return localStorage.getItem("lastLevelIdOpened"); 
 }
 
 /**
- * Display country cards for this level.
- * @param {number} the level id to generate guessed cards for.
+ * Sets a level id as the last level opened.
+ *
+ * @param {string} levelId the level id.
  * @return {undefined}
  */
-export function loadGuessCards(levelId) {
-	let storedLevels = JSON.parse(localStorage.getItem("levels"));
-	if (storedLevels) {
-		const level = storedLevels.find((l) => l.id == levelId);
-		if (level) {
-			level.guesses.forEach((guess) => {
-				createCardElement(
-					guess.country,
-					`${guess.distance}km`,
-					ENTITY_COLOURS[guess.country],
-					CONTAINER.GUESSED_CARDS,
-					LEVEL_CARD.WIDTH,
-					LEVEL_CARD.HEIGHT,
-				);
-			});
-		}
-	}
+export function setLastLevelOpened(levelId) {
+	localStorage.setItem("lastLevelIdOpened", levelId); 
 }
 
-// Source - https://stackoverflow.com/a/2117523
-// Posted by broofa, modified by community. See post 'Timeline' for change history
-// Retrieved 2026-01-13, License - CC BY-SA 4.0
-function uuidv4() {
-	return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c) =>
-		(
-			+c ^
-			(crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))
-		).toString(16),
-	);
+// todo: this is ideally for local storage levels
+// but you can use it for static levels
+// therefore, shouldn't it be placed in a levels.js file to encourage that re-use?
+export function getLevelIndex(levelId) {
+  return getLevels().findIndex((l) => l.id === levelId);
 }
 
-function iterateStatus(status) {
-	switch (status) {
-		case LevelStatus.notStarted:
-			status = LevelStatus.inProgress;
-			break;
-		case LevelStatus.inProgress:
-			status = LevelStatus.completed;
-			break;
-		default:
-			// do nothing to status if completed
-			break;
+/**
+ * Returns a level using a level id.
+ * 
+ * @param {string} levelId the level id. 	// todo: confirm it's a string
+ * @return {object} the level found.
+ */
+export function getLevel(levelId) {
+  return getLevels().find((l) => l.id === levelId);
+}
+
+/**
+ * Returns the levels.
+ *
+ * @return {object} the levels
+ */
+export function getLevels() {
+	return localStorage.getItem("levels") ? 
+	JSON.parse(localStorage.getItem("levels")) : [];
+}
+
+/**
+ * Sets the levels.
+ *
+ * @param {array} levels The levels to set.
+ * @return {undefined}
+ */
+function setLevels(levels) {
+	localStorage.setItem("levels", JSON.stringify(levels))
+}
+
+/**
+ * Sets a guess for a given level. 
+ * If the level doesn't exist in local storage, a new one is made.
+ *
+ * @param {array} levels The levels to set.
+ * @return {undefined}
+ */
+export function setLevelGuess(level, guess) {
+	let levels  = getLevels();
+	let levelIndex = getLevelIndex(level.id);
+	if (levels[levelIndex]) {
+		const sortedGuessIndex = sortedIndex(levels[levelIndex].guesses, guess.distance);
+		levels[levelIndex].guesses.splice(sortedGuessIndex, 0, guess);
+		levels[levelIndex].status = level.status;
+	} else {
+		levels[levelIndex] = createNewLevel(level, guess);
+		levels.push(levels[levelIndex]);
 	}
-	return status;
+	setLevels(levels);
+}
+
+function createNewLevel(level, guess) {
+	const guesses = [];
+	guesses.push(guess);
+	const newLevel = {
+		id: level.id,
+		title: level.title,
+		status: level.status,
+		hintsUsed: level.hintsUsed,
+		guesses: guesses,
+	};
+	return newLevel;
 }
