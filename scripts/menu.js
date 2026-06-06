@@ -12,13 +12,15 @@ import {
 } from "./constants.js";
 
 export function handleDialogOpenEvent() {
-  const closeBtns = document.querySelectorAll(".close");
   Object.entries(DIALOG_CONFIG).forEach(([key, { button, dialog }]) => {
     const buttonElement = document.getElementById(button);
     const dialogElement = document.getElementById(dialog);
     attachDialogOpenEvent(buttonElement, dialogElement);
   });
+}
 
+export function attachButtonParentDialogCloseEvents() {
+  const closeBtns = document.querySelectorAll(".close");
   closeBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       btn.parentElement.close();
@@ -27,9 +29,8 @@ export function handleDialogOpenEvent() {
 }
 
 function attachDialogOpenEvent(buttonElement, dialogElement) {
-  const closeBtns = document.querySelectorAll(".close");
   buttonElement.addEventListener("click", () => {
-    closeDialogs(closeBtns);
+    closeButtonParentDialogs();
     dialogElement.showModal();
   });
 }
@@ -58,55 +59,38 @@ export function attachEndLevelEvents() {
 }
 
 function attachEndLevelEventReview() {
+  const classesToHide = document.querySelectorAll(".hide-in-review-state");
+  const classesToShow = document.querySelectorAll(".show-in-review-state");
   const reviewButton = document.getElementById(END_LEVEL.BUTTON.review);
-  const isSvg = true;
-  const isSvgElement = false;
-  const isHtmlElement = true; 
+  const reviewLevelContainer = document.getElementById(REVIEW_LEVEL_CONTAINER);
   reviewButton.addEventListener("click", () => {
-    setHtmlOrSvgElementDisplayValue(
-      FORM_GUESS.PARENT, 
-      isHtmlElement, 
-      STYLE_ATTRIBUTES.DISPLAY.none
-    );
-    setHtmlOrSvgElementDisplayValue(
-      END_LEVEL.BUTTON.reviewExit, 
-      isSvgElement, 
-      STYLE_ATTRIBUTES.DISPLAY.flex
-    );
-    setHtmlOrSvgElementDisplayValue(
-      DIALOG_CONFIG.MORE.button, 
-      isHtmlElement, 
-      STYLE_ATTRIBUTES.DISPLAY.none
-    );
+    classesToHide.forEach((classToHide) => {
+      classToHide.classList.add("hidden");
+    });
+    classesToShow.forEach((classToShow) => {
+      classToShow.classList.remove("hidden");
+    });
+
     showDialogModal(END_LEVEL.DIALOG, false);
-    const reviewLevelContainer = document.getElementById(REVIEW_LEVEL_CONTAINER);
-    reviewLevelContainer.setAttribute(STYLE_ATTRIBUTES.PARENT, "border-style: solid");
+    reviewLevelContainer.classList.add("border-solid-white-small");
   });
 }
 
 function attachEndLevelEventReviewExit() {
+  // notice this is swapped around
+  const classesToShow = document.querySelectorAll(".hide-in-review-state");
+  const classesToHide = document.querySelectorAll(".show-in-review-state");
   const reviewExitButton = document.getElementById(END_LEVEL.BUTTON.reviewExit);
-  const isSvgElement = false;
-  const isHtmlElement = true; 
+  const reviewLevelContainer = document.getElementById(REVIEW_LEVEL_CONTAINER);
   reviewExitButton.addEventListener("click", () => {
-    setHtmlOrSvgElementDisplayValue(
-      FORM_GUESS.PARENT, 
-      isHtmlElement, 
-      STYLE_ATTRIBUTES.DISPLAY.flex
-    );
-    setHtmlOrSvgElementDisplayValue(
-      END_LEVEL.BUTTON.reviewExit, 
-      isSvgElement, 
-      STYLE_ATTRIBUTES.DISPLAY.none
-    );
-    setHtmlOrSvgElementDisplayValue(
-      DIALOG_CONFIG.MORE.button, 
-      isHtmlElement, 
-      STYLE_ATTRIBUTES.DISPLAY.flex
-    );
+    classesToHide.forEach((classToHide) => {
+      classToHide.classList.add("hidden");
+    });
+    classesToShow.forEach((classToShow) => {
+      classToShow.classList.remove("hidden");
+    });
     showDialogModal(END_LEVEL.DIALOG, true);
-    const reviewLevelContainer = document.getElementById(REVIEW_LEVEL_CONTAINER);
-    reviewLevelContainer.setAttribute(STYLE_ATTRIBUTES.PARENT, "border-style: none");
+    reviewLevelContainer.classList.remove("border-solid-white-small");
   });
 }
 
@@ -145,25 +129,13 @@ export function attachEndLevelEventNext(nextLevel) {
   }
 }
 
-/**
- * Sets the display value for a HTML or SVG element.
- * @param {string} id The id of the element.
- * @param {boolean} True if the element is an HTML; false otherwise.
- * @param {string} newDisplayValue The new display value.
- * @return {undefined}
- */
-function setHtmlOrSvgElementDisplayValue(id, isHTMLElement, newDisplayValue) {
-  const element = document.getElementById(id);
-  isHTMLElement ? element.setAttributeNS(null, STYLE_ATTRIBUTES.PARENT, `display: ${newDisplayValue};`) 
-  : element.setAttributeNS(null, 'display', newDisplayValue) 
-}
-
 function showDialogModal(id, showDialog) {
   const modal = document.getElementById(id); 
   showDialog ? modal.showModal() : modal.close();
 }
 
-export function closeDialogs(closeBtns) {
+export function closeButtonParentDialogs() {
+  const closeBtns = document.querySelectorAll(".close");
   closeBtns.forEach((btn) => {
     btn.parentElement.close();
   });

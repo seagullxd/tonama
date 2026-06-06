@@ -1,27 +1,25 @@
 import { LevelStatus } from "./models/levels.js";
-import { displayErrorMessage } from "./errors.js";
+import { ENTITY_COLOURS } from "./models/entity-colours.js";
 import {
-  GUESSED_ERROR_MESSAGES,
-  LEVEL_CARD,
-  COUNTRY_CARD,
   PATH,
   DIALOG_FAQ,
   CLASS_TRIM_VERTICAL_MARGINS
 } from "./constants.js";
 import { 
-  createCardElement, 
-  createCardElements, 
-  createSvgElement,
-  createDivElement,
+  createLevelCardElements, 
   createParagraphElement
 } from "./svg.js";
 import { 
-  toTitleCase, 
-  isGuessValid,
-  insertSortGuessedCards
+  insertSortGuessedCards,
+  isInputValid,
+  isGuessValidNew,
+  toTitleCase,
+  scrollToCard,
+  displayNewCardEffect
 } from "./util/guess.js";
 import { 
   handleDialogOpenEvent,
+  attachButtonParentDialogCloseEvents,
   attachEndLevelEvents,
   attachEndLevelEventNext,
   createEndLevelDialog,
@@ -29,6 +27,7 @@ import {
 } from "./menu.js";
 import {
   getLevels,
+  getLevelIndex,
   setLevelGuess,
   getLastLevelIdOpened,
   setLastLevelOpened
@@ -58,12 +57,10 @@ export async function fetchJsonFile(filename) {
 function applyGuess(guess, levels, level, countryData) {
   if (guess.country === level.origin) {
     guess.distance = 0;
-    // todo: should var naming distinguish between local storage and static?
     level.status = LevelStatus.completed; 
-    const levelIndex = levels.findIndex(l => l.id == level.id);
-    levels[levelIndex].status = LevelStatus.completed;
+    levels[getLevelIndex(level.id)].status = LevelStatus.completed;
+    // todo: do we need to reload every level? or can we just do the one?
     reloadLevelCards(levels); // to re-tag levels
-
     const nextLevelToComplete = findNextLevelsToComplete(levels, level)?.[0];
     attachEndLevelEventNext(nextLevelToComplete);
     const endLevelDialog = createEndLevelDialog(level.id);
@@ -73,44 +70,49 @@ function applyGuess(guess, levels, level, countryData) {
     level.status = LevelStatus.inProgress;
   }
   setLevelGuess(level, guess);
-  if (getLastLevelIdOpened() != level.id) {
-    setLastLevelOpened(level.id);
-  }
-  insertSortGuessedCards(level.id);
 }
 
-function attachFormDataEvent(formElem, levels) {
-  let guess = {
-    country: undefined,
-    distance: undefined,
-  };
-  formElem.addEventListener("formdata", (e) => {
-    for (const value of e.formData.values()) {
-      guess.country = value;
-    }
-    guess.country = toTitleCase(guess.country);
-    let lastLevelIdOpened = getLastLevelIdOpened();
-    let level = {}; // todo: should we just do level = getStaticLevel??
-    fetchJsonFile(`${PATH.PARENT}/${PATH.COUNTRIES_FILE}`).then((countryData) => {
-      setStaticLevel(level, levels, lastLevelIdOpened,); // todo: why is this set again?
-      if (isGuessValid(guess, countryData, level.id)) {
-        applyGuess(guess, levels, level, countryData);  
-      }
-    });
-  });
-}
-
-function attachFormSubmitEvent(formElem) {
+function attachFormSubmitEvent(formElem, levels) {
   formElem.addEventListener("submit", (e) => {
     e.preventDefault();
-    // construct a FormData object, which fires the formdata event
-    new FormData(formElem);
+
+    const input = document.getElementById("form-container-input-text");
+    if (isInputValid(input)) {
+      fetchJsonFile(`${PATH.PARENT}/${PATH.COUNTRIES_FILE}`).then((countryData) => {
+        let level = {};
+        setStaticLevel(level, levels, getLastLevelIdOpened());
+        const guessCountryCapitals = toTitleCase(input.value);
+        let guess = {
+          id: guessCountryCapitals.split(" ").join("-"),
+          country: guessCountryCapitals,
+          distance: undefined,
+        };
+        if (isGuessValidNew(guess, countryData, level.id)) {
+          applyGuess(guess, levels, level, countryData);
+
+          if (getLastLevelIdOpened() != level.id) {
+            setLastLevelOpened(level.id);
+          }
+          insertSortGuessedCards(level.id);
+          scrollToCard(guess.id);
+          displayNewCardEffect(guess.id);
+        }
+      });
+    }
   });
 }
 
-function tagLevelsWithStatus(levels, initialLevels) {
-  return levels.map(l => {
-    return {...l, status: initialLevels.find(cl => cl.id == l.id)?.status ?? l.status}
+/**
+ * Map the fetched local storage levels status to static levels.
+ * Useful to re-tag static levels status.
+ * 
+ * @param {array} staticLevels Static levels to be map to
+ * @param {array} fetchedLevels Fetched levels to map from
+ * @return {object} level The level now set.
+ */
+function mapFetchedLevelsStatusToStaticLevels(staticLevels, fetchedLevels) {
+  return staticLevels.map(sl => {
+    return {...sl, status: fetchedLevels.find(fl => fl.id == sl.id)?.status ?? sl.status}
   })
 }
 
@@ -133,24 +135,19 @@ function main() {
   createFaqQuestionsAndAnswers();
 
   fetchJsonFile(`${PATH.PARENT}/${PATH.LEVELS_FILE}`).then((data) => {
-    let levels = tagLevelsWithStatus(data.levels, getLevels());
+    let levels = mapFetchedLevelsStatusToStaticLevels(data.levels, getLevels());
+    createLevelCardElements(levels);
     setStaticLevel(level, levels, getLastLevelIdOpened()); 
-    // todo: what is the purpose of this again?
-    // why can't we just live fetch the latest level? in each new function instead of relying on this?
-    // i think it's because of the level.origin... as part of obfuscation
 
-    // todo: create an event listener for this?
     if (level.status == LevelStatus.completed) {
       let endLevelDialog = createEndLevelDialog(level.id);
       dispatchEndLevelEvent(endLevelDialog);   
     }
-    createCardElements(LEVEL_CARD, levels);
     loadLevelAttributes(level);
-
-    attachFormDataEvent(formElem, levels, level);
+    attachFormSubmitEvent(formElem, levels);
   });
   handleDialogOpenEvent();
-  attachFormSubmitEvent(formElem);
+  attachButtonParentDialogCloseEvents();
 }
 
 main();

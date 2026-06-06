@@ -1,11 +1,126 @@
+
+/*
+Helpful? 
+https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Organizing
+https://medium.com/@paulohfev/css-best-practices-you-should-know-374c388a00dd
+https://github.com/andredesousa/css-best-practices
+
+*/
+
+/* || VARIABLES */
+
+:root {
+  --platinum: #EDEDED;
+  --flag-red: #D62828;
+  --jungle-green: #00A878;
+  --amber-flame: #FFB400;
+  --fresh-sky: #00A6ED;
+  --baltic-blue: #005786;
+  --deep-space-blue: #003049;
+  --form-gap: 0.5rem;
+  --input-padding: 0.5rem 0.5rem;
+  --cards-container-padding: 1.5rem 0.35rem;
+  --input-font-size: 20px;
+  --default-pixels: 16px;
+}
+
+/* || UTILITIES */
+.margin-none {
+  margin: 0px;
+}
+
+.margin-vertical-none {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.margin-bottom-very-small {
+  margin-bottom: 6px;
+}
+
+.margin-bottom-small {
+  margin-bottom: 12px;
+}
+
+.margin-bottom-small-2 {
+  margin-bottom: 16px;
+}
+
+.margin-top-medium {
+  margin-top: 36px;
+}
+
+.text-align-off-left {
+  margin-left: 8%;
+}
+
+.text-align-off-center {
+  margin-left: 20%;
+}
+
+.text-align-end {
+  text-align: end;
+}
+
+.heading-large {
+  font-size: 40px;
+}
+
+.paragraph-bold {
+  font-weight: bold;
+}
+
+.background-none {
+  background: none;
+}
+
+.no-button-style {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
+.border-solid-deep-space-blue {
+  border: 0.3rem solid var(--deep-space-blue);;
+}
+
+.border-solid-white {
+  border: 0.5rem solid white;
+}
+
+.border-solid-white-small {
+  border: 0.15rem solid white;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+/* || GENERAL STYLES */
+
 body {
-	background-color: #003049;
-	color: #E7E7E7;
+	background-color: var(--deep-space-blue);
+	color: white;
 	font-family: sans-serif;
 }
 
 a {
-	color: #E7E7E7;
+	color: white;
 }
 
 div {
@@ -17,8 +132,80 @@ div {
 dialog {
   width: 360px;
   border-radius: 16px;
-  border: 0.5rem solid #E7E7E7;
+  border: 0.5rem solid white;
 }
+
+/* Form fills its container */
+.form-container {
+  display: grid;
+  gap: var(--form-gap);
+}
+
+/* Section spans full form width, arranges children in a row */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr auto; /* Text input stretches, button keeps natural width */
+  gap: var(--form-gap);
+}
+
+.form-row.hidden {
+  display: none;
+}
+
+/* Inputs fill their grid cells */
+.form-container input {
+  box-sizing: border-box; /* Crucial: includes padding/border in width calculation */
+  padding: var(--input-padding);
+}
+
+.form-container input:nth-child(1) {
+  border-radius: 16px;
+  font-size: var(--input-font-size);
+  font-weight: 500;
+  color: white;
+}
+
+#placeholder-for-error {
+  padding: 0.5rem;
+}
+
+#error {
+  width: 100%;
+  font-size: 90%;
+  color: white;
+  background-color: #990000;
+  border-radius: 0 0 5px 5px;
+  box-sizing: border-box;
+}
+
+/*form {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+}
+
+form label {
+  grid-column: 1 / 3;
+  grid-row: 1;
+}
+
+form section {
+  display: grid;
+  justify-items: stretch;
+  grid-template-columns: 3fr 1fr;
+  grid-auto-columns: 50px;
+  column-gap: 20px;
+}
+
+form section input:nth-child(1) {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+form section input:nth-child(2) {
+  grid-column: 2;
+  grid-row: 2;
+  aspect-ratio: 2 / 2;
+}*/
 
 .dialog-informative {
   width: 340px;
@@ -37,35 +224,35 @@ dialog p {
 	overflow-y: hidden;
 }
 
-#levels-rounded-corners {
-  height:380px;
-  width:380px;
-  border-radius: 16px; 
-  padding: 6px;
-  background: #003049;
+#level-title-date {
+  font-size: 24px;
 }
 
-#levels-cards-container {
-  height:380px;
-  width:380px;
-  background-color: #003049;
-  display: grid;
-  place-items: center;
-  max-height: 380px;
-  overflow: auto;
+.parent-guessed-cards-container {
+  border-radius: var(--default-pixels);
+  width: 335px;
+}
 
-  svg {
-   padding: 4px 0px 4px 0px;
-  }
+.new-cards-container {
+  display: grid;
+  grid-auto-rows: min-content;
+  justify-content: center;
+  overflow: auto;
+  width: 315px;
+  height:350px;
+
+  padding: var(--cards-container-padding);
+  background-color: var(--deep-space-blue);
+  border-radius: var(--default-pixels);
 
   button:hover svg rect {
-    stroke: #005786;
-    fill: #005786;  
+    stroke: var(--baltic-blue);
+    fill: var(--baltic-blue);  
   }
 
   button {
     margin: 0;
-    background-color: #003049;
+    background-color: var(--deep-space-blue);
     border: none;
     color: white;
     padding: 0px 0px;
@@ -76,14 +263,27 @@ dialog p {
   }
 }
 
+/* REVIEW STATE */
 #review-level-container {
-  height:680px;
-  width:580px;
-/*  border-style: solid;*/
+  width: 338px;
   border-radius: 16px;
 }
 
+.figure-for-review-state {
+  width: 338px;
+  height: 36px;
+}
+
+.form-row-for-review-state {
+  width: 367px;
+  height: 56px;
+}
+
+
+/* SITEWIDE */
 .guessed-card, .level-card, .guessed-card-reference {
+  padding: 0.25rem 0rem;
+
   /* Define the font family using web fonts */
   @font-face {
     font-family: "FiraSans";
@@ -93,7 +293,6 @@ dialog p {
       url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap")
         format("woff2");
   }
-
   text {
     font-family: "Noto Sans", sans-serif;
     font-weight: bold;
@@ -101,13 +300,127 @@ dialog p {
   } 
 }
 
+.card {
+  padding: 0.25rem 0rem;
 
+  /* Define the font family using web fonts */
+  @font-face {
+    font-family: "FiraSans";
+    src:
+      url("https://mdn.github.io/shared-assets/fonts/FiraSans-Italic.woff2")
+        format("woff2"),
+      url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap")
+        format("woff2");
+  }
+  text {
+    font-family: "Noto Sans", sans-serif;
+    font-weight: bold;
+    font-size: 17px;
+  } 
+}
 
 .focus-paragraph {
   text-align: center;
 }
 
-/* Menu */
+/*main section {
+  column-count: 3;
+  column-width: 40ch;
+  max-width: 100ch;
+  column-rule-width: 5px;
+  column-rule-style: dotted;
+  column-rule-color: rebeccapurple;
+}
+
+#section-1 {
+  height: 40ch;
+}*/
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 10%;
+}
+
+.halves {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.halves-heavy-first {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+}
+
+.thirds {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+
+}
+
+.thirds-heavy-ends {
+  display: grid;
+  grid-template-columns: 1.1fr 0.8fr 1.1fr;
+}
+
+.column-gap-very-small {
+  column-gap: 2%;
+}
+
+/*main {
+  margin-inline: auto;
+  max-width: 100ch;
+  column-width: 40ch;
+  column-gap: 3rem;
+  column-rule: .5px solid #98838F;
+  container-type: inline-size;
+}
+
+section:has(> aside) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 3rem;
+}
+
+section:has(> aside) main {
+  flex: 1;
+  margin-inline: 0;
+  min-width: min(100%, 30rem);
+}
+
+section:has(> aside) aside {
+  flex: 4;
+  min-width: min(100%, 30rem);
+}
+
+h1 { font-size: clamp(5.6526rem, 5.4068rem + 1.2288cqi, 6.3592rem); }
+
+h2 { font-size: clamp(1.9994rem, 1.9125rem + 0.4347cqi, 2.2493rem); }
+
+p { font-size: clamp(1rem, 0.9565rem + 0.2174cqi, 1.125rem); }
+
+h1, h2, blockquote {
+  column-span: all; 
+}*/
+
+
+/* Navigation Bar */
+.nav-bar {
+  padding-top: 2px;
+}
+
+.nav-bar-item {
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+  margin-left: 33%;
+}
+
+.no-bullets-list {
+  list-style-type: none;
+}
+
+/* More Menu */
 dialog {
   article {
     display: grid;
@@ -121,11 +434,7 @@ dialog {
 }
 
 /* Dialog: FAQ */
-.trim-vertical-margins {
-  font-weight: bold;
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
+
 
 .faq-dialog-answer {
   font-weight: 500;
@@ -181,7 +490,7 @@ dialog {
 }
 
 .baltic-blue {
-  fill: #005786;
+  fill: var(--baltic-blue);
 }
 
 .white {

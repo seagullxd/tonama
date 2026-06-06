@@ -20,195 +20,231 @@
 
 <body>
     <script>0</script>
-    <nav>
-        <ul>
+    <nav class="nav-bar">
+        <ul class="thirds no-bullets-list">
             <li>
-                <h1><a href="#">tonama: Name guessing game</a></h1>
+                <a href="#" class="nav-bar-item">
+                    tonama
+                </a>
             </li>
+            <li></li>
+            <li></li>
         </ul>
     </nav>
-    <main>
-        <aside>
+    <main class="thirds-heavy-ends column-gap-very-small">
+        <aside id="section-1"></aside>
+        <!-- todo: review level UI looks awkward... attempt to improve this -->
+        <article id="review-level-container">
+                <header id="page-header-content" class="halves-heavy-first"> 
+                    <h2 id="page-header-content-heading" class="margin-vertical-none margin-bottom-small">
+                        <a id="level-title-date">
+                            <!-- todo: make the date include the day e.g., Mon 6th June -->
+                            <time id="level-title-date-time">
+                                <sup id="level-title-date-time-sup"></sup>
+                            </time>
+                        </a>
+                    </h2>
+                    <!-- <nav></nav> -->
+                        <!-- todo: change title format to day dd mm e.g., Tues 12th Aug -->
+                    <nav id="in-game-nav-bar" class="text-align-end hide-in-review-state">
+                        <img src="images/globe-svgrepo-com.svg" alt="streak">
+                        <button id="how-to-play-btn" class="no-button-style">
+                            <img src="images/help-3-svgrepo-com.svg" alt="help">
+                        </button>
+                        <button id="more-btn" class="no-button-style">
+                            <img src="images/more-circle-vertical-svgrepo-com.svg" alt="more">
+                        </button>
+                    </nav>
+                    <nav class="text-align-end show-in-review-state hidden">
+                        <button id="end-level-review-exit-btn" class="no-button-style">
+                            <img src="images/x-round-svgrepo-com.svg" alt="exit button">
+                        </button>
+                    </nav>
+                        
+                        <dialog id="more-dialog" closedby="any">
+                            <button id="more-options-menu-controls-close" class="no-button-style close">
+                                <img src="images/x-round-svgrepo-com-dark.svg" alt="exit button">
+                            </button>
+                            <h2>More</h2>
+                            <p>
+                                Select one of the options below
+                            </p>
+                            <div id="controls">
+                                <!-- todo: You might like to replace this with a JSON object! -->
+                                <button id="levels-btn"><code>Levels</code></button>
+                                <button id="faq-btn"><code>FAQ</code></button>
+                                <button id="settings-btn"><code>Settings</code></button>
+                            </div>
+                        </dialog>
+                        <!-- todo: consider creating a js function to dynamically generate a basic dialog for each, then can add unique text content after -->
+                        <dialog id="levels-dialog" closedby="any">
+                            <button id="more-options-menu-levels-close" class="no-button-style close">
+                                <img src="images/x-round-svgrepo-com-dark.svg" alt="exit button">
+                            </button>
+                            <h2>Levels</h2>
+                            <p>
+                                Select one of the levels below
+                            </p>
+                            <div id="levels-cards-container" class="new-cards-container padding-vertical-small border-solid-deep-space-blue"></div>
+                        </dialog>
+                        <dialog id="how-to-play-dialog" class="dialog-informative" closedby="any">
+                            <!-- todo: make this right aligned -->
+                            <button id="how-to-play-close" class="no-button-style close">
+                                <img src="images/x-round-svgrepo-com-dark.svg" alt="exit button">
+                            </button>
+                            <article class="dialog-article">
+                                <h2>
+                                    How to Play?
+                                </h2>
+                                <p class="margin-vertical-none paragraph-bold">
+                                    You're given a surname, for example:
+                                </p>
+                                <h3 class="focus-paragraph">
+                                    &quot;Smith&quot;
+                                </h3>
+                                <p class="margin-vertical-none paragraph-bold">
+                                    You want to guess what country this surname originally comes from.
+                                </p>
+                                <p>
+                                    Say you guess "Wales". A card will then appear containing the country you guessed.
+                                </p>
+                                <section class="dialog-content-block">
+                                    <!-- todo: put this svg in separate file -->
+                                    <svg class="guessed-card-reference">
+                                        <rect class="guessed-card-rect flag-red" />
+                                        <text class="guessed-card-reference-title white">
+                                            Wales
+                                        </text>
+                                        <text class="guessed-card-reference-grade white">
+                                            180km
+                                        </text>
+                                    </svg>
+                                </section>
+                                <p>
+                                    The value on the right hand side is the distance between the biggest cities of both
+                                    your guess, Wales, and the correct country.
+                                </p>
+                                <p>
+                                    Use this distance as a guide to solve the puzzle. Keep guessing until you guess the
+                                    correct country. In this example, the correct country is...
+                                </p>
+                                <section class="dialog-content-block">
+                                    <!-- todo: put this svg in separate file -->
+                                    <svg class="guessed-card-reference">
+                                        <rect class="guessed-card-rect platinum" />
+                                        <text class="guessed-card-reference-title baltic-blue">
+                                            England
+                                        </text>
+                                        <text class="guessed-card-reference-grade baltic-blue">
+                                            0km
+                                        </text>
+                                    </svg>
+                                </section>
+                                <p>
+                                </p>
+                                <h3 class="margin-vertical-none">
+                                    Helpful tips?
+                                </h3>
+                                <p class="margin-vertical-none paragraph-bold">
+                                    The distance between two countries is based on bilateral distances between the
+                                    biggest
+                                    cities of those two countries. For example, the distance between Cardiff, Wales and
+                                    London, England is 180km.
+                                </p>
+                                <p>
+                                    Be mindful when trying to guess a country with a large land mass, e.g., China or
+                                    Russia.
+                                </p>
+                                <p>
+                                    Make use of hints when you get stuck!
+                                </p>
+                                <p>
+                                </p>
+                            </article>
+                        </dialog>
+                        <dialog id="faq-dialog" class="dialog-informative" closedby="any">
+                            <button id="more-options-menu-faq-close" class="no-button-style close">
+                                <img src="images/x-round-svgrepo-com-dark.svg" alt="exit button">
+                            </button>
+                            <article id="faq-dialog-article" class="dialog-article">
+                                <h2>
+                                    FAQ
+                                </h2>
+                            </article>
+                        </dialog>
+                        <dialog id="settings-dialog" closedby="any">
+                            <button id="more-options-menu-settings-close" class="no-button-style close">
+                                <img src="images/x-round-svgrepo-com-dark.svg" alt="exit button">
+                            </button>
+                            <h2>Settings</h2>
+                            <p>
+                                Dialog not yet made...
+                            </p>
+                        </dialog>
+                        <dialog id="end-level-dialog" closedby="none">
+                            <h2>Level completed!</h2>
+                            <p>
+                                You guessed correct!
+                            </p>
+                            <div id="game-completion-message-container"></div>
+                            <button id="end-level-review-btn">Review level</button>
+                            <button id="end-level-next-btn">Next level</button>
+                            <button id="end-level-select-btn">Select a level</button>
+                        </dialog>
+                </header>
+                <h1 id="level-title-family-name" class="heading-large text-align-off-center margin-bottom-small-2 margin-top-medium">&quot;Morgan&quot;</h1>
+                <figure class="margin-none text-align-end hide-in-review-state">
+                    <img src="images/knowledge-svgrepo-com.svg" alt="streak">
+                </figure>
+                <figure class="margin-none figure-for-review-state show-in-review-state hidden">
+                </figure>
+                <article>
+                    <form class="form-container" novalidate >
+                        <label for="form-container-label">Guess what country the family name is from</label>
+                        <div class="form-row hide-in-review-state">
+                            <input 
+                              type="text" 
+                              name="country"
+                              id="form-container-input-text" 
+                              class="background-none border-solid-white" 
+                              placeholder="Denmark"
+                              pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[\s'\-][A-Za-zÀ-ÖØ-öø-ÿ]+)*"
+                              minlength="4"
+                              maxlength="56"
+                              required
+                            >   
+                            <!-- pattern captures basic latin, common European accents, space or hypen between words -->
+                            <input type="image" id="form-container-input-submit" src="/images/send-1-svgrepo-com.svg" alt="submit" />
+                        </div>
+                        <div class="form-row-for-review-state show-in-review-state hidden"></div>
+                        
+                        <div id="placeholder-for-error" class="margin-bottom-very-small">
+                            <span id="error" class="visually-hidden" aria-live="polite" aria-atomic="true">
+                            </span> 
+                        </div>
+                    </form>
+                    <div id="guessed-message-container">
+                    </div>
+                </article>
+                <div class="parent-guessed-cards-container border-solid-white-small">
+                    <div id="guessed-cards-container" class="new-cards-container margin-vertical-small border-solid-deep-space-blue">
+                    </div> 
+                </div>
+                
+        </article>
+        <aside class="text-align-off-left">
             <table>
                 <tr>
                     <td>elapsed time:</td>
                     <td>2m 1s</td>
                 </tr>
                 <tr>
+                    <!-- todo: make this counter work -->
                     <td>countries guessed:</td>
                     <td>1</td>
                 </tr>
             </table>
         </aside>
-        <div id="review-level-container">
-            <article id="page-header-content">
-                <svg id="end-level-review-exit-btn" width="45px" height="45px" viewBox="0 0 1024.00 1024.00" display="none"
-                    xmlns="http://www.w3.org/2000/svg" fill="#1a181b" style="--darkreader-inline-fill: var(--darkreader-background-72fa78, #3b753c);"
-                    data-darkreader-inline-fill="" stroke="#1a181b" stroke-width="0.01024">
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#1a181b"
-                        stroke-width="102.4" style="--darkreader-inline-stroke: var(--darkreader-text-cccccc, #e8d7ba);"
-                        data-darkreader-inline-stroke="">
-                        <path fill="#3c3c3b" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"
-                            style="--darkreader-inline-fill: var(--darkreader-background-000000, #3c3c3b);"
-                            data-darkreader-inline-fill=""></path>
-                    </g>
-                    <g id="SVGRepo_iconCarrier">
-                        <path fill="#3c3c3b" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"
-                            style="--darkreader-inline-fill: var(--darkreader-background-000000, #3c3c3b);"
-                            data-darkreader-inline-fill=""></path>
-                    </g>
-                </svg>
-                <h2 id="page-header-content-heading">
-                    <a id="level-title-date"><time id="level-title-date-time"><sup id="level-title-date-time-sup"></sup></time></a>
-                    <img src="images/globe.svg" alt="streak">
-                    <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog#specifications -->
-                    <button id="more-btn"><code>More</code></button>
-                    <dialog id="more-dialog" closedby="any">
-                        <h2><code>More</code></h2>
-                        <p>
-                            Closable using the "Close" button, the Esc key, or by clicking outside the
-                            dialog. "Light dismiss" behavior.
-                        </p>
-                        <div id="controls">
-                            <!-- todo: You might like to replace this with a JSON object! -->
-                            <button id="restart-btn"><code>Restart</code></button>
-                            <button id="levels-btn"><code>Levels</code></button>
-                            <button id="how-to-play-btn"><code>How to Play</code></button>
-                            <button id="faq-btn"><code>FAQ</code></button>
-                            <button id="settings-btn"><code>Settings</code></button>
-                        </div>
-                        <button class="close">Close</button>
-                    </dialog>
-                    <dialog id="restart-dialog" closedby="any">
-                        <h2><code>Restart</code></h2>
-                        <p>
-                            Are you sure you want to restart the level?
-                        </p>
-                        <button class="close">Close</button>
-                    </dialog>
-                    <dialog id="levels-dialog" closedby="any">
-                        <h2><code>Levels</code></h2>
-                        <p>
-                            Closable using the "Close" button, the Esc key, or by clicking outside the
-                            dialog. "Light dismiss" behavior.
-                        </p>
-                        <div id="levels-rounded-corners">
-                            <div id="levels-cards-container">
-                            </div>
-                        </div>
-                        <button class="close">Close</button>
-                    </dialog>
-                    <dialog id="how-to-play-dialog" class="dialog-informative" closedby="any">
-                        <button class="close">Close</button>
-                        <article class="dialog-article">
-                            <h2>
-                                How to Play?
-                            </h2>
-                            <p class="trim-vertical-margins">
-                                You're given a surname, for example:
-                            </p>
-                            <h3 class="focus-paragraph">
-                                &quot;Smith&quot;
-                            </h3>
-                            <p class="trim-vertical-margins">
-                                You want to guess what country this surname originally comes from.
-                            </p>
-                            <p>
-                                Say you guess "Wales". A card will then appear containing the country you guessed.
-                            </p>
-                            <section class="dialog-content-block">
-                                <svg class="guessed-card-reference">
-                                    <rect class="guessed-card-rect flag-red" />
-                                    <text class="guessed-card-reference-title white">
-                                        Wales
-                                    </text>
-                                    <text class="guessed-card-reference-grade white">
-                                        180km
-                                    </text>
-                                </svg>
-                            </section>
-                            <p>
-                                The value on the right hand side is the distance between the biggest cities of both
-                                your guess, Wales, and the correct country.
-                            </p>
-                            <p>
-                                Use this distance as a guide to solve the puzzle. Keep guessing until you guess the
-                                correct country. In this example, the correct country is...
-                            </p>
-                            <section class="dialog-content-block">
-                                <svg class="guessed-card-reference">
-                                    <rect class="guessed-card-rect platinum" />
-                                    <text class="guessed-card-reference-title baltic-blue">
-                                        England
-                                    </text>
-                                    <text class="guessed-card-reference-grade baltic-blue">
-                                        0km
-                                    </text>
-                                </svg>
-                            </section>
-                            <p>
-                            </p>
-                            <h3 class="trim-vertical-margins">
-                                Helpful tips?
-                            </h3>
-                            <p class="trim-vertical-margins">
-                                The distance between two countries is based on bilateral distances between the biggest
-                                cities of those two countries. For example, the distance between Cardiff, Wales and
-                                London, England is 180km.
-                            </p>
-                            <p>
-                                Be mindful when trying to guess a country with a large land mass, e.g., China or
-                                Russia.
-                            </p>
-                            <p>
-                                Make use of hints when you get stuck!
-                            </p>
-                            <p>
-                            </p>
-                        </article>
-                    </dialog>
-                    <dialog id="faq-dialog" class="dialog-informative" closedby="any">
-                        <button class="close">Close</button>
-                        <article id="faq-dialog-article" class="dialog-article">
-                            <h2>
-                                FAQ
-                            </h2>
-                        </article>
-                    </dialog>
-                    <dialog id="settings-dialog" closedby="any">
-                        <h2><code>Settings</code></h2>
-                        <p>
-                            Closable using the "Close" button, the Esc key, or by clicking outside the
-                            dialog. "Light dismiss" behavior.
-                        </p>
-                        <button class="close">Close</button>
-                    </dialog>
-                    <dialog id="end-level-dialog" closedby="none">
-                        <h2><code>Level completed!</code></h2>
-                        <p>
-                            You guessed correct!
-                        </p>
-                        <div id="game-completion-message-container"></div>
-                        <button id="end-level-review-btn">Review level</button>
-                        <button id="end-level-next-btn">Next level</button>
-                        <button id="end-level-select-btn">Select a level</button>
-                    </dialog>
-                </h2>
-            </article>
-            <article>
-                <p>Guess the origin country of the surname below.</p>
-                <h2 id="level-title-family-name">&quot;Morgan&quot;</h2>
-                <img src="images/bulb2.svg" alt="streak">
-                <form id="form-guess" style="display: ;">
-                    <input type="text" id="form-guess-input" name="country_name" placeholder="Enter a country" required>
-                    <button type="submit" id="form-guess-submit">▶︎</button>
-                </form>
-                <div id="guessed-message-container">
-                </div>
-            </article>
-            <div id="guessed-cards-container">
-            </div>
     </main>
     <footer>
         <a href="https://www.example.com">about tonama</a>

@@ -13,18 +13,23 @@ import {
   TEXT_COORDINATES,
   LEVEL_CLASS,
   CARD_PADDING,
-  COUNTRY_CARD,
-  LEVEL_CARD,
+  LEVEL_CARD_ATTRIBUTES,
   FORM_GUESS,
   END_LEVEL
 } from "./constants.js";
 
 // https://developer.mozilla.org/en-US/docs/Web/SVG/Guides/Scripting
-export function createSvgElement(width, height, className) {
+export function createSvgElement(id, className, width, height) {
   let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttributeNS(null, "id", id);
+  svg.setAttributeNS(null, "class", className);
   svg.setAttributeNS(null, "width", width);
   svg.setAttributeNS(null, "height", height);
-  svg.setAttributeNS(null, "class", className);
+
+  
+  // svg.addEventListener('animationend', () => {
+  //   svg.classList.add('new-drop-shadow-platinum');
+  // }, { once: true }); 
   return svg;
 }
 
@@ -88,64 +93,67 @@ export function createParagraphElement(id, className, content) {
   return paragraph;
 }
 
-function attachNewLevelSelectEvent(svg, parentContainer, levelData) {
-  const { id, level, difficulty, name, origin } = levelData;
-  let button = createButtonElement(`level-${levelData.id}`, LEVEL_CLASS, "submit");
+function attachNewLevelSelectEvent(level, button) {
   const endLevelDialog = document.getElementById(END_LEVEL.DIALOG);
   button.addEventListener("click", () => {
     unloadLevel();
-    loadLevelAttributes(levelData);
-    setLastLevelOpened(levelData.id);
+    loadLevelAttributes(level);
+    setLastLevelOpened(level.id);
    
     endLevelDialog.close();
-    if (levelData.status == LevelStatus.completed) {
-      let endLevelDialog = createEndLevelDialog(levelData.id);
+    if (level.status == LevelStatus.completed) {
+      let endLevelDialog = createEndLevelDialog(level.id);
       dispatchEndLevelEvent(endLevelDialog);
     }
   });
-  button.appendChild(svg);
-  parentContainer.appendChild(button);
 }
 
+// todo: goal is to make a card.js file, acknowledge this is very similar to 
+// createGuessedCardElements and have them next to each other so the developer knows
+
 /* See createCardElement(...) */
-export function createCardElements(attributes, contents) {
-  const isLevelCard = attributes.ID == LEVEL_CARD.ID;
-  for (const origContent of contents) {
-    const content = { title: origContent.title, grade: origContent.difficulty };
-    createCardElement(LEVEL_CARD, content, isLevelCard ? origContent : undefined);
+export function createLevelCardElements(levels) {
+  for (const level of levels) {
+    const newCard = { title: level.title, measurement: level.difficulty };
+    LEVEL_CARD_ATTRIBUTES.COLOUR = LevelStatusToColour[level.status];
+    createCardElement(LEVEL_CARD_ATTRIBUTES, newCard, level);
   }
 }
 
 /**
  * Creates a card element
- * @param {object} attributes A card's HTML attributes
- * @param {object} contents A card's content
+ * @param {object} cardAttributes A card's HTML attributes
+ * @param {object} newCard A newly prepared card with properties: title, measurement
  * @param {object} level A level's attributes
  * @return {undefined}
  */
-export function createCardElement(attributes, content, level = undefined) {
-  let parentContainer = document.getElementById(attributes.PARENT);
-  if (isEmpty(attributes) || isEmpty(content)) {
-    return;
-  }
-
-  let svg = createSvgElement(
-    attributes.WIDTH + CARD_PADDING,
-    attributes.HEIGHT + CARD_PADDING,
-    level ? LEVEL_CARD.ID : COUNTRY_CARD.ID
+export function createCardElement(cardAttributes, newCard, level = undefined) {
+  const svgId = newCard.title.split(" ").join("-"); // todo: make this into a numeric identifier
+  const svg = createSvgElement(
+    svgId,
+    cardAttributes.CLASS,
+    cardAttributes.WIDTH + CARD_PADDING,
+    cardAttributes.HEIGHT + CARD_PADDING
   );
 
+  const parentContainer = document.getElementById(cardAttributes.PARENT);
   if (level) {
-    attachNewLevelSelectEvent(svg, parentContainer, level);
-    attributes.COLOUR = LevelStatusToColour[level.status];
+    const button = createButtonElement(`level-${level.id}`, LEVEL_CLASS, "submit");
+    attachNewLevelSelectEvent(level, button);
+    button.appendChild(svg);
+    parentContainer.appendChild(button);
   }
   else parentContainer.appendChild(svg);
 
-  let r = createRectElement(attributes.WIDTH, attributes.HEIGHT, attributes.COLOUR);
+  const r = createRectElement(
+    cardAttributes.WIDTH, 
+    cardAttributes.HEIGHT, 
+    cardAttributes.COLOUR
+  );
   svg.appendChild(r);
-  let t1 = createTextElement(TEXT_COORDINATES.X, content.title);
+  const t1 = createTextElement(TEXT_COORDINATES.X, newCard.title);
   svg.appendChild(t1);
-  let t2 = createTextElement(TEXT_COORDINATES.Y, content.grade);
+  const t2 = createTextElement(TEXT_COORDINATES.Y, newCard.measurement);
   svg.appendChild(t2);
 }
 

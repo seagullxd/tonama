@@ -1,6 +1,5 @@
 import { sortedIndex } from "./util/object.js";
 
-// todo: consider renaming 'lastLevelIdOpened' to 'level'
 export function getLastLevelIdOpened() {
 	return localStorage.getItem("lastLevelIdOpened"); 
 }
@@ -15,6 +14,9 @@ export function setLastLevelOpened(levelId) {
 	localStorage.setItem("lastLevelIdOpened", levelId); 
 }
 
+// todo: this is ideally for local storage levels
+// but you can use it for static levels
+// therefore, shouldn't it be placed in a levels.js file to encourage that re-use?
 export function getLevelIndex(levelId) {
   return getLevels().findIndex((l) => l.id === levelId);
 }
