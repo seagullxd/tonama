@@ -19,7 +19,9 @@ https://github.com/andredesousa/css-best-practices
   --deep-space-blue: #003049;
   --form-gap: 0.5rem;
   --input-padding: 0.5rem 0.5rem;
+  --cards-container-padding: 1.5rem 0.35rem;
   --input-font-size: 20px;
+  --default-pixels: 16px;
 }
 
 /* || UTILITIES */
@@ -32,6 +34,10 @@ https://github.com/andredesousa/css-best-practices
   margin-bottom: 0px;
 }
 
+.margin-bottom-very-small {
+  margin-bottom: 6px;
+}
+
 .margin-bottom-small {
   margin-bottom: 12px;
 }
@@ -40,11 +46,9 @@ https://github.com/andredesousa/css-best-practices
   margin-bottom: 16px;
 }
 
-.margin-top-large {
-  margin-top: 48px;
+.margin-top-medium {
+  margin-top: 36px;
 }
-
-
 
 .text-align-off-left {
   margin-left: 8%;
@@ -80,8 +84,27 @@ https://github.com/andredesousa/css-best-practices
   outline: inherit;
 }
 
+.border-solid-deep-space-blue {
+  border: 0.3rem solid var(--deep-space-blue);;
+}
+
 .border-solid-white {
   border: 0.5rem solid white;
+}
+
+.border-solid-white-small {
+  border: 0.15rem solid white;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  border: 0;
 }
 
 /* || GENERAL STYLES */
@@ -134,18 +157,23 @@ dialog {
   color: white;
 }
 
-/* Responsive: stack vertically on small screens */
-@media (max-width: 480px) {
-  .form-row {
-    grid-template-columns: 1fr;
-  }
+#placeholder-for-error {
+  padding: 0.5rem;
+}
+
+#error {
+  width: 100%;
+  font-size: 90%;
+  color: white;
+  background-color: #990000;
+  border-radius: 0 0 5px 5px;
+  box-sizing: border-box;
 }
 
 /*form {
   display: grid;
   grid-template-columns: 1fr 3fr;
 }
-
 
 form label {
   grid-column: 1 / 3;
@@ -188,34 +216,26 @@ dialog p {
 	overflow-y: hidden;
 }
 
-#levels-rounded-corners, .new-cards-parent {
-  height:380px;
-  border-radius: 16px; 
-  padding: 6px;
-  background: #003049;
-}
-
 #level-title-date {
   font-size: 24px;
 }
 
-.new-cards-parent {
-  border-radius: 16px; 
-  border: 0.15rem solid white;
+.parent-guessed-cards-container {
+  border-radius: var(--default-pixels);
+  width: 335px;
 }
 
-.cards-container {
-  height:380px;
-  width:380px;
-  background-color: var(--deep-space-blue);
+.new-cards-container {
   display: grid;
-  place-items: center;
-  max-height: 380px;
+  grid-auto-rows: min-content;
+  justify-content: center;
   overflow: auto;
+  width: 315px;
+  height:350px;
 
-  svg {
-   padding: 4px 0px 4px 0px;
-  }
+  padding: var(--cards-container-padding);
+  background-color: var(--deep-space-blue);
+  border-radius: var(--default-pixels);
 
   button:hover svg rect {
     stroke: var(--baltic-blue);
@@ -241,9 +261,9 @@ dialog p {
 }
 
 /* SITEWIDE */
-
-
 .guessed-card, .level-card, .guessed-card-reference {
+  padding: 0.25rem 0rem;
+
   /* Define the font family using web fonts */
   @font-face {
     font-family: "FiraSans";
@@ -253,7 +273,6 @@ dialog p {
       url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap")
         format("woff2");
   }
-
   text {
     font-family: "Noto Sans", sans-serif;
     font-weight: bold;
@@ -261,7 +280,24 @@ dialog p {
   } 
 }
 
+.card {
+  padding: 0.25rem 0rem;
 
+  /* Define the font family using web fonts */
+  @font-face {
+    font-family: "FiraSans";
+    src:
+      url("https://mdn.github.io/shared-assets/fonts/FiraSans-Italic.woff2")
+        format("woff2"),
+      url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap")
+        format("woff2");
+  }
+  text {
+    font-family: "Noto Sans", sans-serif;
+    font-weight: bold;
+    font-size: 17px;
+  } 
+}
 
 .focus-paragraph {
   text-align: center;

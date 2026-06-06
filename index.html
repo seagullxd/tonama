@@ -14,7 +14,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="styles/constants.css">
     <link rel="stylesheet" href="styles/main.css">
     <script src="scripts/main.js" type="module" defer></script>
 </head>
@@ -34,8 +33,10 @@
     </nav>
     <main class="thirds-heavy-ends column-gap-very-small">
         <aside id="section-1"></aside>
+        <!-- todo: fix UI on review level container -->
         <article id="review-level-container">
                 <header id="page-header-content" class="halves-heavy-first">
+                    <!-- todo: replace svg with separate file -->
                     <svg id="end-level-review-exit-btn" width="45px" height="45px" viewBox="0 0 1024.00 1024.00"
                         display="none" xmlns="http://www.w3.org/2000/svg" fill="#1a181b" style="--darkreader-inline-fill: var(--darkreader-background-72fa78, #3b753c);"
                         data-darkreader-inline-fill="" stroke="#1a181b" stroke-width="0.01024">
@@ -55,6 +56,7 @@
                     </svg>
                     <h2 id="page-header-content-heading" class="margin-vertical-none margin-bottom-small">
                         <a id="level-title-date">
+                            <!-- todo: make the date include the day e.g., Mon 6th June -->
                             <time id="level-title-date-time">
                                 <sup id="level-title-date-time-sup"></sup>
                             </time>
@@ -85,14 +87,15 @@
                                 <button id="faq-btn"><code>FAQ</code></button>
                                 <button id="settings-btn"><code>Settings</code></button>
                             </div>
-                            <button class="close">Close</button>
+                            <button id="more-options-menu-controls-close" class="close">Close</button>
                         </dialog>
+                        <!-- todo: consider creating a js function to dynamically generate a basic dialog for each, then can add unique text content after -->
                         <dialog id="restart-dialog" closedby="any">
                             <h2><code>Restart</code></h2>
                             <p>
                                 Are you sure you want to restart the level?
                             </p>
-                            <button class="close">Close</button>
+                            <button id="more-options-menu-restart-close" class="close">Close</button>
                         </dialog>
                         <dialog id="levels-dialog" closedby="any">
                             <h2><code>Levels</code></h2>
@@ -100,13 +103,11 @@
                                 Closable using the "Close" button, the Esc key, or by clicking outside the
                                 dialog. "Light dismiss" behavior.
                             </p>
-                            <div id="levels-rounded-corners">
-                                <div id="levels-cards-container" class="cards-container"></div>
-                            </div>
-                            <button class="close">Close</button>
+                            <div id="levels-cards-container" class="new-cards-container padding-vertical-small border-solid-deep-space-blue"></div>
+                            <button id="more-options-menu-levels-close" class="close">Close</button>
                         </dialog>
                         <dialog id="how-to-play-dialog" class="dialog-informative" closedby="any">
-                            <button class="close">Close</button>
+                            <button id="how-to-play-close" class="close">Close</button>
                             <article class="dialog-article">
                                 <h2>
                                     How to Play?
@@ -124,6 +125,7 @@
                                     Say you guess "Wales". A card will then appear containing the country you guessed.
                                 </p>
                                 <section class="dialog-content-block">
+                                    <!-- todo: put this svg in separate file -->
                                     <svg class="guessed-card-reference">
                                         <rect class="guessed-card-rect flag-red" />
                                         <text class="guessed-card-reference-title white">
@@ -143,6 +145,7 @@
                                     correct country. In this example, the correct country is...
                                 </p>
                                 <section class="dialog-content-block">
+                                    <!-- todo: put this svg in separate file -->
                                     <svg class="guessed-card-reference">
                                         <rect class="guessed-card-rect platinum" />
                                         <text class="guessed-card-reference-title baltic-blue">
@@ -176,7 +179,7 @@
                             </article>
                         </dialog>
                         <dialog id="faq-dialog" class="dialog-informative" closedby="any">
-                            <button class="close">Close</button>
+                            <button id="more-options-menu-faq-close" class="close">Close</button>
                             <article id="faq-dialog-article" class="dialog-article">
                                 <h2>
                                     FAQ
@@ -189,7 +192,7 @@
                                 Closable using the "Close" button, the Esc key, or by clicking outside the
                                 dialog. "Light dismiss" behavior.
                             </p>
-                            <button class="close">Close</button>
+                            <button id="more-options-menu-settings-close" class="close">Close</button>
                         </dialog>
                         <dialog id="end-level-dialog" closedby="none">
                             <h2><code>Level completed!</code></h2>
@@ -202,46 +205,43 @@
                             <button id="end-level-select-btn">Select a level</button>
                         </dialog>
                 </header>
-                <h1 id="level-title-family-name" class="heading-large text-align-off-center margin-bottom-small-2 margin-top-large">&quot;Morgan&quot;</h1>
+                <h1 id="level-title-family-name" class="heading-large text-align-off-center margin-bottom-small-2 margin-top-medium">&quot;Morgan&quot;</h1>
                 <figure class="margin-none text-align-end">
                     <img src="images/knowledge-svgrepo-com.svg" alt="streak">
                 </figure>
                 
                 <article>
-                    
-                    
                     <form id="form-container" novalidate >
                         <label for="form-container-label">Guess what country the family name is from</label>
                         <div class="form-row">
                             <input 
                               type="text" 
-                              class="background-none border-solid-white" 
+                              name="country"
                               id="form-container-input-text" 
-                              name="country_name" 
-                              placeholder="e.g., Sweden, Portugal"
+                              class="background-none border-solid-white" 
+                              placeholder="Denmark"
+                              pattern="[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[\s'\-][A-Za-zÀ-ÖØ-öø-ÿ]+)*"
                               minlength="4"
                               maxlength="56"
                               required
-                            >
-                            <!-- todo: replace the samp with a span error message -->
-                            <!-- <span class="error" aria-live="polite"></span> -->
-
-                            <!-- todo: spend some time working on the input validation -->
-                            <!-- in my eyes, the general validation message is good  -->
-                            <!-- i just need to add more messages to cover < minlength and > maxlength, empty input, valid characters only i.e., alphabetical, valid country name  -->
-
-                            <!-- see: A more detailed example  -->
-                            <!-- https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Form_validation#validating_forms_using_javascript -->
+                            >   
+                            <!-- pattern captures basic latin, common European accents, space or hypen between words -->
                             <input type="image" id="form-container-input-submit" src="/images/send-1-svgrepo-com.svg" alt="submit" />
-
                         </div>
                         
+                        <div id="placeholder-for-error" class="margin-bottom-very-small">
+                            <span id="error" class="visually-hidden" aria-live="polite" aria-atomic="true">
+                            </span> 
+                        </div>
                     </form>
                     <div id="guessed-message-container">
                     </div>
                 </article>
-                <div id="guessed-cards-container" class="new-cards-parent">
+                <div class="parent-guessed-cards-container border-solid-white-small">
+                    <div id="guessed-cards-container" class="new-cards-container margin-vertical-small border-solid-deep-space-blue">
+                    </div> 
                 </div>
+                
         </article>
         <aside class="text-align-off-left">
             <table>
@@ -250,6 +250,7 @@
                     <td>2m 1s</td>
                 </tr>
                 <tr>
+                    <!-- todo: make this counter work -->
                     <td>countries guessed:</td>
                     <td>1</td>
                 </tr>
