@@ -44,6 +44,17 @@ import {
 // e.g., attachFormDataEvent should be in guess.js, applyGuess should be in guess.js
 // meanwhile, you should rename utilLevels.js to just levels because its role is beyond just helper functions now
 
+// private due to script loaded as an ES Module
+// cache country data
+let countryDataPromise = null;
+
+function getCountryData() {
+  if (!countryDataPromise) {
+    countryDataPromise = fetchJsonFile(`${PATH.PARENT}/${PATH.COUNTRIES_FILE}`);
+  }
+  return countryDataPromise;
+}
+
 export async function fetchJsonFile(filename) {
   const response = await fetch(filename);
   if (!response.ok) {
@@ -58,7 +69,10 @@ function applyGuess(guess, levels, level, countryData) {
   if (guess.country === level.origin) {
     guess.distance = 0;
     level.status = LevelStatus.completed; 
-    levels[getLevelIndex(level.id)].status = LevelStatus.completed;
+
+    const match = levels.find(l => l.id === level.id);
+    match.status = LevelStatus.completed;
+
     // todo: do we need to reload every level? or can we just do the one?
     reloadLevelCards(levels); // to re-tag levels
     const nextLevelToComplete = findNextLevelsToComplete(levels, level)?.[0];
@@ -77,8 +91,8 @@ function attachFormSubmitEvent(formElem, levels) {
     e.preventDefault();
 
     const input = document.getElementById("form-container-input-text");
-    if (isInputValid(input)) {
-      fetchJsonFile(`${PATH.PARENT}/${PATH.COUNTRIES_FILE}`).then((countryData) => {
+    getCountryData().then((countryData) => {
+      if (isInputValid(input)) {
         let level = {};
         setStaticLevel(level, levels, getLastLevelIdOpened());
         const guessCountryCapitals = toTitleCase(input.value);
@@ -89,7 +103,6 @@ function attachFormSubmitEvent(formElem, levels) {
         };
         if (isGuessValidNew(guess, countryData, level.id)) {
           applyGuess(guess, levels, level, countryData);
-
           if (getLastLevelIdOpened() != level.id) {
             setLastLevelOpened(level.id);
           }
@@ -97,8 +110,9 @@ function attachFormSubmitEvent(formElem, levels) {
           scrollToCard(guess.id);
           displayNewCardEffect(guess.id);
         }
-      });
-    }
+      }
+      formElem.reset();
+    });    
   });
 }
 
@@ -134,7 +148,7 @@ function main() {
   attachEndLevelEvents();
   createFaqQuestionsAndAnswers();
 
-  fetchJsonFile(`${PATH.PARENT}/${PATH.LEVELS_FILE}`).then((data) => {
+  fetchJsonFile(`${PATH.PARENT}/new-levels.json`).then((data) => {
     let levels = mapFetchedLevelsStatusToStaticLevels(data.levels, getLevels());
     createLevelCardElements(levels);
     setStaticLevel(level, levels, getLastLevelIdOpened()); 
