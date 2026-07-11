@@ -19,49 +19,34 @@ Use [GitHub issues](https://github.com/seagullxd/tonama/issues) for bug reports 
 | Opera             | 106+    | Full support support                               |
 | Safari            | 17.2+   | Full support support                               |
 
-## Dependencies
-	$ npm install
+## Development Setup
+This project runs in the browser. The `jsconfig.json` and `eslint.config.js` are configured for browser APIs (document, window, etc.).
 
-Install in Sublime Text Command Pallette:
-- HTML-CSS-JS Prettify
-- JavaScript Completions  
-- Prettier
-- JsHint
+### Requirements
+- [Zed](https://zed.dev) editor (or any LSP-compatible editor)
+- Node.js 20+
 
-## Run a simple local HTTP server
-```
-$ npx live-server 
+### Installation
+```bash
+npm install
 ```
 
-Make sure the sublime settings for JsHint and Prettier reference the ./node_modules/.bin
+### Editor Configuration
+This project includes configuration for:
+- **Prettier**: Automatic code formatting on save
+- **ESLint**: Code quality and error checking
+- **TypeScript**: Type checking in JavaScript files via JSDoc
 
-## Get started locally
-I use Sublime Text to run my server locally as the application is light. You may use Visual Studio Code.  
+The editor should automatically detect these configurations when you open the project.
 
-Steps to run tonama locally
-1. Open Sublime Text
-2. Press Ctrl + Alt + P to open the command palette
-3. Search for "SublimeServer: Start Sublime Server"
-4. Open index.html in your editor
-5. Right click then select "View in Sublime Server'
+### Type Checking
+This project uses TypeScript-style type checking in plain JavaScript files. When working with DOM elements, use JSDoc type assertions:
 
-#### Setup build system
-1. Go to Tools > Build System > New Build System...
-2. Start with the below code block - add to it as you like
-3. Save the build system
-4. Set it as the preset build system in Tools > Build System 
-
-```
-tonama.sublime-build
-// activates on save
-{   
-  "cmd": ["/path/to/jshint", "$file"],   
-  "selector": "*.js"   
-}
+```javascript
+const input = /** @type {HTMLInputElement} */ (document.getElementById('myInput'));
 ```
 
 ## Contributing
-
 Pull requests are welcome. You should check whether or not another developer is already working on an open issue.  
 
 For major changes, please open an issue first
