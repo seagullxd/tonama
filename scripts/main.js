@@ -5,11 +5,11 @@ import {
   DIALOG_FAQ,
   CLASS_TRIM_VERTICAL_MARGINS
 } from "./constants.js";
-import { 
-  createLevelCardElements, 
+import {
+  createLevelCardElements,
   createParagraphElement
 } from "./svg.js";
-import { 
+import {
   insertSortGuessedCards,
   isInputValid,
   isGuessValidNew,
@@ -17,7 +17,7 @@ import {
   scrollToCard,
   displayNewCardEffect
 } from "./util/guess.js";
-import { 
+import {
   handleDialogOpenEvent,
   attachButtonParentDialogCloseEvents,
   attachEndLevelEvents,
@@ -27,12 +27,11 @@ import {
 } from "./menu.js";
 import {
   getLevels,
-  getLevelIndex,
   setLevelGuess,
   getLastLevelIdOpened,
   setLastLevelOpened
 } from "./local-storage.js";
-import { 
+import {
   loadLevelAttributes,
   setStaticLevel,
   reloadLevelCards,
@@ -40,7 +39,7 @@ import {
 } from "./util/utilLevels.js";
 
 // todo: refactor so that js files contain functions that make sense
-// want to eliminate menu.js and just group into business logic 
+// want to eliminate menu.js and just group into business logic
 // e.g., attachFormDataEvent should be in guess.js, applyGuess should be in guess.js
 // meanwhile, you should rename utilLevels.js to just levels because its role is beyond just helper functions now
 
@@ -68,7 +67,7 @@ export async function fetchJsonFile(filename) {
 function applyGuess(guess, levels, level, countryData) {
   if (guess.country === level.origin) {
     guess.distance = 0;
-    level.status = LevelStatus.completed; 
+    level.status = LevelStatus.completed;
 
     const match = levels.find(l => l.id === level.id);
     match.status = LevelStatus.completed;
@@ -112,14 +111,14 @@ function attachFormSubmitEvent(formElem, levels) {
         }
       }
       formElem.reset();
-    });    
+    });
   });
 }
 
 /**
  * Map the fetched local storage levels status to static levels.
  * Useful to re-tag static levels status.
- * 
+ *
  * @param {array} staticLevels Static levels to be map to
  * @param {array} fetchedLevels Fetched levels to map from
  * @return {object} level The level now set.
@@ -151,11 +150,11 @@ function main() {
   fetchJsonFile(`${PATH.PARENT}/new-levels.json`).then((data) => {
     let levels = mapFetchedLevelsStatusToStaticLevels(data.levels, getLevels());
     createLevelCardElements(levels);
-    setStaticLevel(level, levels, getLastLevelIdOpened()); 
+    setStaticLevel(level, levels, getLastLevelIdOpened());
 
     if (level.status == LevelStatus.completed) {
       let endLevelDialog = createEndLevelDialog(level.id);
-      dispatchEndLevelEvent(endLevelDialog);   
+      dispatchEndLevelEvent(endLevelDialog);
     }
     loadLevelAttributes(level);
     attachFormSubmitEvent(formElem, levels);

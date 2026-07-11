@@ -1,21 +1,16 @@
 /* Dynamically create svgs and elements for use in HTML */
 import { unloadLevel, loadLevelAttributes } from "./util/utilLevels.js";
-import { isEmpty } from "./util/object.js";
-import { COLOUR } from "./models/entity-colours.js";
 import { LevelStatusToColour } from "./models/levels.js";
 import { LevelStatus } from "./models/levels.js";
 import { setLastLevelOpened } from "./local-storage.js";
-import { 
-  createEndLevelDialog, 
-  dispatchEndLevelEvent 
-} from "./menu.js";
+import { createEndLevelDialog, dispatchEndLevelEvent } from "./menu.js";
 import {
   TEXT_COORDINATES,
   LEVEL_CLASS,
   CARD_PADDING,
   LEVEL_CARD_ATTRIBUTES,
   FORM_GUESS,
-  END_LEVEL
+  END_LEVEL,
 } from "./constants.js";
 
 // https://developer.mozilla.org/en-US/docs/Web/SVG/Guides/Scripting
@@ -26,10 +21,9 @@ export function createSvgElement(id, className, width, height) {
   svg.setAttributeNS(null, "width", width);
   svg.setAttributeNS(null, "height", height);
 
-  
   // svg.addEventListener('animationend', () => {
   //   svg.classList.add('new-drop-shadow-platinum');
-  // }, { once: true }); 
+  // }, { once: true });
   return svg;
 }
 
@@ -67,7 +61,7 @@ export function createButtonElement(id, className, type) {
 }
 
 export function createDivElement(id, className) {
-  const container = document.createElement('div');
+  const container = document.createElement("div");
   container.setAttribute("id", id);
   container.setAttribute("class", className);
   return container;
@@ -77,7 +71,6 @@ export function createMessageElement(id, className, content) {
   const paragraph = document.createElement("p");
   paragraph.setAttribute("id", id);
   paragraph.setAttribute("class", className);
-
   const samp = document.createElement("samp");
   samp.textContent = content;
   paragraph.appendChild(samp);
@@ -94,12 +87,18 @@ export function createParagraphElement(id, className, content) {
 }
 
 function attachNewLevelSelectEvent(level, button) {
-  const endLevelDialog = document.getElementById(END_LEVEL.DIALOG);
+  const endLevelDialog = /** @type {HTMLDialogElement} */ (
+    document.getElementById(END_LEVEL.DIALOG)
+  );
+  if (endLevelDialog) {
+    endLevelDialog.close();
+  }
+
   button.addEventListener("click", () => {
     unloadLevel();
     loadLevelAttributes(level);
     setLastLevelOpened(level.id);
-   
+
     endLevelDialog.close();
     if (level.status == LevelStatus.completed) {
       let endLevelDialog = createEndLevelDialog(level.id);
@@ -108,14 +107,18 @@ function attachNewLevelSelectEvent(level, button) {
   });
 }
 
-// todo: goal is to make a card.js file, acknowledge this is very similar to 
+// todo: goal is to make a card.js file, acknowledge this is very similar to
 // createGuessedCardElements and have them next to each other so the developer knows
 
 /* See createCardElement(...) */
 export function createLevelCardElements(levels) {
   for (const level of levels) {
     const newCard = { title: level.title, measurement: level.difficulty };
-    LEVEL_CARD_ATTRIBUTES.COLOUR = LevelStatusToColour[level.status];
+
+    LEVEL_CARD_ATTRIBUTES.COLOUR =
+      "status" in level
+        ? LevelStatusToColour[level.status]
+        : LevelStatusToColour[LevelStatus.notStarted];
     createCardElement(LEVEL_CARD_ATTRIBUTES, newCard, level);
   }
 }
@@ -142,12 +145,11 @@ export function createCardElement(cardAttributes, newCard, level = undefined) {
     attachNewLevelSelectEvent(level, button);
     button.appendChild(svg);
     parentContainer.appendChild(button);
-  }
-  else parentContainer.appendChild(svg);
+  } else parentContainer.appendChild(svg);
 
   const r = createRectElement(
-    cardAttributes.WIDTH, 
-    cardAttributes.HEIGHT, 
+    cardAttributes.WIDTH,
+    cardAttributes.HEIGHT,
     cardAttributes.COLOUR
   );
   svg.appendChild(r);
